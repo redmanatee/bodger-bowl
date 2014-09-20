@@ -8,9 +8,9 @@ import (
 )
 
 type Season struct {
-	Year string `json:year`
-	Name string `json:name`
-	Active bool `json:active`
+	Year string `json:"year"`
+	Name string `json:"name"`
+	Active bool `json:"active"`
 }
 
 func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
