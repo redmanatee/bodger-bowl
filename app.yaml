@@ -9,7 +9,7 @@ handlers:
 - url: /admin/.*
   script: _go_app
   login: admin
-- url: /jsx
-  static_dir: jsx
+- url: /js
+  static_dir: js
 - url: /.*
   script: _go_app
