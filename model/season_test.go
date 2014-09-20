@@ -47,4 +47,17 @@ func TestSeasonSave(t *testing.T) {
     if !s.Active {
     	t.Error("Expected Season to be active")
     }
+
+    err = SaveSeason(c, "New Name", "Year2")
+    if err != nil {
+    	t.Fatalf("Error saving second season: %v", err)
+    }
+    s = LoadSeason(c, "New Name", "Year2")
+    if s == nil {
+    	t.Fatalf("Should have found the second season")
+    }
+    allSeasons := LoadAllSeasons(c)
+    if len(allSeasons) != 2 {
+    	t.Error("Did not find 2 seasons when loading all seasons, instead found %v", len(allSeasons))
+    }
 }

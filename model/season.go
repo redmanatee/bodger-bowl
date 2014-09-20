@@ -8,9 +8,9 @@ import (
 )
 
 type Season struct {
-	Year string
-	Name string
-	Active bool
+	Year string `json:year`
+	Name string `json:name`
+	Active bool `json:active`
 }
 
 func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
@@ -53,4 +53,15 @@ func LoadCurrentSeason(c appengine.Context) *Season {
 		return nil
 	}
 	return &(seasons[0])
+}
+
+func LoadAllSeasons(c appengine.Context) []Season {
+	q := datastore.NewQuery("Season")
+	var seasons []Season
+	_, err := q.GetAll(c, &seasons)
+	if err != nil {
+		log.Printf("Error loading all seasons '%v'", err)
+		return []Season{}
+	}
+	return seasons
 }
