@@ -15,7 +15,12 @@ func TestSeasonSave(t *testing.T) {
     if s != nil {
     	t.Error("Expected to have a nil season with first lookup")
     }
-    err = SaveSeason(c, "Name", "Year")
+    ns := Season{
+    	Name: "Name",
+    	Year: "Year",
+    	Active: true,
+    }
+    err = SaveSeason(c, ns)
     if err != nil {
     	t.Fatalf("Error saving season: %v", err)
     }
@@ -48,7 +53,12 @@ func TestSeasonSave(t *testing.T) {
     	t.Error("Expected Season to be active")
     }
 
-    err = SaveSeason(c, "New Name", "Year2")
+    ns = Season{
+    	Name: "New Name",
+    	Year: "Year2",
+    	Active: false,
+    }
+    err = SaveSeason(c, ns)
     if err != nil {
     	t.Fatalf("Error saving second season: %v", err)
     }

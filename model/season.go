@@ -18,13 +18,8 @@ func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
 	return datastore.NewKey(c, "Season", keyname, 0, nil)
 }
 
-func SaveSeason(c appengine.Context, name string, year string) error {
-	s := Season{
-		Year: year,
-		Name: name,
-		Active: true,
-	}
-	key := seasonKey(c, name, year)
+func SaveSeason(c appengine.Context, s Season) error {
+	key := seasonKey(c, s.Name, s.Year)
 	_, err := datastore.Put(c, key, &s)
 	return err
 }

@@ -21,6 +21,14 @@ func seasonHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createSeason(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var s model.Season
+	err := decoder.Decode(&s)
+	if err != nil {
+		log.Printf("Unexpected error decoding json data: %v", err)
+		panic(err)
+	}
+
 }
 
 func seasonList(w http.ResponseWriter, r *http.Request) {
