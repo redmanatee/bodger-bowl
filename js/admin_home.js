@@ -13,9 +13,28 @@ var SeasonRow = React.createClass({
 });
 
 var SeasonTable = React.createClass({
+	loadSeasonsFromServer: function() {
+		$.ajax({url:"/admin/api/seasons/",
+				type: 'GET',
+				dataType: 'json',
+				success: function(data) {
+					this.setState({seasons: data});
+				}.bind(this),
+				error: function(xhr, status, err) {
+        			console.error(this.props.url, status, err.toString());
+      			}.bind(this)
+		});
+	},
+	getInitialState: function() {
+		return {seasons:[]};
+	},
+	componentDidMount: function() {
+	    this.loadSeasonsFromServer();
+	    setInterval(this.loadSeasonsFromServer, this.props.pollInterval);
+  	},
 	render: function() {
 		var rows = []
-		this.props.seasons.forEach(function(season) {
+		this.state.seasons.forEach(function(season) {
 			rows.push(<SeasonRow season={season} />);
 		});
 		return (
@@ -31,11 +50,4 @@ var SeasonTable = React.createClass({
 	}
 });
 
-var SEASONS = [
-	{name: 'I', year: '2012', active: Boolean('false')},
-	{name: 'II', year: '2012', active: false},
-	{name: 'III', year: '2013', active: false},
-	{name: 'IV', year: '2014', active: true}
-];
-
-React.renderComponent(<SeasonTable seasons={SEASONS} />, document.getElementById('seasons'));
+React.renderComponent(<SeasonTable pollInterval="1000" />, document.getElementById('seasons'));
