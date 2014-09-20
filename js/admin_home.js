@@ -38,4 +38,4 @@ var SEASONS = [
 	{name: 'IV', year: '2014', active: true}
 ];
 
-React.renderComponent(<SeasonTable seasons={SEASONS} />, document.body);
+React.renderComponent(<SeasonTable seasons={SEASONS} />, document.getElementById('seasons'));
