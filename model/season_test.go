@@ -2,10 +2,7 @@ package model
 
 import (
 	"testing"
-	// "appengine"
     "appengine/aetest"
-    // "appengine/datastore"
-    // "log"
 )
 
 func TestSeasonSave(t *testing.T) {
