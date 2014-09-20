@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"log"
+	"strings"
 )
 
 type Season struct {
@@ -12,19 +13,36 @@ type Season struct {
 	Active bool
 }
 
+func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
+	keyname := strings.Join([]string{name, year}, ":")
+	return datastore.NewKey(c, "Season", keyname, 0, nil)
+}
+
 func SaveSeason(c appengine.Context, name string, year string) error {
 	s := Season{
 		Year: year,
 		Name: name,
 		Active: true,
 	}
-	key := datastore.NewIncompleteKey(c, "Season", nil)
+	key := seasonKey(c, name, year)
 	_, err := datastore.Put(c, key, &s)
 	return err
 }
 
+func LoadSeason(c appengine.Context, name string, year string) *Season {
+	key := seasonKey(c, name, year)
+	var s Season
+	err := datastore.Get(c, key, &s)
+	if err == datastore.ErrNoSuchEntity {
+		return nil
+	} else if err != nil {
+		log.Printf("Got an unexpected error looking up a season: %v", err)
+	}
+	return &s
+}
+
 func LoadCurrentSeason(c appengine.Context) *Season {
-	q := datastore.NewQuery("Season")
+	q := datastore.NewQuery("Season").Filter("Active =", true)
 	var seasons []Season
 	_, err := q.GetAll(c, &seasons)
 	if err != nil {

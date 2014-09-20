@@ -4,6 +4,7 @@ import (
 	"testing"
 	// "appengine"
     "appengine/aetest"
+    // "appengine/datastore"
     // "log"
 )
 
@@ -13,7 +14,7 @@ func TestSeasonSave(t *testing.T) {
             t.Fatal(err)
     }
     defer c.Close()
-    s := LoadCurrentSeason(c)
+    s := LoadSeason(c, "Name", "Year")
     if s != nil {
     	t.Error("Expected to have a nil season with first lookup")
     }
@@ -21,18 +22,32 @@ func TestSeasonSave(t *testing.T) {
     if err != nil {
     	t.Fatalf("Error saving season: %v", err)
     }
+    // Have to test this first, because the season GET from a key "forces" the put to stick in dev environment
+    s = LoadSeason(c, "Name", "Year")
+    if s == nil {
+    	t.Fatal("Should not have had a nil Season")
+    }
+    if s.Name != "Name" {
+    	t.Error("Expected Season to have an appropriate name")
+    }
+    if s.Year != "Year" {
+    	t.Error("Expected Season to have an appropriate year")
+    }
+    if !s.Active {
+    	t.Error("Expected Season to be active")
+    }
+    // Have to do this after a GET (see above) otherwise, in dev environment, the PUT is treated as not-committed yet
     s = LoadCurrentSeason(c)
     if s == nil {
-    	t.Error("Should not have had a nil Season")
-    } else {
-	    if s.Name != "Name" {
-	    	t.Error("Expected Season to have an appropriate name")
-	    }
-	    if s.Year != "Year" {
-	    	t.Error("Expected Season to have an appropriate year")
-	    }
-	    if !s.Active {
-	    	t.Error("Expected Season to be active")
-	    }
-	}
+    	t.Fatal("Should not have had a nil Season")
+    }
+    if s.Name != "Name" {
+    	t.Error("Expected Season to have an appropriate name")
+    }
+    if s.Year != "Year" {
+    	t.Error("Expected Season to have an appropriate year")
+    }
+    if !s.Active {
+    	t.Error("Expected Season to be active")
+    }
 }
