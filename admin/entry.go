@@ -27,7 +27,7 @@ func adminSeasonHandler(w http.ResponseWriter, r *http.Request) {
 func seasonAddHandler(w http.ResponseWriter, r *http.Request) {
 	year := r.FormValue("year")
 	name := r.FormValue("name")
-	model.SaveSeason(name, year, appengine.NewContext(r))
+	model.SaveSeason(appengine.NewContext(r), name, year)
 	fmt.Fprint(w, "added Season")
 	fmt.Fprint(w, year)
 	fmt.Fprint(w, name)
