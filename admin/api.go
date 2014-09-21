@@ -6,7 +6,7 @@ import (
 	"model"
 	"appengine"
 	"log"
-	"io/ioutil"
+	// "io/ioutil"
 )
 
 func init() {
@@ -21,16 +21,10 @@ func seasonHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func createSeason(w http.ResponseWriter, r *http.Request) {
-	body, e := ioutil.ReadAll(r.Body)
-	if e != nil {
-		log.Printf("Unexpected error read the body: %v", e)
-	}
 	c := appengine.NewContext(r)
-	log.Println(string(body))
-	// decoder := json.NewDecoder(r.Body)
+	decoder := json.NewDecoder(r.Body)
 	var s model.Season
-	// err :=  decoder.Decode(&s) 
-	err := json.Unmarshal(body, &s)
+	err :=  decoder.Decode(&s) 
 	if err != nil {
 		log.Printf("Unexpected error decoding json data: %v", err)
 		panic(err)
