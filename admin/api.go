@@ -6,7 +6,6 @@ import (
 	"model"
 	"appengine"
 	"log"
-	// "io/ioutil"
 )
 
 func init() {
