@@ -18,7 +18,8 @@ var SeasonEntryBar = React.createClass({
 		var seasonName = this.refs.addSeasonName.getDOMNode().value;
 		var seasonYear = this.refs.addSeasonYear.getDOMNode().value;
 		this.props.onAddSeason(seasonName, seasonYear);
-		return false;
+		this.refs.addSeasonName.getDOMNode().value = "";
+		this.refs.addSeasonYear.getDOMNode().value = "";
 	},
 	render: function() {
 		return (
@@ -52,14 +53,10 @@ var SeasonTable = React.createClass({
 	    setInterval(this.loadSeasonsFromServer, this.props.pollInterval);
   	},
   	addSeason: function(name, year) {
-  		alert("Called function with " + name + " and " + year);
   		$.ajax({url:"/admin/api/seasons/",
   				type: 'POST',
   				dataType: 'json',
-  				data: {name: name, year: year},
-  				success: function(data) {
-  					this.loadSeasonsFromServer();
-  				}.bind(this),
+  				data: '{"name": "' + name + '", "year": "' + year + '"}',
   				error: function(xhr, status, err) {
         			console.error(this.props.url, status, err.toString());
       			}.bind(this)
@@ -86,4 +83,4 @@ var SeasonTable = React.createClass({
 	}
 });
 
-React.renderComponent(<SeasonTable pollInterval="60000" />, document.getElementById('seasons'));
+React.renderComponent(<SeasonTable pollInterval="1000" />, document.getElementById('seasons'));
