@@ -4,6 +4,8 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"log"
+	"encoding/csv"
+	"strings"
 )
 
 type Player struct {
@@ -42,4 +44,17 @@ func LoadPlayer(c appengine.Context, s *Season, email string) *Player {
 		log.Printf("Got an unexpected error looking up a season: %v", err)
 	}
 	return &p
+}
+
+func CreatePlayersFromCsv(c appengine.Context, owningSeason *Season, csvData string) {
+	strReader := strings.NewReader(csvData)
+	csvReader := csv.NewReader(strReader)
+	records, err := csvReader.ReadAll()
+	if err != nil {
+		log.Printf("Got an unexpected error [%v] reading csv data:\n%v", err, csvData)
+		panic(err)
+	}
+	for _, row := range records {
+		SavePlayer(c, owningSeason, row[0], row[2], row[1])
+	}
 }
