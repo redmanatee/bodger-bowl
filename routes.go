@@ -1,16 +1,12 @@
 package routes
 
 import (
-    // "fmt"
-    // "net/http"
-    
-    // "appengine"
-    
-    // "model"
-    // "admin"
-
+	"admin"
+    "net/http"
 )
 
 func init() {
-	//TODO: Need to add the routing mechanism here somehow.
+	http.HandleFunc("/admin/season", admin.SeasonHandler)
+	http.HandleFunc("/admin/", admin.AdminHandler)
+	http.HandleFunc("/admin/api/seasons/", admin.APISeasonHandler)
 }

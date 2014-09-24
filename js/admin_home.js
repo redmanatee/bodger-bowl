@@ -2,11 +2,12 @@
 
 var SeasonRow = React.createClass({
 	render: function() {
+		hrefTarget = "/admin/season?name=" + this.props.season.name + "&year=" + this.props.season.year;
 		return (
 			<tr>
-				<td>{this.props.season.name}</td>
-				<td>{this.props.season.year}</td>
-				<td>{this.props.season.active ? 'True' : 'False'}</td>
+				<td><a href={hrefTarget}>{this.props.season.name}</a></td>
+				<td><a href={hrefTarget}>{this.props.season.year}</a></td>
+				<td><a href={hrefTarget}>{this.props.season.active ? 'True' : 'False'}</a></td>
 			</tr>
 		);
 	}

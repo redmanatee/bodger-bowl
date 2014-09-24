@@ -9,10 +9,10 @@ import (
 )
 
 func init() {
-	http.HandleFunc("/admin/api/seasons/", seasonHandler)
+	
 }
 
-func seasonHandler(w http.ResponseWriter, r *http.Request) {
+func APISeasonHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		createSeason(w,r)
 	}
