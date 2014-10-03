@@ -14,7 +14,8 @@ func TestPlayerSaveNoSeason(t *testing.T) {
     name := "Player Name"
     email := "player.name@somewhere.com"
     faction := "Skorne"
-	err = SavePlayer(c, nil, name, email, faction)
+    phone := "503-244-6613"
+	err = SavePlayer(c, nil, name, email, phone, faction)
 	if err != nil {
 		t.Fatalf("Error saving player: %v", err)
 	}
@@ -31,6 +32,9 @@ func TestPlayerSaveNoSeason(t *testing.T) {
 	if p.Faction != faction {
 		t.Errorf("Expected player faction to be '%s' instead it was '%s'", faction, p.Faction)
 	}
+	if p.Phone != phone {
+		t.Errorf("Expected player phone number to be '%s' instead it was '%s'", phone, p.Phone)
+	}
 }
 
 func TestPlayerCsvSaveNilSeason(t *testing.T) {
@@ -40,7 +44,7 @@ func TestPlayerCsvSaveNilSeason(t *testing.T) {
     }
     defer c.Close()
     csvString := `Player1,Skorne,player@somewhere.com,406-244-6613
-Player2,Circle,player2@somewhereelse.com,503-882-9933
+Player2,Circle,player2@somewhereelse.com,
 `
 	CreatePlayersFromCsv(c, nil, csvString)
 	p := LoadPlayer(c, nil, "player@somewhere.com")
@@ -56,6 +60,9 @@ Player2,Circle,player2@somewhereelse.com,503-882-9933
 	if p.Faction != "Skorne" {
 		t.Errorf("Expected player faction to be '%s' instead it was '%s'", "Skorne", p.Faction)
 	}
+	if p.Phone != "406-244-6613" {
+		t.Errorf("Expected player phone number to be '%s' instead it was '%s'", "406-244-6613", p.Phone)
+	}
 
 	p = LoadPlayer(c, nil, "player2@somewhereelse.com")
 	if p == nil {
@@ -69,6 +76,9 @@ Player2,Circle,player2@somewhereelse.com,503-882-9933
 	}
 	if p.Faction != "Circle" {
 		t.Errorf("Expected player faction to be '%s' instead it was '%s'", "Circle", p.Faction)
+	}
+	if p.Phone != "" {
+		t.Errorf("Expected player phone to be '' instead it was '%s", p.Phone)
 	}
 
 }

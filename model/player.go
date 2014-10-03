@@ -11,6 +11,7 @@ import (
 type Player struct {
 	Name string
 	Email string
+	Phone string
 	Faction string
 }
 
@@ -23,11 +24,12 @@ func playerKey(c appengine.Context, s *Season, email string) *datastore.Key {
 	return datastore.NewKey(c, "Player", email, 0, sKey)
 }
 
-func SavePlayer(c appengine.Context, s *Season, name string, email string, faction string) error {
+func SavePlayer(c appengine.Context, s *Season, name string, email string, phone string, faction string) error {
 	p := Player {
 		Name: name,
 		Email: email,
 		Faction: faction,
+		Phone: phone,
 	}
 	key := playerKey(c, s, email)
 	_, err := datastore.Put(c, key, &p)
@@ -55,6 +57,6 @@ func CreatePlayersFromCsv(c appengine.Context, owningSeason *Season, csvData str
 		panic(err)
 	}
 	for _, row := range records {
-		SavePlayer(c, owningSeason, row[0], row[2], row[1])
+		SavePlayer(c, owningSeason, row[0], row[2], row[3], row[1])
 	}
 }
