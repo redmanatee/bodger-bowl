@@ -1,7 +1,7 @@
 package model
 
 import (
-
+	
 )
 
 type Division struct {

@@ -2,12 +2,12 @@
 
 var SeasonRow = React.createClass({
 	render: function() {
-		hrefTarget = "/admin/season?name=" + this.props.season.name + "&year=" + this.props.season.year;
+		hrefTarget = "/admin/season?name=" + this.props.season.Name + "&year=" + this.props.season.Year;
 		return (
 			<tr>
-				<td><a href={hrefTarget}>{this.props.season.name}</a></td>
-				<td><a href={hrefTarget}>{this.props.season.year}</a></td>
-				<td><a href={hrefTarget}>{this.props.season.active ? 'True' : 'False'}</a></td>
+				<td><a href={hrefTarget}>{this.props.season.Name}</a></td>
+				<td><a href={hrefTarget}>{this.props.season.Year}</a></td>
+				<td><a href={hrefTarget}>{this.props.season.Active ? 'True' : 'False'}</a></td>
 			</tr>
 		);
 	}
@@ -57,7 +57,7 @@ var SeasonTable = React.createClass({
   		$.ajax({url:"/admin/api/seasons/",
   				type: 'POST',
   				dataType: 'json',
-  				data: '{"name": "' + name + '", "year": "' + year + '"}',
+  				data: '{"Name": "' + name + '", "Year": "' + year + '"}',
   				error: function(xhr, status, err) {
         			console.error(this.props.url, status, err.toString());
       			}.bind(this)
