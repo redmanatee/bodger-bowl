@@ -12,7 +12,6 @@ type Season struct {
 	Name string
 	Active bool
 	Conferences []Conference
-	Players []Player
 }
 
 func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
