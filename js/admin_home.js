@@ -13,26 +13,6 @@ var SeasonRow = React.createClass({
 	}
 });
 
-var SeasonEntryBar = React.createClass({
-	handleSubmit: function(e) {
-		e.preventDefault();
-		var seasonName = this.refs.addSeasonName.getDOMNode().value;
-		var seasonYear = this.refs.addSeasonYear.getDOMNode().value;
-		this.props.onAddSeason(seasonName, seasonYear);
-		this.refs.addSeasonName.getDOMNode().value = "";
-		this.refs.addSeasonYear.getDOMNode().value = "";
-	},
-	render: function() {
-		return (
-			<form onSubmit={this.handleSubmit}>
-				<input type="text" placeholder="Name" ref="addSeasonName" />
-				<input type="text" placeholder="Year" ref="addSeasonYear" />
-				<input type="submit" value="Add" />
-			</form>
-		);
-	}
-});
-
 var SeasonTable = React.createClass({
 	loadSeasonsFromServer: function() {
 		$.ajax({url:"/admin/api/seasons/",
@@ -70,7 +50,6 @@ var SeasonTable = React.createClass({
 		});
 		return (
 			<div>
-			<SeasonEntryBar onAddSeason={this.addSeason} />
 				<table>
 					<thead>
 						<th>Name</th>
