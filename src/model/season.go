@@ -11,6 +11,10 @@ type Season struct {
 	Year string
 	Name string
 	Active bool
+	Schedule string `datastore:",noindex"`
+	Divisions string `datastore:",noindex"`
+	SeasonData string `datastore:",noindex"`
+	Players []*datastore.Key
 }
 
 func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
