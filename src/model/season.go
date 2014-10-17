@@ -12,9 +12,8 @@ type Season struct {
 	Year string
 	Name string
 	Active bool
-	Schedule string `datastore:",noindex"`
-	Divisions string `datastore:",noindex"`
-	SeasonData string `datastore:",noindex"`
+	Schedule []Byte `datastore:",noindex"`
+	Divisions []Byte `datastore:",noindex"`
 	Players []*datastore.Key
 }
 
