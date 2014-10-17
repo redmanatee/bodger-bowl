@@ -14,7 +14,7 @@ type Player struct {
 	Phone string
 	Faction string
 	Injuries []string
-	Bonds string `datastore:",noindex"`
+	Bonds []byte `datastore:",noindex"`
 }
 
 func playerKey(c appengine.Context, s *Season, email string) *datastore.Key {
