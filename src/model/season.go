@@ -5,6 +5,7 @@ import (
 	"appengine/datastore"
 	"log"
 	"strings"
+	"time"
 )
 
 type Season struct {
@@ -89,5 +90,4 @@ func CreateSeason(c appengine.Context, name string, year string, conferenceCount
 		Active: true,
 	}
 	SaveSeason(c, season)
-
 }

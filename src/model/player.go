@@ -13,6 +13,8 @@ type Player struct {
 	Email string
 	Phone string
 	Faction string
+	Injuries []string
+	Bonds string `datastore:",noindex"`
 }
 
 func playerKey(c appengine.Context, s *Season, email string) *datastore.Key {
