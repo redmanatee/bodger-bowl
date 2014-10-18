@@ -34,7 +34,7 @@ var WeekGroup = React.createClass({
 			<table>
 				<thead>
 					<th>
-						<td colspan="3">{this.props.week.Name}</td>
+						<th colspan="3">{"Week " + this.props.week.Number}</th>
 					</th>
 				</thead>
 				<tbody>{rows}</tbody>

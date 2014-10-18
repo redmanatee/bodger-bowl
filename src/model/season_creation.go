@@ -35,8 +35,8 @@ func generateSchedule(season *SeasonJson) {
 			PlayerIds: make([]string, 2),
 			WinnerId: "",
 		}
-		season.Weeks[0].Games[i].PlayerIds[0] = season.Players[i*2].Email
-		season.Weeks[0].Games[i].PlayerIds[1] = season.Players[(i*2)+1].Email
+		season.Weeks[0].Games[i].PlayerIds[0] = season.Players[i*2].Name
+		season.Weeks[0].Games[i].PlayerIds[1] = season.Players[(i*2)+1].Name
 	}
 }
 
@@ -67,7 +67,7 @@ func generateDivisions(season *SeasonJson, conferenceCount int, divisionCount in
 	}
 	for i, p := range playersOrdered {
 		divisionIndex := i % len(divisions)
-		divisions[divisionIndex].PlayerIds = append(divisions[divisionIndex].PlayerIds, p.Email)
+		divisions[divisionIndex].PlayerIds = append(divisions[divisionIndex].PlayerIds, p.Name)
 		divisionIndex++
 	}
 }
