@@ -15,7 +15,6 @@ var PlayerDivisionRow = React.createClass({
 
 var DivisionTable = React.createClass({
 	render: function() {
-		console.log("rendering a division table");
 		var rows = [];
 		var admin = this.props.admin;
 		var winDict = this.props.wins;
@@ -48,7 +47,6 @@ var DivisionTable = React.createClass({
 
 var ConferenceTable = React.createClass({
 	render: function() {
-		console.log("rendering a conference table");
 		var divisionCount = this.props.conference.Divisions.length;
 		var rows = [];
 		var admin = this.props.admin;
@@ -103,12 +101,9 @@ var ConferenceContainer = React.createClass({
 		this.listenTo(window.lossStore, this.onLossChange);
 	},
 	render: function() {
-		console.log("Entering render function");
 		if (this.state.season === null) {
-			console.log("Empty div");
 			return (<div></div>);
 		}
-		console.log("Not an empty div");
 		var divisions = [];
 		var admin = "true";
 		var wins = this.state.wins;

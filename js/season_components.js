@@ -2,7 +2,7 @@
 
 var PlayerCell = React.createClass({
 	render: function() {
-		return (<td>{this.props.player? this.props.player.Name : ""}</td>);
+		return (<td class={this.props.player? this.props.player.Faction : ""}>{this.props.player? this.props.player.Name : ""}</td>);
 	}
 });
 
