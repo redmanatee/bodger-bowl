@@ -16,19 +16,6 @@ type Season struct {
 	Players []*datastore.Key
 }
 
-type SeasonInterface interface {
-	GetYear() string
-	GetName() string
-}
-
-func (s Season) GetYear() string {
-	return s.Year
-}
-
-func (s Season) GetName() string {
-	return s.Name
-}
-
 func (s Season) GetPlayers(c appengine.Context) []*Player {
 	players := make([]*Player, len(s.Players))
 	datastore.GetMulti(c, s.Players, players)

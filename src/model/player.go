@@ -17,29 +17,34 @@ type Player struct {
 	Bonds []byte `datastore:",noindex"`
 }
 
-func playerKey(c appengine.Context, s SeasonInterface, email string) *datastore.Key {
-	var sKey *datastore.Key
-	sKey = nil
-	if s != nil {
-		sKey = seasonKey(c, s.GetName(), s.GetYear())
-	}
+func playerKey(c appengine.Context, name string, year string, email string) *datastore.Key {
+	sKey := seasonKey(c, name, year)
 	return datastore.NewKey(c, "Player", email, 0, sKey)
 }
 
-func SavePlayer(c appengine.Context, s *Season, name string, email string, phone string, faction string) error {
-	p := Player {
-		Name: name,
-		Email: email,
-		Faction: faction,
-		Phone: phone,
+func SavePlayers(c appengine.Context, s *Season, players []Player) {
+	keys := make([]*datastore.Key, len(players))
+	var name, year string
+	if s != nil {
+		name = s.Name
+		year = s.Year
 	}
-	key := playerKey(c, s, email)
-	_, err := datastore.Put(c, key, &p)
-	return err
+	for index, player := range players {
+		keys[index] = playerKey(c, name, year, player.Email)
+	}
+	_, err := datastore.PutMulti(c, keys, players)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func LoadPlayer(c appengine.Context, s *Season, email string) *Player {
-	key := playerKey(c, *s, email)
+	var name, year string
+	if s != nil {
+		name = s.Name
+		year = s.Year
+	}	
+	key := playerKey(c, name, year, email)
 	var p Player
 	err := datastore.Get(c, key, &p)
 	if err == datastore.ErrNoSuchEntity {
@@ -50,7 +55,8 @@ func LoadPlayer(c appengine.Context, s *Season, email string) *Player {
 	return &p
 }
 
-func CreatePlayersFromCsv(c appengine.Context, owningSeason *Season, csvData string) {
+// Creates PlayerJson objects from the CSV passed in
+func createPlayersFromCsv(csvData string) []PlayerJson {
 	strReader := strings.NewReader(csvData)
 	csvReader := csv.NewReader(strReader)
 	records, err := csvReader.ReadAll()
@@ -58,7 +64,18 @@ func CreatePlayersFromCsv(c appengine.Context, owningSeason *Season, csvData str
 		log.Printf("Got an unexpected error [%v] reading csv data:\n%v", err, csvData)
 		panic(err)
 	}
-	for _, row := range records {
-		SavePlayer(c, owningSeason, row[0], row[2], row[3], row[1])
+	players := make([]PlayerJson, len(records))
+	for index, row := range records {
+		players[index] = PlayerJson {
+			Name: row[0],
+			Email: row[2],
+			Phone: row[3],
+			Faction: row[1],
+			Injuries: make([]string, 0),
+			Bonds: make([]Bond, 0),
+		}
 	}
+	return players
 }
+
+

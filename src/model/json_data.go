@@ -55,15 +55,6 @@ type SeasonJson struct {
 	Players []PlayerJson
 }
 
-func (s SeasonJson) GetYear() string {
-	return s.Year
-}
-
-func (s SeasonJson) GetName() string {
-	return s.Name
-}
-
-
 func createDivisions(season Season) []Division {
 	var divisions []Division
 	err := json.Unmarshal(season.Divisions, &divisions)
@@ -128,7 +119,7 @@ func CreateSeasonAndPlayers(c appengine.Context, s SeasonJson) (Season, []Player
 	playerKeys := make([]*datastore.Key, len(players))
 	for index, p := range s.Players {
 		players[index] = p.CreatePlayer()
-		playerKeys[index] = playerKey(c, &s, p.Email)
+		playerKeys[index] = playerKey(c, s.Name, s.Year, p.Email)
 	}
 	return s.createSeason(playerKeys), players
 }

@@ -19,15 +19,31 @@ func deactivateAllSeasons(c appengine.Context) {
 	}
 }
 
+// Creates the schedule and attaches it to the season entity passed in
+func generateSchedule(season *SeasonJson) {
+	//TODO
+}
+
+// Creates and adds the divisions to the season entity passed in.
+func generateDivisions(season *SeasonJson) {
+	//TODO
+}
+
 // Creates a season for the passed in data and information.  This includes the conferences, divisions, players and schedule
 func CreateSeason(c appengine.Context, name string, year string, conferenceCount int, divisionCount int, playersCsv string) {
-	//TODO: implement this
-	deactivateAllSeasons(c)
-	season := Season {
+	seasonJson := SeasonJson {
 		Year: year,
 		Name: name,
 		Active: true,
+		Divisions: make([]Division, divisionCount),
+		Weeks: make([]Week, 0),
+		Players: createPlayersFromCsv(playersCsv),
 	}
+	deactivateAllSeasons(c)
+	generateDivisions(&seasonJson)
+	generateSchedule(&seasonJson)
+	season, players := CreateSeasonAndPlayers(c, seasonJson)
 	SaveSeason(c, season)
+	SavePlayers(c, &season, players)
 }
 

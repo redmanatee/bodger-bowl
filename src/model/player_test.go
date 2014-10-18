@@ -11,14 +11,19 @@ func TestPlayerSaveNoSeason(t *testing.T) {
             t.Fatal(err)
     }
     defer c.Close()
-    name := "Player Name"
     email := "player.name@somewhere.com"
+    name := "Player Name"
     faction := "Skorne"
     phone := "503-244-6613"
-	err = SavePlayer(c, nil, name, email, phone, faction)
-	if err != nil {
-		t.Fatalf("Error saving player: %v", err)
-	}
+    player := Player {
+    	Name: name,
+    	Email: email,
+    	Faction: faction,
+    	Phone: phone,
+    }
+    players := make([]Player, 1)
+    players[0] = player
+	SavePlayers(c, nil, players)
 	p := LoadPlayer(c, nil, email)
 	if p == nil {
 		t.Fatal("Loading player gave us a nil player")
@@ -38,19 +43,14 @@ func TestPlayerSaveNoSeason(t *testing.T) {
 }
 
 func TestPlayerCsvSaveNilSeason(t *testing.T) {
-	c, err := aetest.NewContext(nil)
-    if err != nil {
-            t.Fatal(err)
-    }
-    defer c.Close()
     csvString := `Player1,Skorne,player@somewhere.com,406-244-6613
 Player2,Circle,player2@somewhereelse.com,
 `
-	CreatePlayersFromCsv(c, nil, csvString)
-	p := LoadPlayer(c, nil, "player@somewhere.com")
-	if p == nil {
-		t.Fatal("Loading the first player gave us an unexpected nil player")
+	players := createPlayersFromCsv(csvString)
+	if len(players) != 2 {
+		t.Fatalf("Expected to get 2 players back from csv load, instead got '%d'", len(players))
 	}
+	p := players[0]
 	if p.Name != "Player1" {
 		t.Errorf("Expected player name to be '%s' not '%s'", "Player1", p.Name)
 	}
@@ -64,10 +64,7 @@ Player2,Circle,player2@somewhereelse.com,
 		t.Errorf("Expected player phone number to be '%s' instead it was '%s'", "406-244-6613", p.Phone)
 	}
 
-	p = LoadPlayer(c, nil, "player2@somewhereelse.com")
-	if p == nil {
-		t.Fatal("Loading the second player gave us an unexpected nil player")
-	}
+	p = players[1]
 	if p.Name != "Player2" {
 		t.Errorf("Expected player name to be '%s' not '%s'", "Player2", p.Name)
 	}
