@@ -94,6 +94,7 @@ func (player Player) CreatePlayerJson() PlayerJson {
 }
 
 func createPlayersJson(season Season, c appengine.Context) []PlayerJson {
+	c.Infof("Players: '%v'", season.Players)
 	players := make([]PlayerJson, len(season.Players))
 	if len(players) > 0 {
 		for index, player := range season.GetPlayers(c) {
@@ -121,7 +122,7 @@ func CreateSeasonAndPlayers(c appengine.Context, s SeasonJson) (Season, []Player
 	playerKeys := make([]*datastore.Key, len(players))
 	for index, p := range s.Players {
 		players[index] = p.CreatePlayer()
-		playerKeys[index] = playerKey(c, s.Name, s.Year, p.Email)
+		playerKeys[index] = playerKey(c, s.Name, s.Year, p.Name)
 	}
 	return s.createSeason(playerKeys), players
 }

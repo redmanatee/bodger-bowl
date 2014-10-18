@@ -13,11 +13,14 @@ type Player struct {
 	Email string
 	Phone string
 	Faction string
-	Injuries []string
+	Injuries []string `datastore:",noindex"`
 	Bonds []byte `datastore:",noindex"`
 }
 
 func playerKey(c appengine.Context, seasonName string, year string, playerName string) *datastore.Key {
+	c.Infof("Player name: '%v'", playerName)
+	// modPlayerName := strings.Replace(playerName, " ", "_", -1)
+	// c.Infof("Mod Player name: '%v'", modPlayerName)
 	sKey := seasonKey(c, seasonName, year)
 	return datastore.NewKey(c, "Player", playerName, 0, sKey)
 }
@@ -32,6 +35,7 @@ func SavePlayers(c appengine.Context, s *Season, players []Player) {
 	for index, player := range players {
 		keys[index] = playerKey(c, name, year, player.Name)
 	}
+	c.Infof("Creating player keys: '%v'", keys)
 	_, err := datastore.PutMulti(c, keys, players)
 	if err != nil {
 		panic(err)

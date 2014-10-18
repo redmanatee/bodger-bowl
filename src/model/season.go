@@ -17,8 +17,19 @@ type Season struct {
 }
 
 func (s Season) GetPlayers(c appengine.Context) []*Player {
-	var players []*Player
-	datastore.GetMulti(c, s.Players, players)
+	var players []*Player = make([]*Player, len(s.Players), len(s.Players))
+	//Have to do this because appengine is fucking stupid and requires the entity to exist
+	//prior to loading.
+	for index := 0; index < len(players); index++ {
+		players[index] = new(Player)
+	}
+	c.Infof("Player count to lookup: '%d'", len(s.Players))
+	err := datastore.GetMulti(c, s.Players, players)
+	if err != nil {
+		c.Errorf("Error loading players: '%v'", err)
+		panic(err)
+	}
+	c.Infof("Players retrieved: '%v'", players)
 	return players
 }
 

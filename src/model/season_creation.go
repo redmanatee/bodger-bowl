@@ -83,6 +83,7 @@ func playersByFaction(players []PlayerJson) map[string][]PlayerJson {
 
 // Creates a season for the passed in data and information.  This includes the conferences, divisions, players and schedule
 func CreateSeason(c appengine.Context, name string, year string, conferenceCount int, divisionCount int, playersCsv string) {
+	c.Infof("Creating a season")
 	seasonJson := SeasonJson {
 		Year: year,
 		Name: name,

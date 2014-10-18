@@ -13,6 +13,7 @@ func init() {
 
 func createSeason(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
+	c.Infof("Creating season")
 	name := r.FormValue("name")
 	year := r.FormValue("year")
 	players := r.FormValue("players")

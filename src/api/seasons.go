@@ -11,13 +11,14 @@ import (
 
 func getAllSeasons(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	// TODO: fix this so that it uses a smaller season entity
+	c.Infof("Getting all seasons")
 	seasons := model.LoadAllSeasons(c)
 	data, err := json.MarshalIndent(seasons, "", "\t")
 	if err != nil {
 		c.Errorf("Unexpected error marshalling seasons: %v", err)
 		panic(err)
 	}
+	c.Infof("Season count: '%d'", len(seasons))
 	w.Write(data)
 }
 

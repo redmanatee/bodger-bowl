@@ -34,7 +34,7 @@ var WeekGroup = React.createClass({
 			<table>
 				<thead>
 					<th>
-						<th colspan="3">{"Week " + this.props.week.Number}</th>
+						<th colSpan="3">{"Week " + this.props.week.Number}</th>
 					</th>
 				</thead>
 				<tbody>{rows}</tbody>
@@ -44,27 +44,20 @@ var WeekGroup = React.createClass({
 });
 
 var SeasonScheduleTable = React.createClass({
-	loadSeasonFromServer: function() {
-		$.ajax({url:"/api/seasons/" + this.props.seasonId,
-				type: 'GET',
-				dataType: 'json',
-				success: function(data) {
-					this.setState({
-						season: data,
-					});
-				}.bind(this),
-				error: function(xhr, status, err) {
-        			console.error(this.props.url, status, err.toString());
-      			}.bind(this)
-		});
+	mixins: [Reflux.ListenerMixin],
+	onStatusChange: function(data) {
+		this.setState({
+			season: data,
+		});		
 	},
 	getInitialState: function() {
 		return {
-			season: null,
+			season: window.seasonStore.season,
 		};
 	},
 	componentDidMount: function() {
-	    this.loadSeasonFromServer();
+		this.listenTo(window.seasonStore, this.onStatusChange);
+	    // this.loadSeasonFromServer();
 	    //setInterval(this.loadSeasonFromServer, this.props.pollInterval);
   	},
 	render: function() {
@@ -74,13 +67,13 @@ var SeasonScheduleTable = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.state.season.Weeks.forEach(function(week) {
-			rows.push(<WeekGroup week={week} admin={admin}/>)
+			rows.push(<WeekGroup week={week} admin={admin} key={week.Number}/>)
 		});
 		return (
 			<div>
 				<table>
 					<thead>
-						<th colspan="3">{this.state.season.Name + " (" + this.state.season.Year + ")"}</th>
+						<th colSpan="3">{this.state.season.Name + " (" + this.state.season.Year + ")"}</th>
 					</thead>
 				</table>
 				{rows}
