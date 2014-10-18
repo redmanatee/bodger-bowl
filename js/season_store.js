@@ -21,29 +21,27 @@ window.seasonStore = Reflux.createStore({
 		//setup player map lookup for quick lookup
 		players = {};
 		for (i = 0; i < season.Players.length; i++) {
-			console.log(season.Players[i]);
 			players[season.Players[i].Name] = season.Players[i];
 		}
-		console.log(players);
-		// var lookupPlayer = function(playerId, i) {
-		// 	return players[playerId];
-		// };
-		// //map the players to their divisions
-		// for (i = 0; i < season.Conferences.length; i++) {
-		// 	var conference = season.Conferences[i];
-		// 	for (j = 0; j < conference.Divisions.length; j++) {
-		// 		var division = conference.Divisions[j];
-		// 		division.Players = $.map(division.PlayerIds, lookupPlayer);
-		// 	}
-		// }
-		// //Map the players to their games
-		// for (i = 0; i < season.Weeks.length; i++) {
-		// 	var week = season.Weeks[i];
-		// 	for (j = 0; j < week.Games.length; j++) {
-		// 		var game = week.Games[j];
-		// 		game.Players = $.map(game.Playerids, lookupPlayer);
-		// 	}
-		// }
+		var lookupPlayer = function(playerId, i) {
+			return players[playerId];
+		};
+		//map the players to their divisions
+		for (i = 0; i < season.Conferences.length; i++) {
+			var conference = season.Conferences[i];
+			for (j = 0; j < conference.Divisions.length; j++) {
+				var division = conference.Divisions[j];
+				division.Players = $.map(division.PlayerIds, lookupPlayer);
+			}
+		}
+		//Map the players to their games
+		for (i = 0; i < season.Weeks.length; i++) {
+			var week = season.Weeks[i];
+			for (j = 0; j < week.Games.length; j++) {
+				var game = week.Games[j];
+				game.Players = $.map(game.PlayerIds, lookupPlayer);
+			}
+		}
 		//Set the season to ourselves
 		this.season = season;
 		this.trigger(this.season);

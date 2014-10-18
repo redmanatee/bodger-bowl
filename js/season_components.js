@@ -2,7 +2,7 @@
 
 var PlayerCell = React.createClass({
 	render: function() {
-		return (<td>{this.props.player}</td>);
+		return (<td>{this.props.player? this.props.player.Name : ""}</td>);
 	}
 });
 
@@ -23,10 +23,10 @@ var WeekGroup = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.props.week.Games.forEach(function(game) {
-			rows.push(<tr><GameRow player1={game.PlayerIds[0]} 
-							   player2={game.PlayerIds[1]} 
-							   hasWinner={game.WinnerId != null}
-							   winner={game.WinnerId}
+			rows.push(<tr><GameRow player1={game.Players[0]} 
+							   player2={game.Players[1]} 
+							   hasWinner={game.Winner != null}
+							   winner={game.Winner}
 							   admin={admin} /></tr>
 			);
 		});
