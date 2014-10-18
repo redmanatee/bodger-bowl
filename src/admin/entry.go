@@ -14,7 +14,7 @@ func AdminHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == "POST" {
 		createSeason(w, r)
 	}
-	tmpl := template.Must(template.ParseFiles("templates/admin/admin_home.html"))
+	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/admin/admin_home.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {
 		panic(err)
