@@ -4,6 +4,7 @@ import (
     "html/template"
     "net/http"
     "strings"
+    "log"
 )
 
 func init() {
@@ -29,7 +30,8 @@ func SeasonHandler(w http.ResponseWriter, r *http.Request) {
 	if lastItem == "" {
 		AdminHandler(w, r)
 	} else {
-		tmpl := template.Must(template.ParseFiles("templates/admin/admin_season.html"))
+		tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/admin/admin_season.html"))
+		log.Printf("Templates: '%v'", tmpl.Templates())
 		err := tmpl.Execute(w, nil)
 		if err != nil {
 			panic(err)
