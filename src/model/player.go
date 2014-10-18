@@ -17,11 +17,11 @@ type Player struct {
 	Bonds []byte `datastore:",noindex"`
 }
 
-func playerKey(c appengine.Context, s *Season, email string) *datastore.Key {
+func playerKey(c appengine.Context, s SeasonInterface, email string) *datastore.Key {
 	var sKey *datastore.Key
 	sKey = nil
 	if s != nil {
-		sKey = seasonKey(c, s.Name, s.Year)
+		sKey = seasonKey(c, s.GetName(), s.GetYear())
 	}
 	return datastore.NewKey(c, "Player", email, 0, sKey)
 }
@@ -39,7 +39,7 @@ func SavePlayer(c appengine.Context, s *Season, name string, email string, phone
 }
 
 func LoadPlayer(c appengine.Context, s *Season, email string) *Player {
-	key := playerKey(c, s, email)
+	key := playerKey(c, *s, email)
 	var p Player
 	err := datastore.Get(c, key, &p)
 	if err == datastore.ErrNoSuchEntity {

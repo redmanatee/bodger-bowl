@@ -5,16 +5,34 @@ import (
 	"appengine/datastore"
 	"log"
 	"strings"
-	"time"
 )
 
 type Season struct {
 	Year string
 	Name string
 	Active bool
-	Schedule []Byte `datastore:",noindex"`
-	Divisions []Byte `datastore:",noindex"`
+	Schedule []byte `datastore:",noindex"`
+	Divisions []byte `datastore:",noindex"`
 	Players []*datastore.Key
+}
+
+type SeasonInterface interface {
+	GetYear() string
+	GetName() string
+}
+
+func (s Season) GetYear() string {
+	return s.Year
+}
+
+func (s Season) GetName() string {
+	return s.Name
+}
+
+func (s Season) GetPlayers(c appengine.Context) []*Player {
+	players := make([]*Player, len(s.Players))
+	datastore.GetMulti(c, s.Players, players)
+	return players
 }
 
 func seasonKey(c appengine.Context, name string, year string) *datastore.Key {
