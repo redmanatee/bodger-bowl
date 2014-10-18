@@ -7,12 +7,12 @@ import (
 	"appengine/datastore"
 )
 
-type Division struct {
+type Conference struct {
 	Name string
-	Conferences []Conference
+	Divisions []Division
 }
 
-type Conference struct {
+type Division struct {
 	Name string
 	PlayerIds []string
 }
@@ -50,18 +50,18 @@ type SeasonJson struct {
 	Year string
 	Name string
 	Active bool
-	Divisions []Division
+	Conferences []Conference
 	Weeks []Week
 	Players []PlayerJson
 }
 
-func createDivisions(season Season) []Division {
-	var divisions []Division
-	err := json.Unmarshal(season.Divisions, &divisions)
+func createConferences(season Season) []Conference {
+	var conference []Conference
+	err := json.Unmarshal(season.Conferences, &conference)
 	if err != nil {
 		panic(err)
 	}
-	return divisions
+	return conference
 }
 
 func createWeeks(season Season) []Week {
@@ -107,7 +107,7 @@ func (season Season) CreateJsonSeason(c appengine.Context) SeasonJson {
 		Year: season.Year,
 		Name: season.Name,
 		Active: season.Active,
-		Divisions: createDivisions(season),
+		Conferences: createConferences(season),
 		Weeks: createWeeks(season),
 		Players: createPlayersJson(season, c),
 	}
@@ -144,7 +144,7 @@ func (s SeasonJson) createSeason(players []*datastore.Key) Season {
 	if err != nil {
 		panic(err)
 	}
-	divisions, err := json.Marshal(s.Divisions)
+	conferences, err := json.Marshal(s.Conferences)
 	if err != nil {
 		panic(err)
 	}
@@ -154,6 +154,6 @@ func (s SeasonJson) createSeason(players []*datastore.Key) Season {
 		Active: s.Active,
 		Players: players,
 		Schedule: schedule,
-		Divisions: divisions,
+		Conferences: conferences,
 	}
 }

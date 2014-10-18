@@ -12,7 +12,7 @@ type Season struct {
 	Name string
 	Active bool
 	Schedule []byte `datastore:",noindex"`
-	Divisions []byte `datastore:",noindex"`
+	Conferences []byte `datastore:",noindex"`
 	Players []*datastore.Key
 }
 
