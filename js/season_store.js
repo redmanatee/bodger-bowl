@@ -2,12 +2,16 @@
 window.seasonStore = Reflux.createStore({
 	init: function() {
 		this.season = null;
-		var path = window.location.pathname.split('/');
-		this.seasonId = path[path.length - 1];
-		this.loadSeasonFromServer();
+		if (window.location.pathname === "/") {
+			this.loadActiveSeasonFromServer();
+		} else {
+			var path = window.location.pathname.split('/');
+			this.seasonId = path[path.length - 1];
+			this.loadSeasonFromServer();
+		}
 	},
-	loadSeasonFromServer: function() {
-		$.ajax({url:"/api/seasons/" + this.seasonId,
+	loadActiveSeasonFromServer: function() {
+		$.ajax({url:"/api/seasons/latest/" + this.seasonId,
 				type: 'GET',
 				dataType: 'json',
 				success: function(data) {
@@ -18,8 +22,27 @@ window.seasonStore = Reflux.createStore({
       			}.bind(this)
 		});
 	},
+	loadSeasonFromServer: function() {
+		$.ajax({url:"/api/seasons/" + this.seasonId,
+				type: 'GET',
+				dataType: 'json',
+				success: function(data) {
+					this.loadSeason(data);
+				}.bind(this),
+				error: function(xhr, status, err) {
+        			this.loadActiveSeasonFromServer();
+      			}.bind(this)
+		});
+	},
 	loadSeason: function(season) {
 		//setup player map lookup for quick lookup
+		if (season != null && season.Length === 1) {
+			season = season[0];
+		}
+		if (season === null || season.Length === 0) {
+			this.loadActiveSeasonFromServer();
+			return;
+		}
 		players = {};
 		for (i = 0; i < season.Players.length; i++) {
 			players[season.Players[i].Name] = season.Players[i];

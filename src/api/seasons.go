@@ -2,6 +2,7 @@ package api
 
 import (
 	"appengine"
+	"appengine/datastore"
 	"encoding/json"
 	"model"
 	"net/http"
@@ -33,6 +34,27 @@ func getOneSeason(w http.ResponseWriter, r *http.Request, seasonInfo string) {
 		panic(err)
 	}
 	w.Write(data)
+}
+
+func GetActiveSeason(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("Called getactiveseason")
+	q := datastore.NewQuery("Season").Filter("Active = ", true).Limit(1)
+	var seasons []model.Season
+	_, err := q.GetAll(c, &seasons)
+	if err != nil {
+		panic(err)
+	}
+	if len(seasons) > 0 {
+		c.Infof("found season '%v'", seasons[0])
+		data, err := json.MarshalIndent(seasons[0].CreateJsonSeason(c), "", "\t")
+		if err != nil {
+			panic(err)
+		}
+		w.Write(data)
+	} else {
+		c.Infof("Did not get back any seasons")
+	}
 }
 
 func SeasonList(w http.ResponseWriter, r *http.Request) {
