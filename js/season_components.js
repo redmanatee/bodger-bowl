@@ -57,11 +57,9 @@ var SeasonScheduleTable = React.createClass({
 	},
 	componentDidMount: function() {
 		this.listenTo(window.seasonStore, this.onStatusChange);
-	    // this.loadSeasonFromServer();
-	    //setInterval(this.loadSeasonFromServer, this.props.pollInterval);
   	},
 	render: function() {
-		if (this.state.season == null) {
+		if (this.state.season === null) {
 			return (<div></div>);
 		}
 		var rows = [];

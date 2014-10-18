@@ -1,9 +1,12 @@
 /** @jsx React.DOM */
 
-var getSeasonId=function() {
-	var path = window.location.pathname.split('/');
-	return path[path.length - 1];
-}
+var SeasonAdmin = React.createClass({
+	render: function() {
+		return (
+			<div><SeasonScheduleTable admin="true" /><ConferenceContainer admin="true" /></div>
+		);
+	}
+});
 
-React.renderComponent(<SeasonScheduleTable pollInterval="1000" admin="true" seasonId={getSeasonId()} />,
+React.renderComponent(<SeasonAdmin />,
 					  document.getElementById('seasonSchedule'));
