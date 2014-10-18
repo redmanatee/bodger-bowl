@@ -37,7 +37,13 @@ var DivisionTable = React.createClass({
 		return (
 			<table>
 				<thead>
-					<th colSpan="3">{this.props.division.Name}</th>
+					<th colSpan="4">{this.props.division.Name}</th>
+				</thead>
+				<thead>
+					<th>Player</th>
+					<th>Wins</th>
+					<th>Losses</th>
+					<th>Rank</th>
 				</thead>
 				<tbody>{rows}</tbody>
 			</table>
@@ -60,12 +66,12 @@ var ConferenceTable = React.createClass({
 		});
 		return (
 			<div>
-			<table>
-				<thead>
-					<th colSpan={divisionCount}>{this.props.conference.Name}</th>
-				</thead>
-			</table>
-			{rows}
+				<table>
+					<thead>
+						<th colSpan={divisionCount}>{this.props.conference.Name}</th>
+					</thead>
+				</table>
+				{rows}
 			</div>
 		);
 	}
