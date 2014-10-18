@@ -6,36 +6,32 @@ import (
 	"model"
 	"appengine"
 	"log"
+	"strconv"
 )
 
 func init() {
 	
 }
 
-func APISeasonHandler(w http.ResponseWriter, r *http.Request) {
-	if r.Method == "POST" {
-		createSeason(w,r)
-	}
-	seasonList(w, r)
-}
-
 func createSeason(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	decoder := json.NewDecoder(r.Body)
-	var s model.Season
-	err :=  decoder.Decode(&s) 
-	if err != nil {
-		log.Printf("Unexpected error decoding json data: %v", err)
-		panic(err)
+	name := r.FormValue("name")
+	year := r.FormValue("year")
+	players := r.FormValue("players")
+	conferenceCount, confErr := strconv.Atoi(r.FormValue("conferences"))
+	if confErr != nil {
+		c.Errorf("Error getting conference count: '%s'", confErr)
 	}
-	err = model.SaveSeason(c, s)
-	if err != nil {
-		log.Printf("Unexpected error saving season: %v", err)
-		panic(err)
+	divisionCount, divErr := strconv.Atoi(r.FormValue("divisions"))
+	if divErr != nil {
+		c.Errorf("Error getting division count: '%s'", divErr)
+	}
+	if confErr == nil && divErr == nil {
+		model.CreateSeason(c, name, year, conferenceCount, divisionCount, players)
 	}
 }
 
-func seasonList(w http.ResponseWriter, r *http.Request) {
+func SeasonList(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	seasons := model.LoadAllSeasons(c)
 	data, err := json.MarshalIndent(seasons, "", "\t")
