@@ -2,7 +2,7 @@
 
 var SeasonRow = React.createClass({
 	render: function() {
-		hrefTarget = "/admin/season?name=" + this.props.season.Name + "&year=" + this.props.season.Year;
+		hrefTarget = "/admin/seasons/" + encodeURIComponent(this.props.season.Name + ";" + this.props.season.Year);
 		return (
 			<tr>
 				<td><a href={hrefTarget}>{this.props.season.Name}</a></td>
@@ -15,7 +15,7 @@ var SeasonRow = React.createClass({
 
 var SeasonTable = React.createClass({
 	loadSeasonsFromServer: function() {
-		$.ajax({url:"/admin/api/seasons/",
+		$.ajax({url:"/api/seasons/",
 				type: 'GET',
 				dataType: 'json',
 				success: function(data) {
@@ -33,18 +33,8 @@ var SeasonTable = React.createClass({
 	    this.loadSeasonsFromServer();
 	    setInterval(this.loadSeasonsFromServer, this.props.pollInterval);
   	},
-  	addSeason: function(name, year) {
-  		$.ajax({url:"/admin/api/seasons/",
-  				type: 'POST',
-  				dataType: 'json',
-  				data: '{"Name": "' + name + '", "Year": "' + year + '"}',
-  				error: function(xhr, status, err) {
-        			console.error(this.props.url, status, err.toString());
-      			}.bind(this)
-  		});
-  	},
 	render: function() {
-		var rows = []
+		var rows = [];
 		this.state.seasons.forEach(function(season) {
 			rows.push(<SeasonRow season={season} />);
 		});

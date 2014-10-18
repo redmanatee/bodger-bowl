@@ -17,7 +17,7 @@ type Season struct {
 }
 
 func (s Season) GetPlayers(c appengine.Context) []*Player {
-	players := make([]*Player, len(s.Players))
+	var players []*Player
 	datastore.GetMulti(c, s.Players, players)
 	return players
 }

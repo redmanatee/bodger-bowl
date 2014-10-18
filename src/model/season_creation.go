@@ -4,6 +4,7 @@ import (
 	"appengine"
 	"appengine/datastore"
 	"strconv"
+	"time"
 )
 
 func deactivateAllSeasons(c appengine.Context) {
@@ -22,7 +23,21 @@ func deactivateAllSeasons(c appengine.Context) {
 
 // Creates the schedule and attaches it to the season entity passed in
 func generateSchedule(season *SeasonJson) {
-	//TODO
+	//TODO: Implement this for reals
+	season.Weeks = make([]Week, 1)
+	season.Weeks[0] = Week {
+		Number: 1,
+		Date: time.Now(),
+		Games: make([]Game, len(season.Players) / 2),
+	}
+	for i := 0; i < len(season.Players) / 2; i++ {
+		season.Weeks[0].Games[i] = Game {
+			PlayerIds: make([]string, 2),
+			WinnerId: "",
+		}
+		season.Weeks[0].Games[i].PlayerIds[0] = season.Players[i*2].Email
+		season.Weeks[0].Games[i].PlayerIds[1] = season.Players[(i*2)+1].Email
+	}
 }
 
 // Creates and adds the divisions to the season entity passed in.

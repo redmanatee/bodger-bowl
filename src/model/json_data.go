@@ -95,8 +95,10 @@ func (player Player) CreatePlayerJson() PlayerJson {
 
 func createPlayersJson(season Season, c appengine.Context) []PlayerJson {
 	players := make([]PlayerJson, len(season.Players))
-	for index, player := range season.GetPlayers(c) {
-		players[index] = player.CreatePlayerJson()
+	if len(players) > 0 {
+		for index, player := range season.GetPlayers(c) {
+			players[index] = player.CreatePlayerJson()
+		}
 	}
 	return players
 }

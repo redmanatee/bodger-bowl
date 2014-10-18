@@ -1,11 +1,9 @@
 package admin
 
 import (
-	"net/http"
-	"encoding/json"
-	"model"
 	"appengine"
-	"log"
+	"net/http"
+	"model"
 	"strconv"
 )
 
@@ -29,15 +27,4 @@ func createSeason(w http.ResponseWriter, r *http.Request) {
 	if confErr == nil && divErr == nil {
 		model.CreateSeason(c, name, year, conferenceCount, divisionCount, players)
 	}
-}
-
-func SeasonList(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
-	seasons := model.LoadAllSeasons(c)
-	data, err := json.MarshalIndent(seasons, "", "\t")
-	if err != nil {
-		log.Printf("Unexpected error marshalling seasons: %v", err)
-		panic(err)
-	}
-	w.Write(data)
 }
