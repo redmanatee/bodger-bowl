@@ -3,12 +3,12 @@
 var PlayerDivisionRow = React.createClass({
 	render: function() {
 		return (
-			<tr>
-				<PlayerCell player={this.props.player} admin={this.props.admin} />
-				<td>{this.props.wins}</td>
-				<td>{this.props.losses}</td>
-				<td>{this.props.rank}</td>
-			</tr>
+			<ul className="small-block-grid-4">
+				<li>{this.props.player.Name}</li>
+				<li>{this.props.wins}</li>
+				<li>{this.props.losses}</li>
+				<li>{this.props.rank}</li>
+			</ul>
 		);
 	}
 });
@@ -35,18 +35,18 @@ var DivisionTable = React.createClass({
 										   admin={admin} />);
 		});
 		return (
-			<table>
-				<thead>
-					<th colSpan="4">{this.props.division.Name}</th>
-				</thead>
-				<thead>
-					<th>Player</th>
-					<th>Wins</th>
-					<th>Losses</th>
-					<th>Rank</th>
-				</thead>
-				<tbody>{rows}</tbody>
-			</table>
+			<div>
+				<ul className="small-block-grid-1">
+					<li>{this.props.division.Name}</li>
+				</ul>
+				<ul className="small-block-grid-4">
+					<li>Player</li>
+					<li>Wins</li>
+					<li>Losses</li>
+					<li>Rank</li>
+				</ul>
+				{rows}
+			</div>
 		);
 	}
 });
@@ -59,20 +59,24 @@ var ConferenceTable = React.createClass({
 		var wins = this.props.wins;
 		var losses = this.props.losses;
 		this.props.conference.Divisions.forEach(function(division) {
-			rows.push(<DivisionTable division={division}
+			rows.push(
+				<li>
+					<DivisionTable division={division}
 									 admin={admin}
 									 wins={wins}
-									 losses={losses}/>);
+									 losses={losses}/>
+				</li>
+			);
 		});
 		return (
-			<div>
-				<table>
-					<thead>
-						<th colSpan={divisionCount}>{this.props.conference.Name}</th>
-					</thead>
-				</table>
-				{rows}
-			</div>
+			<ul className="small-block-grid-1 centered">
+				<li>{this.props.conference.Name}</li>
+				<li>
+					<ul className="small-block-grid-1 medium-block-grid-2">
+						{rows}
+					</ul>
+				</li>
+			</ul>
 		);
 	}
 });
@@ -115,12 +119,16 @@ var ConferenceContainer = React.createClass({
 		var wins = this.state.wins;
 		var losses = this.state.losses;
 		this.state.season.Conferences.forEach(function(conference) {
-			divisions.push(<ConferenceTable conference={conference} wins={wins} losses={losses} admin={admin} />);
+			divisions.push(
+				<li>
+					<ConferenceTable conference={conference} wins={wins} losses={losses} admin={admin} />
+				</li>
+			);
 		});
 		return (
-			<div>
+			<ul className="small-block-grid-1">
 				{divisions}
-			</div>
+			</ul>
 		);
 	}
 });
