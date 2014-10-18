@@ -24,7 +24,7 @@ func TestPlayerSaveNoSeason(t *testing.T) {
     players := make([]Player, 1)
     players[0] = player
 	SavePlayers(c, nil, players)
-	p := LoadPlayer(c, nil, email)
+	p := LoadPlayer(c, nil, name)
 	if p == nil {
 		t.Fatal("Loading player gave us a nil player")
 	}

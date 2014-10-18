@@ -17,9 +17,9 @@ type Player struct {
 	Bonds []byte `datastore:",noindex"`
 }
 
-func playerKey(c appengine.Context, name string, year string, email string) *datastore.Key {
-	sKey := seasonKey(c, name, year)
-	return datastore.NewKey(c, "Player", email, 0, sKey)
+func playerKey(c appengine.Context, seasonName string, year string, playerName string) *datastore.Key {
+	sKey := seasonKey(c, seasonName, year)
+	return datastore.NewKey(c, "Player", playerName, 0, sKey)
 }
 
 func SavePlayers(c appengine.Context, s *Season, players []Player) {
@@ -30,7 +30,7 @@ func SavePlayers(c appengine.Context, s *Season, players []Player) {
 		year = s.Year
 	}
 	for index, player := range players {
-		keys[index] = playerKey(c, name, year, player.Email)
+		keys[index] = playerKey(c, name, year, player.Name)
 	}
 	_, err := datastore.PutMulti(c, keys, players)
 	if err != nil {
@@ -38,13 +38,13 @@ func SavePlayers(c appengine.Context, s *Season, players []Player) {
 	}
 }
 
-func LoadPlayer(c appengine.Context, s *Season, email string) *Player {
+func LoadPlayer(c appengine.Context, s *Season, playerName string) *Player {
 	var name, year string
 	if s != nil {
 		name = s.Name
 		year = s.Year
 	}	
-	key := playerKey(c, name, year, email)
+	key := playerKey(c, name, year, playerName)
 	var p Player
 	err := datastore.Get(c, key, &p)
 	if err == datastore.ErrNoSuchEntity {
