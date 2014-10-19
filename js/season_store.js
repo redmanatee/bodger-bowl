@@ -66,7 +66,6 @@ window.seasonStore = Reflux.createStore({
 			var week = season.Weeks[i];
 			for (j = 0; j < week.Games.length; j++) {
 				var game = week.Games[j];
-				console.log("Game Winner: " + game.WinnerId);
 				game.Players = $.map(game.PlayerIds, lookupPlayer);
 				game.Winner = lookupPlayer(game.WinnerId, 0);
 			}

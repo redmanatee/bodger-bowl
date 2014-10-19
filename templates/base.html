@@ -7,15 +7,27 @@
     <link rel="stylesheet" type="text/css" href="/css/cache/foundation.css">
     <link rel="stylesheet" type="text/css" href="/css/core.css">
     <!-- Template libraries-->
-    <script src="/js/cache/zepto.js"></script>
-    <script src="http://fb.me/react-0.11.2.js"></script>
-    <script src="http://fb.me/JSXTransformer-0.11.2.js"></script>
+    <!-- Requirements for foundation-->
+    <script src="/js/cache/jquery.js"></script>
+    <script src="/js/cache/fastclick.js"></script>
+    <script src="/js/cache/jquery.cookie.js"></script>
+    <script src="/js/cache/modernizer.js"></script>
+    <script src="/js/cache/placeholder.js"></script>
+    <!-- foundation -->
+    <script src="/js/cache/foundation.min.js"></script>
+    <!-- Requirements for React -->
     <script src="/js/cache/EventEmitter.js"></script>
-    <script src="/js/cache/reflux.js"></script>
+    <!-- React and Reflux -->
+    <script src="/js/cache/react.min.js"></script>
+    <script src="/js/cache/react.jsx.js"></script>
+    <script src="/js/cache/reflux.min.js"></script>
     <!-- jsx libraries -->
     {{template "includes" .}}
   </head>
   <body>
     {{template "body" .}}
+    <script>
+      $(document).foundation();
+    </script>    
   </body>
 </html>
