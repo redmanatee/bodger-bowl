@@ -11,12 +11,31 @@ var PlayerCell = React.createClass({
 });
 
 var GameRow = React.createClass({
+	handleChange: function(event) {
+		var name = event.target.value;
+
+		alert(event.target.value);
+	},
 	render: function() {
+		var winnerRow = (<PlayerCell player={this.props.winner} admin={this.props.admin} />);
+		var player1Selected = this.props.winner? this.props.player1.Name === this.props.winner.Name : false;
+		var player2Selected = this.props.winner? this.props.player2.Name === this.props.winner.Name : false;
+		if (this.props.admin) {
+			winnerRow = (
+				<li>
+					<select name="" onChange={this.handleChange}>
+						<option value={this.props.week + ":"} selected={!player1Selected && player2Selected}>-</option>
+						<option value={this.props.week + ":" + this.props.player1.Name} selected={player1Selected}>{this.props.player1.Name}</option>
+						<option value={this.props.week + ":" + this.props.player2.Name} selected={player1Selected}>{this.props.player2.Name}</option>
+					</select>
+				</li>
+			);
+		}
 		return (
 			<ul className="small-block-grid-3">
 				<PlayerCell player={this.props.player1} admin={this.props.admin} />
 				<PlayerCell player={this.props.player2} admin={this.props.admin} />
-				<PlayerCell player={this.props.winner} admin={this.props.admin} />
+				{winnerRow}
 			</ul>
 		);
 	}
@@ -26,18 +45,20 @@ var WeekGroup = React.createClass({
 	render: function() {
 		var rows = [];
 		var admin = this.props.admin;
+		var number = this.props.week.Number;
 		this.props.week.Games.forEach(function(game) {
 			rows.push(
 					<GameRow player1={game.Players[0]} 
 							   player2={game.Players[1]} 
 							   hasWinner={game.Winner != null}
 							   winner={game.Winner}
+							   week={number}
 							   admin={admin} />
 			);
 		});
 		return (
 				<ul className="small-block-grid-1">
-					<li>{"Week " + this.props.week.Number}</li>
+					<li>{"Week " + number}</li>
 					<ul className="small-block-grid-3">
 						<li>Player 1</li>
 						<li>Player 2</li>
