@@ -83,10 +83,9 @@ func createBonds(player Player) []Bond {
 }
 
 func (player Player) CreatePlayerJson() PlayerJson {
+	//Note: we don't apply the email or phone number to help our end users keep that information private.
 	return PlayerJson {
 			Name: player.Name,
-			Email: player.Email,
-			Phone: player.Phone,
 			Faction: player.Faction,
 			Injuries: player.Injuries,
 			Bonds: createBonds(player),
