@@ -3,7 +3,10 @@
 var SeasonAdmin = React.createClass({
 	render: function() {
 		return (
-			<div><SeasonScheduleTable admin="true" /><ConferenceContainer admin="true" /></div>
+			<ul className="small-block-grid-1 large-block-grid-2">
+				<li><SeasonScheduleTable admin="true" /></li>
+				<li><ConferenceContainer admin="true" /></li>
+			</ul>
 		);
 	}
 });
