@@ -24,9 +24,14 @@ func deactivateAllSeasons(c appengine.Context) {
 // Creates the schedule and attaches it to the season entity passed in
 func generateSchedule(season *SeasonJson) {
 	//TODO: Implement this for reals
-	season.Weeks = make([]Week, 1)
+	season.Weeks = make([]Week, 2)
 	season.Weeks[0] = Week {
 		Number: 1,
+		Date: time.Now(),
+		Games: make([]Game, len(season.Players) / 2),
+	}
+	season.Weeks[1] = Week {
+		Number: 2,
 		Date: time.Now(),
 		Games: make([]Game, len(season.Players) / 2),
 	}
@@ -37,6 +42,14 @@ func generateSchedule(season *SeasonJson) {
 		}
 		season.Weeks[0].Games[i].PlayerIds[0] = season.Players[i*2].Name
 		season.Weeks[0].Games[i].PlayerIds[1] = season.Players[(i*2)+1].Name
+	}
+	for i := 0; i < len(season.Players) / 2; i++ {
+		season.Weeks[1].Games[i] = Game {
+			PlayerIds: make([]string, 2),
+			WinnerId: "",
+		}
+		season.Weeks[1].Games[i].PlayerIds[0] = season.Players[i*2].Name
+		season.Weeks[1].Games[i].PlayerIds[1] = season.Players[(i*2)+1].Name
 	}
 }
 

@@ -9,7 +9,7 @@ var PlayerCell = React.createClass({
 var GameRow = React.createClass({
 	render: function() {
 		return (
-			<ul className="small-block-grid-3 hide">
+			<ul className="small-block-grid-3">
 				<PlayerCell player={this.props.player1} admin={this.props.admin} />
 				<PlayerCell player={this.props.player2} admin={this.props.admin} />
 				<PlayerCell player={this.props.winner} admin={this.props.admin} />
@@ -23,7 +23,8 @@ var WeekGroup = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.props.week.Games.forEach(function(game) {
-			rows.push(<GameRow player1={game.Players[0]} 
+			rows.push(
+					<GameRow player1={game.Players[0]} 
 							   player2={game.Players[1]} 
 							   hasWinner={game.Winner != null}
 							   winner={game.Winner}
@@ -31,12 +32,15 @@ var WeekGroup = React.createClass({
 			);
 		});
 		return (
-			<div>
 				<ul className="small-block-grid-1">
 					<li>{"Week " + this.props.week.Number}</li>
+					<ul className="small-block-grid-3">
+						<li>Player 1</li>
+						<li>Player 2</li>
+						<li>Winner</li>
+					</ul>
+					{rows}
 				</ul>
-				{rows}
-			</div>
 		);
 	}
 });
