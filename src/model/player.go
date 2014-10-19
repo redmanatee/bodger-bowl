@@ -10,17 +10,14 @@ import (
 
 type Player struct {
 	Name string
-	Email string
-	Phone string
 	Faction string
+	Wins int
+	Losses int
 	Injuries []string `datastore:",noindex"`
 	Bonds []byte `datastore:",noindex"`
 }
 
 func playerKey(c appengine.Context, seasonName string, year string, playerName string) *datastore.Key {
-	c.Infof("Player name: '%v'", playerName)
-	// modPlayerName := strings.Replace(playerName, " ", "_", -1)
-	// c.Infof("Mod Player name: '%v'", modPlayerName)
 	sKey := seasonKey(c, seasonName, year)
 	return datastore.NewKey(c, "Player", playerName, 0, sKey)
 }
@@ -35,8 +32,7 @@ func SavePlayers(c appengine.Context, s *Season, players []Player) {
 	for index, player := range players {
 		keys[index] = playerKey(c, name, year, player.Name)
 	}
-	c.Infof("Creating player keys: '%v'", keys)
-	_, err := datastore.PutMulti(c, keys, players)
+	keys, err := datastore.PutMulti(c, keys, players)
 	if err != nil {
 		panic(err)
 	}
@@ -72,8 +68,6 @@ func createPlayersFromCsv(csvData string) []PlayerJson {
 	for index, row := range records {
 		players[index] = PlayerJson {
 			Name: row[0],
-			Email: row[2],
-			Phone: row[3],
 			Faction: row[1],
 			Injuries: make([]string, 0),
 			Bonds: make([]Bond, 0),

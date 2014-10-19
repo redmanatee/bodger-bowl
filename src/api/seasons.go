@@ -12,22 +12,24 @@ import (
 
 func getAllSeasons(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	c.Infof("Getting all seasons")
 	seasons := model.LoadAllSeasons(c)
 	data, err := json.MarshalIndent(seasons, "", "\t")
 	if err != nil {
 		c.Errorf("Unexpected error marshalling seasons: %v", err)
 		panic(err)
 	}
-	c.Infof("Season count: '%d'", len(seasons))
 	w.Write(data)
+}
+
+func LoadSeasonById(c appengine.Context, seasonId string) *model.Season {
+	seasonArr := strings.Split(seasonId, ";")
+	season := model.LoadSeason(c, seasonArr[0], seasonArr[1])
+	return season
 }
 
 func getOneSeason(w http.ResponseWriter, r *http.Request, seasonInfo string) {
 	c := appengine.NewContext(r)
-	seasonArr := strings.Split(seasonInfo, ";")
-	c.Infof("Season request array split: '%v'", seasonArr)
-	season := model.LoadSeason(c, seasonArr[0], seasonArr[1])
+	season := LoadSeasonById(c, seasonInfo)
 	data, err := json.MarshalIndent(season.CreateJsonSeason(c), "", "\t")
 	if err != nil {
 		c.Errorf("Unexpected error marshalling a season: %v", err)
@@ -38,7 +40,6 @@ func getOneSeason(w http.ResponseWriter, r *http.Request, seasonInfo string) {
 
 func GetActiveSeason(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	c.Infof("Called getactiveseason")
 	q := datastore.NewQuery("Season").Filter("Active = ", true).Limit(1)
 	var seasons []model.Season
 	_, err := q.GetAll(c, &seasons)
@@ -46,14 +47,11 @@ func GetActiveSeason(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 	if len(seasons) > 0 {
-		c.Infof("found season '%v'", seasons[0])
 		data, err := json.MarshalIndent(seasons[0].CreateJsonSeason(c), "", "\t")
 		if err != nil {
 			panic(err)
 		}
 		w.Write(data)
-	} else {
-		c.Infof("Did not get back any seasons")
 	}
 }
 

@@ -14,6 +14,7 @@ func init() {
 	http.HandleFunc("/api/seasons/", api.SeasonList)
 	http.HandleFunc("/", HomeRequest)
 	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
+	http.HandleFunc("/admin/api/weeks/", admin.UpdateWeek)
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {

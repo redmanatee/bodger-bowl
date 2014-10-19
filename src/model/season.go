@@ -23,13 +23,12 @@ func (s Season) GetPlayers(c appengine.Context) []*Player {
 	for index := 0; index < len(players); index++ {
 		players[index] = new(Player)
 	}
-	c.Infof("Player count to lookup: '%d'", len(s.Players))
 	err := datastore.GetMulti(c, s.Players, players)
 	if err != nil {
+		c.Errorf(err.Error())
 		c.Errorf("Error loading players: '%v'", err)
 		panic(err)
 	}
-	c.Infof("Players retrieved: '%v'", players)
 	return players
 }
 

@@ -30,9 +30,9 @@ type Game struct {
 
 type PlayerJson struct {
 	Name string
-	Email string
-	Phone string
 	Faction string
+	Wins int
+	Losses int
 	Injuries []string
 	Bonds []Bond
 }
@@ -86,6 +86,8 @@ func (player Player) CreatePlayerJson() PlayerJson {
 	//Note: we don't apply the email or phone number to help our end users keep that information private.
 	return PlayerJson {
 			Name: player.Name,
+			Wins: player.Wins,
+			Losses: player.Losses,
 			Faction: player.Faction,
 			Injuries: player.Injuries,
 			Bonds: createBonds(player),
@@ -93,7 +95,6 @@ func (player Player) CreatePlayerJson() PlayerJson {
 }
 
 func createPlayersJson(season Season, c appengine.Context) []PlayerJson {
-	c.Infof("Players: '%v'", season.Players)
 	players := make([]PlayerJson, len(season.Players))
 	if len(players) > 0 {
 		for index, player := range season.GetPlayers(c) {
@@ -133,8 +134,8 @@ func (p PlayerJson) CreatePlayer() Player {
 	}
 	return Player {
 		Name: p.Name,
-		Email: p.Email,
-		Phone: p.Phone,
+		Wins: p.Wins,
+		Losses: p.Losses,
 		Faction: p.Faction,
 		Injuries: p.Injuries,
 		Bonds: bonds,
