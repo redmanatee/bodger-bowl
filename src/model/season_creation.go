@@ -46,7 +46,7 @@ func generateDivisions(season *SeasonJson, conferenceCount int, divisionCount in
 		divisions := make([]Division, divisionCount)
 		for j := 0; j < divisionCount; j++ {
 			divisions[j] = Division {
-				Name: "Division" + strconv.Itoa(j),
+				Name: "Division" + strconv.Itoa(j+1),
 				PlayerIds: make([]string, 0),
 			}
 		}
