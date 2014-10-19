@@ -2,7 +2,11 @@
 
 var PlayerCell = React.createClass({
 	render: function() {
-		return (<li className={this.props.player? this.props.player.Faction : ""}>{this.props.player? this.props.player.Name : ""}</li>);
+		var img = (<div></div>);
+		if (this.props.player != null) {
+			img = (<img className="faction text-left" src={"/img/" + this.props.player.Faction + ".jpg"} alt={this.props.player.Faction} />)
+		}
+		return (<li className="">{this.props.player? this.props.player.Name : ""}{img}</li>);
 	}
 });
 
