@@ -69,7 +69,7 @@ var ConferenceTable = React.createClass({
 			);
 		});
 		return (
-			<ul className="small-block-grid-1 centered">
+			<ul className="small-block-grid-1">
 				<li>{this.props.conference.Name}</li>
 				<li>
 					<ul className="small-block-grid-1">
@@ -126,7 +126,7 @@ var ConferenceContainer = React.createClass({
 			);
 		});
 		return (
-			<ul className="small-block-grid-1">
+			<ul className="small-block-grid-1 text-center">
 				{divisions}
 			</ul>
 		);

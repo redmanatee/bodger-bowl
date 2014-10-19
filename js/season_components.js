@@ -9,7 +9,7 @@ var PlayerCell = React.createClass({
 var GameRow = React.createClass({
 	render: function() {
 		return (
-			<ul className="small-block-grid-3">
+			<ul className="small-block-grid-3 hide">
 				<PlayerCell player={this.props.player1} admin={this.props.admin} />
 				<PlayerCell player={this.props.player2} admin={this.props.admin} />
 				<PlayerCell player={this.props.winner} admin={this.props.admin} />
@@ -66,7 +66,7 @@ var SeasonScheduleTable = React.createClass({
 			rows.push(<WeekGroup week={week} admin={admin} key={week.Number}/>)
 		});
 		return (
-			<div className="centered">
+			<div className="text-center">
 				<ul className="small-block-grid-1">
 					<li>{this.state.season.Name + " (" + this.state.season.Year + ")"}</li>
 				</ul>
