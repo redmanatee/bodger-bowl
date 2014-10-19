@@ -3,7 +3,10 @@
 var HomeScreen = React.createClass({
 	render: function() {
 		return (
-			<div><SeasonScheduleTable admin="false" /><ConferenceContainer admin="false" /></div>
+			<ul className="small-block-grid-1 large-block-grid-2">
+				<li><SeasonScheduleTable admin="false" /></li>
+				<li><ConferenceContainer admin="false" /></li>
+			</ul>
 		);
 	}
 });

@@ -4,7 +4,7 @@ var PlayerDivisionRow = React.createClass({
 	render: function() {
 		return (
 			<ul className="small-block-grid-4">
-				<li>{this.props.player.Name}</li>
+				<PlayerCell player={this.props.Player} admin={this.props.admin} />
 				<li>{this.props.wins}</li>
 				<li>{this.props.losses}</li>
 				<li>{this.props.rank}</li>

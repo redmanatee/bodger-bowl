@@ -2,18 +2,18 @@
 
 var PlayerCell = React.createClass({
 	render: function() {
-		return (<td class={this.props.player? this.props.player.Faction : ""}>{this.props.player? this.props.player.Name : ""}</td>);
+		return (<li className={this.props.player? this.props.player.Faction : ""}>{this.props.player? this.props.player.Name : ""}</li>);
 	}
 });
 
 var GameRow = React.createClass({
 	render: function() {
 		return (
-			<tr>
-				<td><PlayerCell player={this.props.player1} admin={this.props.admin} /></td>
-				<td><PlayerCell player={this.props.player2} admin={this.props.admin} /></td>
-				<td><PlayerCell player={this.props.winner} admin={this.props.admin} /></td>
-			</tr>
+			<ul className="small-block-grid-3">
+				<PlayerCell player={this.props.player1} admin={this.props.admin} />
+				<PlayerCell player={this.props.player2} admin={this.props.admin} />
+				<PlayerCell player={this.props.winner} admin={this.props.admin} />
+			</ul>
 		);
 	}
 });
@@ -23,22 +23,20 @@ var WeekGroup = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.props.week.Games.forEach(function(game) {
-			rows.push(<tr><GameRow player1={game.Players[0]} 
+			rows.push(<GameRow player1={game.Players[0]} 
 							   player2={game.Players[1]} 
 							   hasWinner={game.Winner != null}
 							   winner={game.Winner}
-							   admin={admin} /></tr>
+							   admin={admin} />
 			);
 		});
 		return (
-			<table>
-				<thead>
-					<th>
-						<th colSpan="3">{"Week " + this.props.week.Number}</th>
-					</th>
-				</thead>
-				<tbody>{rows}</tbody>
-			</table>
+			<div>
+				<ul className="small-block-grid-1">
+					<li>{"Week " + this.props.week.Number}</li>
+				</ul>
+				{rows}
+			</div>
 		);
 	}
 });
@@ -68,12 +66,10 @@ var SeasonScheduleTable = React.createClass({
 			rows.push(<WeekGroup week={week} admin={admin} key={week.Number}/>)
 		});
 		return (
-			<div>
-				<table>
-					<thead>
-						<th colSpan="3">{this.state.season.Name + " (" + this.state.season.Year + ")"}</th>
-					</thead>
-				</table>
+			<div className="centered">
+				<ul className="small-block-grid-1">
+					<li>{this.state.season.Name + " (" + this.state.season.Year + ")"}</li>
+				</ul>
 				{rows}
 			</div>
 		);
