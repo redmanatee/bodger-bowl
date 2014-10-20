@@ -38,21 +38,24 @@ func getOneSeason(w http.ResponseWriter, r *http.Request, seasonInfo string) {
 	w.Write(data)
 }
 
-func GetActiveSeason(w http.ResponseWriter, r *http.Request) {
-	c := appengine.NewContext(r)
+func getActiveSeasonWithContext(c appengine.Context) model.Season {
 	q := datastore.NewQuery("Season").Filter("Active = ", true).Limit(1)
 	var seasons []model.Season
 	_, err := q.GetAll(c, &seasons)
 	if err != nil {
 		panic(err)
 	}
-	if len(seasons) > 0 {
-		data, err := json.MarshalIndent(seasons[0].CreateJsonSeason(c), "", "\t")
-		if err != nil {
-			panic(err)
-		}
-		w.Write(data)
+	return seasons[0]
+}
+
+func GetActiveSeason(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	season := getActiveSeasonWithContext(c)
+	data, err := json.MarshalIndent(season.CreateJsonSeason(c), "", "\t")
+	if err != nil {
+		panic(err)
 	}
+	w.Write(data)
 }
 
 func SeasonList(w http.ResponseWriter, r *http.Request) {

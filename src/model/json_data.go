@@ -122,7 +122,7 @@ func CreateSeasonAndPlayers(c appengine.Context, s SeasonJson) (Season, []Player
 	playerKeys := make([]*datastore.Key, len(players))
 	for index, p := range s.Players {
 		players[index] = p.CreatePlayer()
-		playerKeys[index] = playerKey(c, s.Name, s.Year, p.Name)
+		playerKeys[index] = PlayerKey(c, s.Name, s.Year, p.Name)
 	}
 	return s.createSeason(playerKeys), players
 }
