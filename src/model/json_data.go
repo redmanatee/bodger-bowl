@@ -33,6 +33,7 @@ type PlayerJson struct {
 	Faction string
 	Wins int
 	Losses int
+	Standin bool
 	Injuries []string
 	Bonds BondSet
 }
@@ -98,6 +99,7 @@ func (player Player) CreatePlayerJson() PlayerJson {
 			Wins: player.Wins,
 			Losses: player.Losses,
 			Faction: player.Faction,
+			Standin: player.Standin,
 			Injuries: player.Injuries,
 			Bonds: createBonds(player),
 		}
@@ -145,6 +147,7 @@ func (p PlayerJson) CreatePlayer() Player {
 		Name: p.Name,
 		Wins: p.Wins,
 		Losses: p.Losses,
+		Standin: p.Standin,
 		Faction: p.Faction,
 		Injuries: p.Injuries,
 		Bonds: bonds,
