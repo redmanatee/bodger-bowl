@@ -1,13 +1,7 @@
 {{define "title"}}Bodger Bowl{{end}}
 {{define "body"}}
-<div>
-	<ul class="tabs" data-tab="" role="tablist">
-		<li class="tab-title active" role="presentational" ><a href="#panel1" role="tab" tabindex="0" aria-selected="true" controls="panel1">Tab 1</a></li>
- 		<li class="tab-title" role="presentational" ><a href="#panel2" role="tab" tabindex="0"aria-selected="false" controls="panel2">Tab 2</a></li>
-	</ul>
     <div id="seasonSchedule" />
-</div>
-    <script type="text/jsx" src="/js/season_admin.js"></script>
+    <script type="text/jsx" src="/js/season_data_rendering.js"></script>
 {{end}}
 {{define "includes"}}
     <script src="/js/season_store.js"></script>
