@@ -36,7 +36,7 @@ window.seasonStore = Reflux.createStore({
 	},
 	loadSeason: function(season) {
 		//setup player map lookup for quick lookup
-		if (season != null && season.Length === 1) {
+		if (season !== null && season.Length === 1) {
 			season = season[0];
 		}
 		if (season === null || season.Length === 0) {
