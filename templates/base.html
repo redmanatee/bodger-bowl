@@ -3,31 +3,33 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
   <head>
     <title>{{template "title" .}}</title>
+
+    <!-- Template libraries-->
+    <script src="/js/cache/jquery.js"></script>
+
     <!-- Style Sheets -->
     <link rel="stylesheet" type="text/css" href="/css/cache/foundation.css">
     <link rel="stylesheet" type="text/css" href="/css/core.css">
-    <!-- Template libraries-->
     <!-- Requirements for foundation-->
-    <script src="/js/cache/jquery.js"></script>
-    <script src="/js/cache/fastclick.js"></script>
+    <!--<script src="/js/cache/fastclick.js"></script>
     <script src="/js/cache/jquery.cookie.js"></script>
     <script src="/js/cache/modernizer.js"></script>
-    <script src="/js/cache/placeholder.js"></script>
+    <script src="/js/cache/placeholder.js"></script>-->
     <!-- foundation -->
-    <script src="/js/cache/foundation.min.js"></script>
+    <!--<script src="/js/cache/foundation.min.js"></script>-->
+    <!-- bootstrap -->
     <!-- Requirements for React -->
     <script src="/js/cache/EventEmitter.js"></script>
     <!-- React and Reflux -->
+    <!-- jsx libraries -->
     <script src="/js/cache/react.min.js"></script>
     <script src="/js/cache/react.jsx.js"></script>
     <script src="/js/cache/reflux.min.js"></script>
-    <!-- jsx libraries -->
+    <script src="/js/cache/react-bootstrap.js"></script>
+    <script src="/js/cache/bootstrap.min.js"></script>
     {{template "includes" .}}
   </head>
   <body>
     {{template "body" .}}
-    <script>
-      $(document).foundation();
-    </script>    
   </body>
 </html>
