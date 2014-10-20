@@ -3,10 +3,22 @@
 var PlayerCell = React.createClass({
 	render: function() {
 		var img = (<div></div>);
+		var playerLink = (<div></div>);
 		if (this.props.player != null) {
 			img = (<img className="faction text-left" src={"/img/" + this.props.player.Faction + ".jpg"} alt={this.props.player.Faction} />)
+			var hrefTarget = window.location.pathname;
+			if (hrefTarget.indexOf("/", hrefTarget.length - 1) === -1){
+				hrefTarget += "/";
+			}
+			hrefTarget += "players/" + this.props.player.Name;
+			playerLink = (<a href={hrefTarget}>{this.props.player? this.props.player.Name : ""}</a>);
 		}
-		return (<li className="">{this.props.player? this.props.player.Name : ""}{img}</li>);
+		return (
+			<li>
+				{playerLink}
+				{img}
+			</li>
+		);
 	}
 });
 

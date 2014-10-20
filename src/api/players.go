@@ -13,6 +13,7 @@ func GetPlayer(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	seasonId := r.FormValue("SeasonId")
 	playerId := r.FormValue("PlayerId")
+	c.Infof("Looking up '%v' for season '%v'", playerId, seasonId)
 	var player *model.Player
 	if seasonId == "" {
 		activeSeason := getActiveSeasonWithContext(c)
@@ -25,6 +26,8 @@ func GetPlayer(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
+	c.Infof("%v", player)
+	c.Infof(string(player.Bonds))
 	playerJson := player.CreatePlayerJson()
 	data, err := json.Marshal(playerJson)
 	if err != nil {

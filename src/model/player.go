@@ -70,7 +70,7 @@ func createPlayersFromCsv(csvData string) []PlayerJson {
 			Name: row[0],
 			Faction: row[1],
 			Injuries: make([]string, 0),
-			Bonds: make([]Bond, 0),
+			Bonds: *new(BondSet),
 		}
 	}
 	return players

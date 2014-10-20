@@ -15,6 +15,8 @@ func init() {
 	http.HandleFunc("/", HomeRequest)
 	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
 	http.HandleFunc("/admin/api/weeks/", admin.UpdateWeek)
+	http.HandleFunc("/api/players/", api.GetPlayer)
+	http.HandleFunc("/players/", PlayerRequest)
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {
@@ -25,3 +27,13 @@ func HomeRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func PlayerRequest(w http.ResponseWriter, r *http.Request) {
+	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/player_page.html"))
+	err := tmpl.Execute(w, nil)
+	if err != nil {
+		panic(err)
+	}
+
+}
+
