@@ -34,16 +34,25 @@ type PlayerJson struct {
 	Wins int
 	Losses int
 	Injuries []string
-	Bonds []Bond
+	Bonds BondSet
 }
 
-type Bond struct {
+type BondSet struct {
+	ActiveBonds []ActiveBond
+	PotentialBonds []PotentialBond
+}
+
+type PotentialBond struct {
+	Warcaster string
+	Warjack string
+	Bonus int
+}
+
+type ActiveBond struct {
 	Warcaster string
 	Warjack string
 	BondNumber int
 	BondName string
-	Bonus int
-	SuccessfulBond bool
 }
 
 type SeasonJson struct {
@@ -73,8 +82,8 @@ func createWeeks(season Season) []Week {
 	return weeks
 }
 
-func createBonds(player Player) []Bond {
-	var bonds []Bond
+func createBonds(player Player) BondSet {
+	var bonds BondSet
 	err := json.Unmarshal(player.Bonds, &bonds)
 	if err != nil {
 		panic(err)
@@ -122,7 +131,7 @@ func CreateSeasonAndPlayers(c appengine.Context, s SeasonJson) (Season, []Player
 	playerKeys := make([]*datastore.Key, len(players))
 	for index, p := range s.Players {
 		players[index] = p.CreatePlayer()
-		playerKeys[index] = playerKey(c, s.Name, s.Year, p.Name)
+		playerKeys[index] = PlayerKey(c, s.Name, s.Year, p.Name)
 	}
 	return s.createSeason(playerKeys), players
 }
