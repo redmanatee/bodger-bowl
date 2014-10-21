@@ -5,7 +5,7 @@ var PlayerCell = React.createClass({
 		var img = (<div></div>);
 		var playerLink = (<div>--</div>);
 		if (this.props.player !== null) {
-			img = (<img className="faction text-left" src={"/img/" + this.props.player.Faction + ".jpg"} alt={this.props.player.Faction} />)
+			img = (<img className="faction text-left" src={"/img/" + this.props.player.Faction + ".jpg"} alt={"(" + this.props.player.Faction + ")"} title={this.props.player.Faction}/>)
 			var hrefTarget = window.location.pathname;
 			if (hrefTarget.indexOf("/", hrefTarget.length - 1) === -1){
 				hrefTarget += "/";
@@ -117,6 +117,7 @@ var SeasonScheduleTable = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.state.season.Weeks.forEach(function(week) {
+			console.log("Adding a week")
 			rows.push(<WeekGroup week={week} admin={admin} key={week.Number}/>)
 		});
 		return (
