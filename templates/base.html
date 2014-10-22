@@ -4,7 +4,8 @@
   <head>
     <title>{{template "title" .}}</title>
     <!-- Style Sheets -->
-    <link rel="stylesheet" type="text/css" href="/css/cache/foundation.css">
+    <link rel="stylesheet" type="text/css" href="/css/cache/foundation.css">-
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="/css/core.css">
     <!-- Template libraries-->
     <script src="/js/cache/jquery.js"></script>
@@ -14,10 +15,15 @@
     <script src="/js/cache/react.min.js"></script>
     <script src="/js/cache/react.jsx.js"></script>
     <script src="/js/cache/reflux.min.js"></script>
+    <!--<script src="/dist/scripts/vendor.js"></script>
+    <script src="/dist/scripts/app.js"></script>-->
+    <!--<script src="scripts/vendor/modernizr.js"></script>-->
     <!-- jsx libraries -->
     {{template "includes" .}}
   </head>
   <body>
+    <!-- React-Bootstrap-->
+    <script type="text/jsx" src="/js/cache/react-bootstrap.js"></script>
     {{template "body" .}}
   </body>
 </html>

@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"appengine"
 	"admin"
 	"api"
     "net/http"
@@ -22,6 +23,8 @@ func init() {
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("Home request")
 	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/home_page.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {

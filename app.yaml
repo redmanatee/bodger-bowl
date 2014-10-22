@@ -6,14 +6,16 @@ api_version: go1
 default_expiration: "1s"
 
 handlers:
-- url: /admin/.*
-  script: _go_app
-  login: admin
 - url: /js
   static_dir: js
 - url: /css
   static_dir: css
 - url: /img
   static_dir: img
+- url: /dist
+  static_dir: dist
+- url: /admin/.*
+  script: _go_app
+  login: admin
 - url: /.*
   script: _go_app
