@@ -91,18 +91,14 @@ var WeekGroup = React.createClass({
 			);
 		});
 		return (
-			<Accordion>
-				<Panel header={"Week " + number + "-" +  "Scenario Numbers: (" + this.props.week.Scenarios[0] + ", " + this.props.week.Scenarios[1] + ")"} key={1}>
-					<table striped bordered hover>
-						<thead>
-							<th>Player 1</th>
-							<th>Player 2</th>
-							<th>Winner</th>
-						</thead>
-						<tbody>{rows}</tbody>
-					</table>
-				</Panel>
-			</Accordion>
+			<table striped bordered hover>
+				<thead>
+					<th>Player 1</th>
+					<th>Player 2</th>
+					<th>Winner</th>
+				</thead>
+				<tbody>{rows}</tbody>
+			</table>
 		);
 	}
 });
@@ -130,14 +126,16 @@ var SeasonScheduleTable = React.createClass({
 		var admin = this.props.admin;
 		this.state.season.Weeks.forEach(function(week) {
 			console.log("Adding a week")
-			rows.push(<WeekGroup week={week} admin={admin} key={week.Number}/>)
+			rows.push(
+					<Panel header={"Week " + week.Number + "-" +  "Scenario Numbers: (" + week.Scenarios[0] + ", " + week.Scenarios[1] + ")"} key={week.Number}>
+						<WeekGroup week={week} admin={admin} key={week.Number}/>
+					</Panel>
+			);
 		});
 		return (
 			<div className="text-center">
-				<ul className="small-block-grid-1">
-					<li>{this.state.season.Name + " (" + this.state.season.Year + ")"}</li>
-				</ul>
-				{rows}
+				<div>{this.state.season.Name + " (" + this.state.season.Year + ")"}</div>
+				<Accordion>{rows}</Accordion>
 			</div>
 		);
 	}
