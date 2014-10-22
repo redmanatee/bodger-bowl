@@ -84,6 +84,7 @@ var WeekGroup = React.createClass({
 		return (
 				<ul className="small-block-grid-1">
 					<li>{"Week " + number}</li>
+					<li>{"Scenario Numbers: (" + this.props.week.Scenarios[0] + ", " + this.props.week.Scenarios[1] + ")"}</li>
 					<ul className="small-block-grid-3">
 						<li>Player 1</li>
 						<li>Player 2</li>

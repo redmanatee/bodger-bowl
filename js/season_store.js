@@ -1,4 +1,6 @@
 
+var _weekly_scenarios = [["1", "2"], ["7", "8"], ["3", "4"], ["11", "12"], ["9", "10"], ["5", "6"], ["11", "12"], ["3", "4"]];
+
 window.seasonStore = Reflux.createStore({
 	init: function() {
 		this.season = null;
@@ -64,6 +66,7 @@ window.seasonStore = Reflux.createStore({
 		//Map the players to their games
 		for (i = 0; i < season.Weeks.length; i++) {
 			var week = season.Weeks[i];
+			week.Scenarios = _weekly_scenarios[i];
 			for (j = 0; j < week.Games.length; j++) {
 				var game = week.Games[j];
 				game.Players = $.map(game.PlayerIds, lookupPlayer);
