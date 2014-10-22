@@ -19,10 +19,10 @@ var PlayerCell = React.createClass({
 			playerLink = (<a href={hrefTarget} target="_blank">{this.props.player.Name}</a>);
 		}
 		return (
-			<li>
+			<td>
 				{playerLink}
 				{img}
-			</li>
+			</td>
 		);
 	}
 });
@@ -56,21 +56,21 @@ var GameRow = React.createClass({
 				defaultValue += this.props.player2.Name;
 			}
 			winnerRow = (
-				<li>
+				<td>
 					<select name="" onChange={this.handleChange} defaultValue={defaultValue}>
 						<option value={baseString} selected={!player1Selected && player2Selected}>-</option>
 						<option value={baseString + this.props.player1.Name}>{this.props.player1.Name}</option>
 						<option value={baseString + this.props.player2.Name}>{this.props.player2.Name}</option>
 					</select>
-				</li>
+				</td>
 			);
 		}
 		return (
-			<ul className="small-block-grid-3">
+			<tr>
 				<PlayerCell player={this.props.player1} admin={this.props.admin} />
 				<PlayerCell player={this.props.player2} admin={this.props.admin} />
 				{winnerRow}
-			</ul>
+			</tr>
 		);
 	}
 });
@@ -92,17 +92,15 @@ var WeekGroup = React.createClass({
 		});
 		return (
 			<Accordion>
-				<Panel header={"Week " + number} key={1}>
-					<ul className="small-block-grid-1">
-						<li></li>
-						<li>{"Scenario Numbers: (" + this.props.week.Scenarios[0] + ", " + this.props.week.Scenarios[1] + ")"}</li>
-						<ul className="small-block-grid-3">
-							<li>Player 1</li>
-							<li>Player 2</li>
-							<li>Winner</li>
-						</ul>
-						{rows}
-					</ul>
+				<Panel header={"Week " + number + "-" +  "Scenario Numbers: (" + this.props.week.Scenarios[0] + ", " + this.props.week.Scenarios[1] + ")"} key={1}>
+					<table striped bordered hover>
+						<thead>
+							<th>Player 1</th>
+							<th>Player 2</th>
+							<th>Winner</th>
+						</thead>
+						<tbody>{rows}</tbody>
+					</table>
 				</Panel>
 			</Accordion>
 		);
