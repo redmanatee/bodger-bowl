@@ -3,11 +3,10 @@
 var PlayerDivisionRow = React.createClass({
 	render: function() {
 		return (
-			<ul className="small-block-grid-4">
+			<ul className="small-block-grid-3">
 				<PlayerCell player={this.props.player} admin={this.props.admin} />
 				<li>{this.props.player.Wins}</li>
 				<li>{this.props.player.Losses}</li>
-				<li>{this.props.rank}</li>
 			</ul>
 		);
 	}
@@ -27,11 +26,10 @@ var DivisionTable = React.createClass({
 				<ul className="small-block-grid-1">
 					<li>{this.props.division.Name}</li>
 				</ul>
-				<ul className="small-block-grid-4">
+				<ul className="small-block-grid-3">
 					<li>Player</li>
 					<li>Wins</li>
 					<li>Losses</li>
-					<li>Rank</li>
 				</ul>
 				{rows}
 			</div>
@@ -56,7 +54,7 @@ var ConferenceTable = React.createClass({
 			<ul className="small-block-grid-1">
 				<li>{this.props.conference.Name}</li>
 				<li>
-					<ul className="small-block-grid-1">
+					<ul className="small-block-grid-3">
 						{rows}
 					</ul>
 				</li>

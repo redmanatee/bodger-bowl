@@ -4,10 +4,14 @@ var SeasonData = React.createClass({
 	render: function() {
 		var admin = window.location.pathname.indexOf("admin") > -1;
 		return (
-				<div>
-					<SeasonScheduleTable admin={admin} />
-					<ConferenceContainer admin={admin} />
+			<div>
+				<div className="row">
+					<div className="small-grid-12 columns">
+						<SeasonScheduleTable admin={admin} />
+					</div>
 				</div>
+				<ConferenceContainer admin={admin} />
+			</div>
 		);
 	}
 });

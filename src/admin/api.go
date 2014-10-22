@@ -75,6 +75,24 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 	return weekData, ""
 }
 
+// Handles the update calls of the players
+func PlayerInjuryUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("Called player injury update handler")
+	seasonId := r.FormValue("SeasonId")
+	playerName := r.FormValue("Player")
+	injuryString := r.FormValue("Injuries")
+	c.Infof("%v %v %v", seasonId, playerName, injuryString)
+	season := api.LoadSeasonById(c, seasonId)
+	player := model.LoadPlayer(c, season, playerName)
+	if strings.TrimSpace(injuryString) == "" {
+		player.Injuries = make([]string, 0)
+	} else {
+		player.Injuries = strings.Split(injuryString, ",")
+	}
+	model.SavePlayer(c, season, player)
+}
+
 // Handles update week API calls.
 func UpdateWeek(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
