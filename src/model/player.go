@@ -3,8 +3,8 @@ package model
 import (
 	"appengine"
 	"appengine/datastore"
-	"log"
 	"encoding/csv"
+	"log"
 	"strings"
 )
 
@@ -21,6 +21,19 @@ type Player struct {
 func PlayerKey(c appengine.Context, seasonName string, year string, playerName string) *datastore.Key {
 	sKey := seasonKey(c, seasonName, year)
 	return datastore.NewKey(c, "Player", playerName, 0, sKey)
+}
+
+func SavePlayer(c appengine.Context, s *Season, player *Player) {
+	var name, year string
+	if s != nil {
+		name = s.Name
+		year = s.Year
+	}
+	key := PlayerKey(c, name, year, player.Name)
+	_, err := datastore.Put(c, key, player)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func SavePlayers(c appengine.Context, s *Season, players []Player) {

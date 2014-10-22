@@ -35,15 +35,13 @@ var GameRow = React.createClass({
 				SeasonId: decodeURIComponent(window.seasonStore.seasonId),
 				Data: event.target.value
 			},
-			dataType: 'json',
 			success: function(data) {
-				this.loadSeason(data);
+				//TODO: this
 			}.bind(this),
 			error: function(xhr, status, err) {
-    			console.error(this.props.url, status, err.toString());
+    			//TODO: this
   			}.bind(this)
 		});
-
 	},
 	render: function() {
 		var winnerRow = (<PlayerCell player={this.props.winner} admin={this.props.admin} />);
@@ -51,12 +49,18 @@ var GameRow = React.createClass({
 		var player2Selected = this.props.winner? this.props.player2.Name === this.props.winner.Name : false;
 		if (this.props.admin && this.props.admin !== "false") {
 			var baseString = this.props.week + ":" + this.props.player1.Name + ":" + this.props.player2.Name + ":";
+			var defaultValue = baseString;
+			if (player1Selected) {
+				defaultValue += this.props.player1.Name;
+			} else if (player2Selected) {
+				defaultValue += this.props.player2.Name;
+			}
 			winnerRow = (
 				<li>
-					<select name="" onChange={this.handleChange}>
+					<select name="" onChange={this.handleChange} defaultValue={defaultValue}>
 						<option value={baseString} selected={!player1Selected && player2Selected}>-</option>
-						<option value={baseString + this.props.player1.Name} selected={player1Selected}>{this.props.player1.Name}</option>
-						<option value={baseString + this.props.player2.Name} selected={player2Selected}>{this.props.player2.Name}</option>
+						<option value={baseString + this.props.player1.Name}>{this.props.player1.Name}</option>
+						<option value={baseString + this.props.player2.Name}>{this.props.player2.Name}</option>
 					</select>
 				</li>
 			);

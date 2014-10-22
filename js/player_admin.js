@@ -12,9 +12,31 @@ var PlayerInfoAdminPanel = React.createClass({
 });
 
 var InjuriesAdminPanel = React.createClass({
+	injuryValue: "",
+	handleChange: function(event) {
+		this.injuryValue = event.target.value;
+	},
+	updateData: function(event) {
+		console.log("button pushed");
+		$.ajax({url:"/admin/api/players/injuries/",
+			type: 'POST',
+			data: {
+				SeasonId: this.props.season,
+				Player: this.props.player.Name,
+				Injuries: this.injuryValue,
+			},
+			success: function(data) {
+				alert("Injury update was successful!");
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Injury update failed!");
+  			}.bind(this)
+		});
+
+	},
 	render: function() {
 		var rows = [];
-		if (this.props.player.Injuries === null || this.props.players.Injuries.length === 0) {
+		if (this.props.player.Injuries === null || this.props.player.Injuries.length === 0) {
 			rows.push(<li className="font-weight-bold">--None--</li>);
 		} else {
 			this.props.player.Injuries.forEach(function(injury) {
@@ -24,10 +46,13 @@ var InjuriesAdminPanel = React.createClass({
 			});
 		}
 		return (
-			<ul>
-				<li>Injuries</li>
-				<ul>{rows}</ul>
-			</ul>
+			<div>
+				<ul>
+					<li>Injuries</li>
+					<ul>{rows}</ul>
+				</ul>
+				<div>Update Injuries: <input type="text" onChange={this.handleChange} /><input type="button" onClick={this.updateData} value="Update" /></div>
+			</div>	
 		);
 	}
 });
@@ -140,12 +165,14 @@ var PlayerAdminPanel = React.createClass({
 		if (this.state.player === null) {
 			return (<div></div>);
 		}
+		var winParams = this.getSearchParameters();
+		var season = decodeURIComponent(winParams['season']);
 		return (
 			<div className="row">
-				<div className="small-12"><PlayerInfoAdminPanel player={this.state.player} /></div>
-				<div className="small-12"><InjuriesAdminPanel player={this.state.player} /></div>
-				<div className="small-12"><ActiveBondsAdminPanel player={this.state.player} /></div>
-				<div className="small-12"><PotentialBondsAdminPanel player={this.state.player} /></div>
+				<div className="small-12"><PlayerInfoAdminPanel player={this.state.player} season={season} /></div>
+				<div className="small-12"><InjuriesAdminPanel player={this.state.player} season={season} /></div>
+				<div className="small-12"><ActiveBondsAdminPanel player={this.state.player} season={season} /></div>
+				<div className="small-12"><PotentialBondsAdminPanel player={this.state.player} season={season} /></div>
 			</div>
 		);
 	}

@@ -14,7 +14,7 @@ var PlayerInfoCell = React.createClass({
 var InjuriesInfo = React.createClass({
 	render: function() {
 		var rows = [];
-		if (this.props.player.Injuries === null || this.props.players.Injuries.length === 0) {
+		if (this.props.player.Injuries === null || this.props.player.Injuries.length === 0) {
 			rows.push(<li className="font-weight-bold">--None--</li>);
 		} else {
 			this.props.player.Injuries.forEach(function(injury) {

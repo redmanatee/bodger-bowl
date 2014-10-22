@@ -2,11 +2,9 @@ package api
 
 import (
 	"appengine"
-	"appengine/datastore"
 	"encoding/json"
 	"model"
 	"net/http"
-	"strings"
 )
 
 func GetPlayer(w http.ResponseWriter, r *http.Request) {
@@ -15,18 +13,15 @@ func GetPlayer(w http.ResponseWriter, r *http.Request) {
 	playerId := r.FormValue("PlayerId")
 	c.Infof("Looking up '%v' for season '%v'", playerId, seasonId)
 	var player *model.Player
-	if seasonId != "" {
+	var season *model.Season
+	if seasonId == "" {
 		c.Infof("Lookup season")
-		activeSeason := getActiveSeasonWithContext(c)
-		player = model.LoadPlayer(c, &activeSeason, playerId)
+		tmpSeason := getActiveSeasonWithContext(c)
+		season = &tmpSeason
 	} else {
-		seasonParts := strings.Split(seasonId, ";")
-		playerKey := model.PlayerKey(c, seasonParts[0], seasonParts[1], playerId)
-		err := datastore.Get(c, playerKey, player)
-		if err != nil {
-			panic(err)
-		}
+		season = LoadSeasonById(c, seasonId)
 	}
+	player = model.LoadPlayer(c, season, playerId)
 	c.Infof("%v", player)
 	c.Infof(string(player.Bonds))
 	playerJson := player.CreatePlayerJson()
