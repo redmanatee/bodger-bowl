@@ -125,7 +125,6 @@ var SeasonScheduleTable = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.state.season.Weeks.forEach(function(week) {
-			console.log("Adding a week")
 			rows.push(
 					<Panel header={"Week " + week.Number + "-" +  "Scenario Numbers: (" + week.Scenarios[0] + ", " + week.Scenarios[1] + ")"} key={week.Number}>
 						<WeekGroup week={week} admin={admin} key={week.Number}/>

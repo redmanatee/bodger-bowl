@@ -25,12 +25,12 @@ var DivisionTable = React.createClass({
 			<div>
 				<h2>{this.props.division.Name}</h2>
 				<Table striped bordered hover >
-					<thead>
+					<thead className="text-left">
 						<th>Player</th>
 						<th>Wins</th>
 						<th>Losses</th>
 					</thead>
-					<tbody>{rows}</tbody>
+					<tbody className="text-left">{rows}</tbody>
 				</Table>
 			</div>
 		);
@@ -44,13 +44,15 @@ var ConferenceTable = React.createClass({
 		var admin = this.props.admin;
 		this.props.conference.Divisions.forEach(function(division) {
 			rows.push(
-				<DivisionTable division={division} admin={admin}/>
+				<Col xs={12} md={4}><DivisionTable division={division} admin={admin}/></Col>
 			);
 		});
 		return (
 			<div>
 				<PageHeader>{this.props.conference.Name}</PageHeader>
-				{rows}
+				<Grid>
+					<Row>{rows}</Row>
+				</Grid>
 			</div>
 		);
 	}
