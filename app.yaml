@@ -1,5 +1,5 @@
 application: bodger-bowl
-version: 1
+version: 1-bootstrap
 runtime: go
 api_version: go1
 

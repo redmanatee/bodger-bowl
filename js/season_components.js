@@ -91,14 +91,14 @@ var WeekGroup = React.createClass({
 			);
 		});
 		return (
-			<table striped bordered hover>
+			<Table striped bordered hover>
 				<thead>
 					<th>Player 1</th>
 					<th>Player 2</th>
 					<th>Winner</th>
 				</thead>
 				<tbody>{rows}</tbody>
-			</table>
+			</Table>
 		);
 	}
 });

@@ -24,14 +24,14 @@ var DivisionTable = React.createClass({
 		return (
 			<div>
 				<h2>{this.props.division.Name}</h2>
-				<table striped bordered hover >
+				<Table striped bordered hover >
 					<thead>
 						<th>Player</th>
 						<th>Wins</th>
 						<th>Losses</th>
 					</thead>
 					<tbody>{rows}</tbody>
-				</table>
+				</Table>
 			</div>
 		);
 	}
