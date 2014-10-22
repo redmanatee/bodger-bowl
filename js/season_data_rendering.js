@@ -1,20 +1,19 @@
 /** @jsx React.DOM */
 
-var BootstrapTabbedArea = ReactBootstrap.TabbedArea;
-var BootstrapTabPane = ReactBootstrap.TabPane;
-
 var SeasonData = React.createClass({
 	render: function() {
 		var admin = window.location.pathname.indexOf("admin") > -1;
 		return (
-			
-			<BootstrapTabbedArea defaultActiveKey={1}>
-				<BootstrapTabPane key={1} tab="Season Schedule"><SeasonScheduleTable admin={admin} /></BootstrapTabPane>
-				<BootstrapTabPane key={2} tab="Conferences"><ConferenceContainer admin={admin} /></BootstrapTabPane>
-			</BootstrapTabbedArea>
+			<TabbedArea defaultActiveKey={1}>
+				<TabPane key={1} tab="Season Schedule">
+					<SeasonScheduleTable admin={admin} />
+				</TabPane>
+				<TabPane key={2} tab="Conferences">
+					<ConferenceContainer admin={admin} />
+				</TabPane>
+			</TabbedArea>
 		);
 	},
-
 });
 
 React.renderComponent(<SeasonData />,

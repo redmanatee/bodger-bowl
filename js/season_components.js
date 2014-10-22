@@ -91,16 +91,20 @@ var WeekGroup = React.createClass({
 			);
 		});
 		return (
-				<ul className="small-block-grid-1">
-					<li>{"Week " + number}</li>
-					<li>{"Scenario Numbers: (" + this.props.week.Scenarios[0] + ", " + this.props.week.Scenarios[1] + ")"}</li>
-					<ul className="small-block-grid-3">
-						<li>Player 1</li>
-						<li>Player 2</li>
-						<li>Winner</li>
+			<Accordion>
+				<Panel header={"Week " + number} key={1}>
+					<ul className="small-block-grid-1">
+						<li></li>
+						<li>{"Scenario Numbers: (" + this.props.week.Scenarios[0] + ", " + this.props.week.Scenarios[1] + ")"}</li>
+						<ul className="small-block-grid-3">
+							<li>Player 1</li>
+							<li>Player 2</li>
+							<li>Winner</li>
+						</ul>
+						{rows}
 					</ul>
-					{rows}
-				</ul>
+				</Panel>
+			</Accordion>
 		);
 	}
 });
