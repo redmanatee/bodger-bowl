@@ -11,7 +11,7 @@ var PlayerCell = React.createClass({
 				hrefTarget += "/";
 			}
 			hrefTarget += "players/" + this.props.player.Name;
-			playerLink = (<a href={hrefTarget}>{this.props.player? this.props.player.Name : "--"}</a>);
+			playerLink = (<a href={hrefTarget} target="_blank">{this.props.player? this.props.player.Name : "--"}</a>);
 		}
 		return (
 			<li>
