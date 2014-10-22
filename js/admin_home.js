@@ -31,7 +31,6 @@ var SeasonTable = React.createClass({
 	},
 	componentDidMount: function() {
 	    this.loadSeasonsFromServer();
-	    setInterval(this.loadSeasonsFromServer, this.props.pollInterval);
   	},
 	render: function() {
 		var rows = [];
