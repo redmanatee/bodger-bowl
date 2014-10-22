@@ -23,7 +23,7 @@ var DivisionTable = React.createClass({
 		});
 		return (
 			<div>
-				<div>{this.props.division.Name}</div>
+				<h2>{this.props.division.Name}</h2>
 				<table striped bordered hover >
 					<thead>
 						<th>Player</th>
@@ -44,21 +44,14 @@ var ConferenceTable = React.createClass({
 		var admin = this.props.admin;
 		this.props.conference.Divisions.forEach(function(division) {
 			rows.push(
-				<li>
-					<DivisionTable division={division}
-									 admin={admin}/>
-				</li>
+				<DivisionTable division={division} admin={admin}/>
 			);
 		});
 		return (
-			<ul className="small-block-grid-1">
-				<li>{this.props.conference.Name}</li>
-				<li>
-					<ul className="small-block-grid-3">
-						{rows}
-					</ul>
-				</li>
-			</ul>
+			<div>
+				<PageHeader>{this.props.conference.Name}</PageHeader>
+				{rows}
+			</div>
 		);
 	}
 });
@@ -82,19 +75,19 @@ var ConferenceContainer = React.createClass({
 		if (this.state.season === null) {
 			return (<div></div>);
 		}
-		var divisions = [];
+		var conferences = [];
 		var admin = "true";
 		this.state.season.Conferences.forEach(function(conference) {
-			divisions.push(
+			conferences.push(
 				<li>
 					<ConferenceTable conference={conference} admin={admin} />
 				</li>
 			);
 		});
 		return (
-			<ul className="small-block-grid-1 text-center">
-				{divisions}
-			</ul>
+			<div className="text-center">
+				{conferences}
+			</div>
 		);
 	}
 });

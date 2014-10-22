@@ -134,8 +134,10 @@ var SeasonScheduleTable = React.createClass({
 		});
 		return (
 			<div className="text-center">
-				<div>{this.state.season.Name + " (" + this.state.season.Year + ")"}</div>
-				<Accordion>{rows}</Accordion>
+				<div>
+					<PageHeader>{this.state.season.Name + " (" + this.state.season.Year + ")"}</PageHeader>
+					<Accordion>{rows}</Accordion>
+				</div>
 			</div>
 		);
 	}
