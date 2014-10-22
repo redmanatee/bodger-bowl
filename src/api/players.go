@@ -15,7 +15,8 @@ func GetPlayer(w http.ResponseWriter, r *http.Request) {
 	playerId := r.FormValue("PlayerId")
 	c.Infof("Looking up '%v' for season '%v'", playerId, seasonId)
 	var player *model.Player
-	if seasonId == "" {
+	if seasonId != "" {
+		c.Infof("Lookup season")
 		activeSeason := getActiveSeasonWithContext(c)
 		player = model.LoadPlayer(c, &activeSeason, playerId)
 	} else {

@@ -17,6 +17,7 @@ func init() {
 	http.HandleFunc("/admin/api/weeks/", admin.UpdateWeek)
 	http.HandleFunc("/api/players/", api.GetPlayer)
 	http.HandleFunc("/players/", PlayerRequest)
+	http.HandleFunc("/admin/players/", admin.PlayerHandler)
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {

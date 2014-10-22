@@ -6,12 +6,17 @@ var PlayerCell = React.createClass({
 		var playerLink = (<div>--</div>);
 		if (this.props.player !== null) {
 			img = (<img className="faction text-left" src={"/img/" + this.props.player.Faction + ".jpg"} alt={"(" + this.props.player.Faction + ")"} title={this.props.player.Faction}/>)
-			var hrefTarget = window.location.pathname;
-			if (hrefTarget.indexOf("/", hrefTarget.length - 1) === -1){
-				hrefTarget += "/";
+			var hrefTarget = "";
+			if (this.props.admin) {
+				hrefTarget = "/admin/players/?player=" + encodeURIComponent(this.props.player.Name) + "&season=" + window.seasonStore.seasonId;
+			} else {
+				hrefTarget = window.location.pathname;
+				if (hrefTarget.indexOf("/", hrefTarget.length - 1) === -1){
+					hrefTarget += "/";
+				}
+				hrefTarget += "players/" + this.props.player.Name;
 			}
-			hrefTarget += "players/" + this.props.player.Name;
-			playerLink = (<a href={hrefTarget} target="_blank">{this.props.player? this.props.player.Name : "--"}</a>);
+			playerLink = (<a href={hrefTarget} target="_blank">{this.props.player.Name}</a>);
 		}
 		return (
 			<li>
