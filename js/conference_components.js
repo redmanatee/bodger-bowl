@@ -79,9 +79,7 @@ var ConferenceContainer = React.createClass({
 		var admin = "true";
 		this.state.season.Conferences.forEach(function(conference) {
 			conferences.push(
-				<li>
-					<ConferenceTable conference={conference} admin={admin} />
-				</li>
+				<ConferenceTable conference={conference} admin={admin} />
 			);
 		});
 		return (
