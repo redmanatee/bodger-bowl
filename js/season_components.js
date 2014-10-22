@@ -19,10 +19,7 @@ var PlayerCell = React.createClass({
 			playerLink = (<a href={hrefTarget} target="_blank">{this.props.player.Name}</a>);
 		}
 		return (
-			<td>
-				{playerLink}
-				{img}
-			</td>
+			<td>{img}{playerLink}</td>
 		);
 	}
 });
@@ -92,12 +89,12 @@ var WeekGroup = React.createClass({
 		});
 		return (
 			<Table striped bordered hover>
-				<thead>
+				<thead className="text-left">
 					<th>Player 1</th>
 					<th>Player 2</th>
 					<th>Winner</th>
 				</thead>
-				<tbody>{rows}</tbody>
+				<tbody className="text-left">{rows}</tbody>
 			</Table>
 		);
 	}
