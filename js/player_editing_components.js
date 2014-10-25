@@ -40,7 +40,7 @@ var PlayerInjuries = React.createClass({
 			adminCols = (
 				<Col >
 					<input type="text" ref="injuryText" />
-					<input type="button" onClick={this.updateData} value="Update" />
+					<Button bsStyle="primary" onClick={this.updateData}>Update</Button>
 				</Col>
 			);
 		}
