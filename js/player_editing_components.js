@@ -20,12 +20,9 @@ var PlayerSelector = React.createClass({
 });
 
 var PlayerInjuries = React.createClass({
-	injuryValue: "",
-	handleChange: function(event) {
-		this.injuryValue = event.target.value;
-	},
 	updateData: function(event) {
-		appActions.updateInjuries(this.props.player.Name, this.injuryValue);
+		appActions.updateInjuries(this.props.player.Name, this.refs.injuryText.getDOMNode().value);
+		this.refs.injuryText.getDOMNode().value = "";
 	},
 	render: function() {
 		var rows = []
@@ -42,7 +39,7 @@ var PlayerInjuries = React.createClass({
 		if (this.props.admin) {
 			adminCols = (
 				<Col >
-					<input type="text" onChange={this.handleChange} />
+					<input type="text" ref="injuryText" />
 					<input type="button" onClick={this.updateData} value="Update" />
 				</Col>
 			);
