@@ -98,11 +98,21 @@ var PlayerBonds = React.createClass({
 				<tr className="text-left" key={0}><td colSpan={this.props.admin? 5 : 4}>--None--</td></tr>
 			);
 		}
+		var editingPanel = [];
 		adminHeader = [];
 		if (this.props.admin) {
 			adminHeader = (
 				<th>Delete?</th>
 			);
+			editingPanel = (
+				<tr>
+					<td><input type="text" placeholder="Warcaster" /></td>
+					<td><input type="text" placeholder="Warjack" /></td>
+					<td><input type="Text" placeholder="Bond Name" /></td>
+					<td><input type="number" placeholder="Number" /></td>
+					<td><Button bsStyle="primary">Submit</Button></td>
+				</tr>
+			);			
 		}
 		//TODO: adding or deleting bonds
 		return (
@@ -117,7 +127,10 @@ var PlayerBonds = React.createClass({
 								<th>Bond Number</th>
 								{adminHeader}
 							</thead>
-							<tbody>{bonds}</tbody>
+							<tbody>
+								{bonds}
+								{editingPanel}
+							</tbody>
 						</Table>
 					</Col>
 				</Row>
@@ -160,17 +173,26 @@ var PlayerPotentialBonds = React.createClass({
 				<tr className="text-left" key={0}><td colSpan={this.props.admin? 4 : 3}>--None--</td></tr>
 			);
 		}
-		adminHeader = [];
+		var adminHeader = [];
+		var editingPanel = []
 		if (this.props.admin) {
 			adminHeader = (
 				<th>Delete?</th>
+			);
+			editingPanel = (
+				<tr>
+					<td><input type="text" placeholder="Warcaster" /></td>
+					<td><input type="text" placeholder="Warjack" /></td>
+					<td><input type="number" placeholder="Bonus" /></td>
+					<td><Button bsStyle="primary">Submit</Button></td>
+				</tr>
 			);
 		}
 		//TODO: adding or deleting bonds
 		return (
 			<Grid>
 				<Row>
-					<Col xs={this.props.admin? 6 : 12}>
+					<Col xs={12}>
 						<Table striped bordered hover >
 							<thead>
 								<th>Warcaster/Warlock</th>
@@ -178,7 +200,10 @@ var PlayerPotentialBonds = React.createClass({
 								<th>Bonus</th>
 								{adminHeader}
 							</thead>
-							<tbody>{bonds}</tbody>
+							<tbody>
+								{bonds}
+								{editingPanel}
+							</tbody>
 						</Table>
 					</Col>
 				</Row>
