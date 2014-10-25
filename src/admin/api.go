@@ -75,6 +75,41 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 	return weekData, ""
 }
 
+func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
+	playerName := r.FormValue("Player")
+	warcasterName := r.FormValue("Warcaster")
+	warjackName := r.FormValue("Warjack")
+	bondText := r.FormValue("BondText")
+	bondNumber, err := strconv.Atoi(r.FormValue("BondNumber"))
+	if err != nil {
+		panic(err)
+	}
+	c.Infof("'%v' '%v' '%v' '%v' '%v' '%v' '%d'", seasonName, seasonYear, playerName, warcasterName, warjackName, bondText, bondNumber)
+	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
+	player := model.LoadPlayer(c, season, playerName)
+	playerJson := player.CreatePlayerJson()
+	index := 0
+	for ; index < len(playerJson.Bonds.ActiveBonds); index++ {
+		bond := playerJson.Bonds.ActiveBonds[index]
+		if bond.Warcaster == warcasterName && bond.Warjack == warjackName && bond.BondNumber == bondNumber && bond.BondName == bondText {
+			//We have found the match
+			break
+		}
+	}
+	c.Infof("Index: %d", index)
+	if index >= len(playerJson.Bonds.ActiveBonds) {
+		http.Error(w, "Could not find matching bond", 400)
+	}
+	c.Infof("%d", len(playerJson.Bonds.ActiveBonds))
+	playerJson.Bonds.ActiveBonds = append(playerJson.Bonds.ActiveBonds[:index], playerJson.Bonds.ActiveBonds[index+1:]...)
+	c.Infof("%d", len(playerJson.Bonds.ActiveBonds))
+	updatedPlayer := playerJson.CreatePlayer()
+	model.SavePlayer(c, season, &updatedPlayer)
+}
+
 func PlayerBondAddHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	seasonName := r.FormValue("SeasonName")

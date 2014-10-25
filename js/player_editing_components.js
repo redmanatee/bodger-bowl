@@ -61,11 +61,18 @@ var PlayerInjuries = React.createClass({
 });
 
 var PlayerBondDetail = React.createClass({
+	deleteBond: function(event) {
+		appActions.deleteActiveBond(this.props.bond.Warcaster,
+									this.props.bond.Warjack,
+									this.props.bond.BondNumber,
+									this.props.bond.BondName,
+									this.props.playerName);
+	},
 	render: function() {
 		deleteButton = [];
 		if (this.props.admin) {
 			deleteButton = (
-				<td><Button bsStyle="danger" bsSize="xsmall">Delete</Button></td>
+				<td><Button bsStyle="danger" bsSize="xsmall" onClick={this.deleteBond}>Delete</Button></td>
 			);
 		}
 		return (
@@ -97,7 +104,7 @@ var PlayerBonds = React.createClass({
 		if (this.props.player !== null && this.props.player.Bonds !== null && this.props.player.Bonds.ActiveBonds !== null) {
 			for (i = 0; i < this.props.player.Bonds.ActiveBonds.length; i++) {
 				bonds.push(
-					<PlayerBondDetail bond={this.props.player.Bonds.ActiveBonds[i]} key={i} admin={this.props.admin} />
+					<PlayerBondDetail bond={this.props.player.Bonds.ActiveBonds[i]} playerName={this.props.player.Name} key={i} admin={this.props.admin} />
 				);
 			}
 		}

@@ -15,9 +15,9 @@ var _ActiveBondSort = function(a, b) {
 		return -1;
 	} else if (a.Warcaster.toLowerCase() > b.Warcaster.toLowerCase()) {
 		return 1;
-	} else if (a.Warjack.toLowercase() < b.Warjack.toLowerCase()) {
+	} else if (a.Warjack.toLowerCase() < b.Warjack.toLowerCase()) {
 		return -1;
-	} else if (a.Warjack.toLowercase() > b.Warjack.toLowerCase()) {
+	} else if (a.Warjack.toLowerCase() > b.Warjack.toLowerCase()) {
 		return 1;
 	} else if (a.BondNumber < b.BondNumber) {
 		return -1;
@@ -50,6 +50,7 @@ var _PotentialBondSort = function(a, b) {
 var appActions = Reflux.createActions([
 	"updateInjuries",
 	"addActiveBond",
+	"deleteActiveBond",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -58,11 +59,30 @@ window.seasonStore = Reflux.createStore({
 		this.refreshSeasonFromServer();
 		this.listenTo(appActions.updateInjuries, this.updateInjuries);
 		this.listenTo(appActions.addActiveBond, this.addActiveBond);
+		this.listenTo(appActions.deleteActiveBond, this.deleteActiveBond);
+	},
+	deleteActiveBond: function(warcaster, warjack, bondNum, bondName, playerName) {
+		$.ajax({url:"/admin/api/players/bonds/delete/",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				Player: playerName,
+				Warcaster: warcaster,
+				Warjack: warjack,
+				BondText: bondName,
+				BondNumber: bondNum,
+			},
+			success: function(data) {
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Bond Deletion Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});
 	},
 	addActiveBond: function(warcasterName, warjackName, bondText, bondNumber, playerName) {
-		console.log(warcasterName);
-		console.log(warjackName);
-		console.log(bondText);
 		$.ajax({url:"/admin/api/players/bonds/add/",
 			type: 'POST',
 			data: {
