@@ -22,6 +22,7 @@ func init() {
 	http.HandleFunc("/admin/api/players/injuries/", admin.PlayerInjuryUpdateHandler)
 	http.HandleFunc("/admin/api/players/bonds/add/", admin.PlayerBondAddHandler)
 	http.HandleFunc("/admin/api/players/bonds/delete/", admin.PlayerBondDeleteHandler)
+	http.HandleFunc("/admin/api/players/bonds/potential/add/", admin.PlayerPotentialBondAddHandler)
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {

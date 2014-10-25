@@ -164,7 +164,7 @@ var PlayerPotentialBondDetail = React.createClass({
 		}
 		return (
 			<tr>
-				<td>{this.props.bond.Warcaster.Name}</td>
+				<td>{this.props.bond.Warcaster}</td>
 				<td>{this.props.bond.Warjack}</td>
 				<td>{this.props.bond.Bonus}</td>
 				{deleteButton}
@@ -174,6 +174,15 @@ var PlayerPotentialBondDetail = React.createClass({
 });
 
 var PlayerPotentialBonds = React.createClass({
+	submitBond: function(event) {
+		var warcasterName = this.refs.warcasterPotential.getDOMNode().value;
+		var warjackName = this.refs.warjackPotential.getDOMNode().value;
+		var bonus = this.refs.bonusPotential.getDOMNode().value;
+		appActions.addPotentialBond(warcasterName, warjackName, bonus, this.props.player.Name);
+		this.refs.warcasterPotential.getDOMNode().value = "";
+		this.refs.warjackPotential.getDOMNode().value = "";
+		this.refs.bonusPotential.getDOMNode().value = "";
+	},
 	render: function() {
 		var bonds = [];
 		if (this.props.player !== null && this.props.player.Bonds !== null && this.props.player.Bonds.PotentialBonds !== null) {
@@ -196,10 +205,10 @@ var PlayerPotentialBonds = React.createClass({
 			);
 			editingPanel = (
 				<tr>
-					<td><input type="text" placeholder="Warcaster" /></td>
-					<td><input type="text" placeholder="Warjack" /></td>
-					<td><input type="number" placeholder="Bonus" /></td>
-					<td><Button bsStyle="primary">Submit</Button></td>
+					<td><input type="text" ref="warcasterPotential" placeholder="Warcaster" /></td>
+					<td><input type="text" ref="warjackPotential" placeholder="Warjack" /></td>
+					<td><input type="number" ref="bonusPotential" placeholder="Bonus" /></td>
+					<td><Button bsStyle="primary" onClick={this.submitBond}>Submit</Button></td>
 				</tr>
 			);
 		}

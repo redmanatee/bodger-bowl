@@ -106,6 +106,34 @@ func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	model.SavePlayer(c, season, &updatedPlayer)
 }
 
+func PlayerPotentialBondAddHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	c.Infof("Called adad potential bonds")
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
+	playerName := r.FormValue("Player")
+	warcasterName := r.FormValue("Warcaster")
+	warjackName := r.FormValue("Warjack")
+	bonus, err := strconv.Atoi(r.FormValue("Bonus"))
+	if err != nil {
+		panic(err)
+	}
+	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
+	player := model.LoadPlayer(c, season, playerName)
+	playerJson := player.CreatePlayerJson()
+	if playerJson.Bonds.PotentialBonds == nil {
+		playerJson.Bonds.PotentialBonds = make([]model.PotentialBond, 0)
+	}
+	newPotential := model.PotentialBond {
+		Warcaster: warcasterName,
+		Warjack: warjackName,
+		Bonus: bonus,
+	}
+	playerJson.Bonds.PotentialBonds = append(playerJson.Bonds.PotentialBonds, newPotential)
+	updatedPlayer := playerJson.CreatePlayer()
+	model.SavePlayer(c, season, &updatedPlayer)
+}
+
 func PlayerBondAddHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	seasonName := r.FormValue("SeasonName")

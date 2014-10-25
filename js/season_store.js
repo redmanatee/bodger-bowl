@@ -51,6 +51,8 @@ var appActions = Reflux.createActions([
 	"updateInjuries",
 	"addActiveBond",
 	"deleteActiveBond",
+	"addPotentialBond",
+	"deletePotentialBond",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -60,6 +62,31 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(appActions.updateInjuries, this.updateInjuries);
 		this.listenTo(appActions.addActiveBond, this.addActiveBond);
 		this.listenTo(appActions.deleteActiveBond, this.deleteActiveBond);
+		this.listenTo(appActions.addPotentialBond, this.addPotentialBond);
+	},
+	addPotentialBond: function(warcaster, warjack, bonus, playerName) {
+		console.log(warcaster);
+		console.log(warjack);
+		console.log(bonus);
+		console.log(playerName);
+		$.ajax({url:"/admin/api/players/bonds/potential/add/",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				Player: playerName,
+				Warcaster: warcaster,
+				Warjack: warjack,
+				Bonus: bonus,
+			},
+			success: function(data) {
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Bond Deletion Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});
 	},
 	deleteActiveBond: function(warcaster, warjack, bondNum, bondName, playerName) {
 		$.ajax({url:"/admin/api/players/bonds/delete/",
