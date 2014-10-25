@@ -87,7 +87,6 @@ func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	c.Infof("'%v' '%v' '%v' '%v' '%v' '%v' '%d'", seasonName, seasonYear, playerName, warcasterName, warjackName, bondText, bondNumber)
 	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
 	player := model.LoadPlayer(c, season, playerName)
 	playerJson := player.CreatePlayerJson()
@@ -99,13 +98,10 @@ func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	c.Infof("Index: %d", index)
 	if index >= len(playerJson.Bonds.ActiveBonds) {
 		http.Error(w, "Could not find matching bond", 400)
 	}
-	c.Infof("%d", len(playerJson.Bonds.ActiveBonds))
 	playerJson.Bonds.ActiveBonds = append(playerJson.Bonds.ActiveBonds[:index], playerJson.Bonds.ActiveBonds[index+1:]...)
-	c.Infof("%d", len(playerJson.Bonds.ActiveBonds))
 	updatedPlayer := playerJson.CreatePlayer()
 	model.SavePlayer(c, season, &updatedPlayer)
 }
