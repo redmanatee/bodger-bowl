@@ -38,21 +38,34 @@ var PlayerInjuries = React.createClass({
 		} else {
 			rows.push(<tr key={0}><td>--None--</td></tr>)
 		}
+		var adminCols = [];
+		if (this.props.admin) {
+			adminCols = (
+				<Col >
+					<input type="text" onChange={this.handleChange} />
+					<input type="button" onClick={this.updateData} value="Update" />
+				</Col>
+			);
+		}
 		return (
 			<Grid>
 				<Row>
-					<Col xs={6}>
+					<Col xs={this.props.admin? 6 : 12}>
 						<Table striped bordered condensed hover>
+							<thead><th>Injuries</th></thead>
 							<tbody>{rows}</tbody>
 						</Table>
 					</Col>
-					<Col xs={6}>
-						<input type="text" onChange={this.handleChange} />
-						<input type="button" onClick={this.updateData} value="Update" />
-					</Col>
+					{adminCols}
 				</Row>
 			</Grid>
 		);
+	}
+});
+
+var PlayerBonds = React.createClass({
+	render: function() {
+		return (<div></div>);
 	}
 });
 
@@ -95,6 +108,7 @@ var PlayerEditorPanel = React.createClass({
 		if (this.state.season != null) {
 			players = this.state.season.Players;
 		}
+		var admin = this.props.admin;
 		return (
 			<div>
 				<PlayerSelector players={players} 
@@ -103,10 +117,10 @@ var PlayerEditorPanel = React.createClass({
 				<PlayerCell player={this.state.selectedPlayer} />
 				<TabbedArea defaultActiveKey={1}>
 					<TabPane key={1} tab="Injuries">
-						<PlayerInjuries player={this.state.selectedPlayer}/>
+						<PlayerInjuries player={this.state.selectedPlayer} admin={admin} />
 					</TabPane>
 					<TabPane key={2} tab="Bonds">
-						<p>Player Bonds</p>
+						<PlayerBonds player={this.state.selectedPlayer} admin={admin} />
 					</TabPane>
 					<TabPane key={3} tab="Potential Bonds">
 						<p>Potential Bonds</p>
