@@ -10,6 +10,42 @@ var _playerSort = function(a, b) {
 		return 0;
 	}
 };
+var _ActiveBondSort = function(a, b) {
+	if (a.Warcaster.toLowerCase() < b.Warcaster.toLowerCase()) {
+		return -1;
+	} else if (a.Warcaster.toLowerCase() > b.Warcaster.toLowerCase()) {
+		return 1;
+	} else if (a.Warjack.toLowercase() < b.Warjack.toLowerCase()) {
+		return -1;
+	} else if (a.Warjack.toLowercase() > b.Warjack.toLowerCase()) {
+		return 1;
+	} else if (a.BondNumber < b.BondNumber) {
+		return -1;
+	} else if (a.BondNumber > b.BondNumber) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
+var _PotentialBondSort = function(a, b) {
+	if (a.Warcaster.toLowerCase() < b.Warcaster.toLowerCase()) {
+		return -1;
+	} else if (a.Warcaster.toLowerCase() > b.Warcaster.toLowerCase()) {
+		return 1;
+	} else if (a.Warjack.toLowercase() < b.Warjack.toLowerCase()) {
+		return -1;
+	} else if (a.Warjack.toLowercase() > b.Warjack.toLowerCase()) {
+		return 1;
+	} else if (a.Bonus < b.Bonus) {
+		return -1;
+	} else if (a.Bonus > b.Bonus) {
+		return 1;
+	} else {
+		return 0;
+	}
+}
+
 
 var appActions = Reflux.createActions([
 	"updateInjuries",
@@ -84,6 +120,16 @@ window.seasonStore = Reflux.createStore({
 			return;
 		}
 		season.Players.sort(_playerSort);
+		season.Players.forEach(function(player) {
+			if (player.Bonds != null) {
+				if (player.Bonds.ActiveBonds != null) {
+					player.Bonds.ActiveBonds.sort(_ActiveBondSort);
+				}
+				if (player.Bonds.PotentialBonds != null) {
+					player.Bonds.PotentialBonds.sort(_PotentialBondSort);
+				}
+			}
+		});
 		players = {};
 		for (i = 0; i < season.Players.length; i++) {
 			players[season.Players[i].Name] = season.Players[i];

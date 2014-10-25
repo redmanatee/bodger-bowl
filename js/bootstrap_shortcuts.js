@@ -1,7 +1,7 @@
 /** @jsx React.DOM */
 
 var Accordion = ReactBootstrap.Accordion;
-var Badge = ReactBootstrap.Bage;
+var Button = ReactBootstrap.Button;
 var Col = ReactBootstrap.Col;
 var Grid = ReactBootstrap.Grid;
 var Row = ReactBootstrap.Row;

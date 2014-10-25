@@ -12,7 +12,7 @@ var PlayerSelector = React.createClass({
 		}.bind(this));
 		return (
 			<select onChange={this.props.onChangeFunction} 
-					defaultValue={this.props.selectedPlayer != null? this.props.selectedPlayer.Name : ""}>
+					defaultValue={this.props.selectedPlayer !== null? this.props.selectedPlayer.Name : ""}>
 						{rows}
 			</select>
 		);
@@ -29,7 +29,7 @@ var PlayerInjuries = React.createClass({
 	},
 	render: function() {
 		var rows = []
-		if (this.props.player != null && this.props.player.Injuries != null && this.props.player.Injuries.length > 0) {
+		if (this.props.player !== null && this.props.player.Injuries !== null && this.props.player.Injuries.length > 0) {
 			this.props.player.Injuries.forEach(function(injury) {
 				rows.push(
 					<tr key={injury}><td>{injury}</td></tr>
@@ -63,9 +63,65 @@ var PlayerInjuries = React.createClass({
 	}
 });
 
+var PlayerBondDetail = React.createClass({
+	render: function() {
+		deleteButton = [];
+		if (this.props.admin) {
+			deleteButton = (
+				<td><Button bsStyle="danger" bsSize="xsmall">Delete</Button></td>
+			);
+		}
+		return (
+			<tr>
+				<td>{this.props.bond.Warcaster}</td>
+				<td>{this.props.bond.Warjack}</td>
+				<td>{this.props.bond.BondName}</td>
+				<td>{this.props.bond.BondNumber}</td>
+				{deleteButton}
+			</tr>
+		);
+	}
+});
+
 var PlayerBonds = React.createClass({
 	render: function() {
-		return (<div></div>);
+		var bonds = [];
+		if (this.props.player !== null && this.props.player.Bonds !== null && this.props.player.Bonds.ActiveBonds !== null) {
+			for (i = 0; i < this.props.player.Bonds.ActiveBonds.length; i++) {
+				bonds.push(
+					<PlayerBondDetail bond={this.props.player.Bonds.ActiveBonds[i]} key={i} admin={this.props.admin} />
+				);
+			}
+		}
+		if (bonds.length === 0) {
+			bonds.push(
+				<tr className="text-left"><td colSpan={this.props.admin? 5 : 4}>--None--</td></tr>
+			);
+		}
+		adminHeader = [];
+		if (this.props.admin) {
+			adminHeader = (
+				<th>Delete?</th>
+			);
+		}
+		return (
+			<Grid>
+				<Row>
+					<Col xs={this.props.admin? 6 : 12}>
+						<Table striped bordered hover >
+							<thead>
+								<th>Warcaster/Warlock</th>
+								<th>Warjack/Warbeast</th>
+								<th>Bond Name</th>
+								<th>Bond Number</th>
+								{adminHeader}
+							</thead>
+							<tbody>{bonds}</tbody>
+						</Table>
+					</Col>
+				</Row>
+			</Grid>
+		);
 	}
 });
 
@@ -73,7 +129,7 @@ var PlayerEditorPanel = React.createClass({
 	mixins: [Reflux.ListenerMixin],
 	onStatusChange: function(data) {
 		var selectedPlayer = this.state.selectedPlayer;
-		if (selectedPlayer == null) {
+		if (selectedPlayer === null) {
 			selectedPlayer = data.Players[0];
 		}
 		this.setState({
@@ -91,7 +147,7 @@ var PlayerEditorPanel = React.createClass({
 		var selectedPlayer = null;
 		var selectedPlayerName = event.target.value;
 		for (var i = 0; i < this.state.season.Players.length; i++) {
-			if (this.state.season.Players[i].Name == selectedPlayerName) {
+			if (this.state.season.Players[i].Name === selectedPlayerName) {
 				selectedPlayer = this.state.season.Players[i];
 				break;
 			}
@@ -105,7 +161,7 @@ var PlayerEditorPanel = React.createClass({
 	},
 	render: function() {
 		var players = [];
-		if (this.state.season != null) {
+		if (this.state.season !== null) {
 			players = this.state.season.Players;
 		}
 		var admin = this.props.admin;
