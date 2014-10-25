@@ -73,7 +73,7 @@ var PlayerBondDetail = React.createClass({
 		}
 		return (
 			<tr>
-				<td>{this.props.bond.Warcaster}</td>
+				<td>{this.props.bond.Warcaster.Name}</td>
 				<td>{this.props.bond.Warjack}</td>
 				<td>{this.props.bond.BondName}</td>
 				<td>{this.props.bond.BondNumber}</td>
@@ -95,7 +95,7 @@ var PlayerBonds = React.createClass({
 		}
 		if (bonds.length === 0) {
 			bonds.push(
-				<tr className="text-left"><td colSpan={this.props.admin? 5 : 4}>--None--</td></tr>
+				<tr className="text-left" key={0}><td colSpan={this.props.admin? 5 : 4}>--None--</td></tr>
 			);
 		}
 		adminHeader = [];
@@ -104,6 +104,7 @@ var PlayerBonds = React.createClass({
 				<th>Delete?</th>
 			);
 		}
+		//TODO: adding or deleting bonds
 		return (
 			<Grid>
 				<Row>
@@ -114,6 +115,67 @@ var PlayerBonds = React.createClass({
 								<th>Warjack/Warbeast</th>
 								<th>Bond Name</th>
 								<th>Bond Number</th>
+								{adminHeader}
+							</thead>
+							<tbody>{bonds}</tbody>
+						</Table>
+					</Col>
+				</Row>
+			</Grid>
+		);
+	}
+});
+
+var PlayerPotentialBondDetail = React.createClass({
+	render: function() {
+		deleteButton = [];
+		if (this.props.admin) {
+			deleteButton = (
+				<td><Button bsStyle="danger" bsSize="xsmall">Delete</Button></td>
+			);
+		}
+		return (
+			<tr>
+				<td>{this.props.bond.Warcaster.Name}</td>
+				<td>{this.props.bond.Warjack}</td>
+				<td>{this.props.bond.Bonus}</td>
+				{deleteButton}
+			</tr>
+		);
+	}
+});
+
+var PlayerPotentialBonds = React.createClass({
+	render: function() {
+		var bonds = [];
+		if (this.props.player !== null && this.props.player.Bonds !== null && this.props.player.Bonds.PotentialBonds !== null) {
+			for (i = 0; i < this.props.player.Bonds.PotentialBonds.length; i++) {
+				bonds.push(
+					<PlayerPotentialBondDetail bond={this.props.player.Bonds.PotentialBonds[i]} key={i} admin={this.props.admin} />
+				);
+			}
+		}
+		if (bonds.length === 0) {
+			bonds.push(
+				<tr className="text-left" key={0}><td colSpan={this.props.admin? 4 : 3}>--None--</td></tr>
+			);
+		}
+		adminHeader = [];
+		if (this.props.admin) {
+			adminHeader = (
+				<th>Delete?</th>
+			);
+		}
+		//TODO: adding or deleting bonds
+		return (
+			<Grid>
+				<Row>
+					<Col xs={this.props.admin? 6 : 12}>
+						<Table striped bordered hover >
+							<thead>
+								<th>Warcaster/Warlock</th>
+								<th>Warjack/Warbeast</th>
+								<th>Bonus</th>
 								{adminHeader}
 							</thead>
 							<tbody>{bonds}</tbody>
@@ -179,7 +241,7 @@ var PlayerEditorPanel = React.createClass({
 						<PlayerBonds player={this.state.selectedPlayer} admin={admin} />
 					</TabPane>
 					<TabPane key={3} tab="Potential Bonds">
-						<p>Potential Bonds</p>
+						<PlayerPotentialBonds player={this.state.selectedPlayer} admin={admin} />
 					</TabPane>
 				</TabbedArea>
 			</div>
