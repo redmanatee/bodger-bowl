@@ -33,9 +33,9 @@ var _PotentialBondSort = function(a, b) {
 		return -1;
 	} else if (a.Warcaster.toLowerCase() > b.Warcaster.toLowerCase()) {
 		return 1;
-	} else if (a.Warjack.toLowercase() < b.Warjack.toLowerCase()) {
+	} else if (a.Warjack.toLowerCase() < b.Warjack.toLowerCase()) {
 		return -1;
-	} else if (a.Warjack.toLowercase() > b.Warjack.toLowerCase()) {
+	} else if (a.Warjack.toLowerCase() > b.Warjack.toLowerCase()) {
 		return 1;
 	} else if (a.Bonus < b.Bonus) {
 		return -1;
@@ -49,6 +49,7 @@ var _PotentialBondSort = function(a, b) {
 
 var appActions = Reflux.createActions([
 	"updateInjuries",
+	"addActiveBond",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -56,6 +57,32 @@ window.seasonStore = Reflux.createStore({
 		this.season = null;
 		this.refreshSeasonFromServer();
 		this.listenTo(appActions.updateInjuries, this.updateInjuries);
+		this.listenTo(appActions.addActiveBond, this.addActiveBond);
+	},
+	addActiveBond: function(warcasterName, warjackName, bondText, bondNumber, playerName) {
+		console.log(warcasterName);
+		console.log(warjackName);
+		console.log(bondText);
+		$.ajax({url:"/admin/api/players/bonds/add/",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				Player: playerName,
+				Warcaster: warcasterName,
+				Warjack: warjackName,
+				BondText: bondText,
+				BondNumber: bondNumber,
+			},
+			success: function(data) {
+				console.log("Bond addition finished");
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Bond Addition Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});
 	},
 	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {

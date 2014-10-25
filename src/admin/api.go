@@ -75,6 +75,35 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 	return weekData, ""
 }
 
+func PlayerBondAddHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
+	playerName := r.FormValue("Player")
+	warcasterName := r.FormValue("Warcaster")
+	warjackName := r.FormValue("Warjack")
+	bondText := r.FormValue("BondText")
+	bondNumber, err := strconv.Atoi(r.FormValue("BondNumber"))
+	if err != nil {
+		panic(err)
+	}
+	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
+	player := model.LoadPlayer(c, season, playerName)
+	playerJson := player.CreatePlayerJson()
+	if playerJson.Bonds.ActiveBonds == nil {
+		playerJson.Bonds.ActiveBonds = make([]model.ActiveBond, 0)
+	}
+	newBond := model.ActiveBond {
+		Warcaster: warcasterName,
+		Warjack: warjackName,
+		BondNumber: bondNumber,
+		BondName: bondText,
+	}
+	playerJson.Bonds.ActiveBonds = append(playerJson.Bonds.ActiveBonds, newBond)
+	updatedPlayer := playerJson.CreatePlayer()
+	model.SavePlayer(c, season, &updatedPlayer)
+}
+
 // Handles the update calls of the players
 func PlayerInjuryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
