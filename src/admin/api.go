@@ -79,11 +79,12 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 func PlayerInjuryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("Called player injury update handler")
-	seasonId := r.FormValue("SeasonId")
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
 	playerName := r.FormValue("Player")
 	injuryString := r.FormValue("Injuries")
-	c.Infof("%v %v %v", seasonId, playerName, injuryString)
-	season := api.LoadSeasonById(c, seasonId)
+	c.Infof("'%v' '%v' '%v' '%v'", seasonName, seasonYear, playerName, injuryString)
+	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
 	player := model.LoadPlayer(c, season, playerName)
 	if strings.TrimSpace(injuryString) == "" {
 		player.Injuries = make([]string, 0)

@@ -4,7 +4,7 @@ var PlayerDivisionRow = React.createClass({
 	render: function() {
 		return (
 			<tr>
-				<PlayerCell player={this.props.player} admin={this.props.admin} />
+				<td><PlayerCell player={this.props.player} admin={this.props.admin} /></td>
 				<td>{this.props.player.Wins}</td>
 				<td>{this.props.player.Losses}</td>
 			</tr>
@@ -19,6 +19,7 @@ var DivisionTable = React.createClass({
 		this.props.division.Players.forEach(function(player) {
 			rows.push(<PlayerDivisionRow player={player} 
 										   rank={-1}
+										   key={player.Name}
 										   admin={admin} />);
 		});
 		return (
@@ -44,7 +45,7 @@ var ConferenceTable = React.createClass({
 		var admin = this.props.admin;
 		this.props.conference.Divisions.forEach(function(division) {
 			rows.push(
-				<Col xs={12} md={4}><DivisionTable division={division} admin={admin}/></Col>
+				<Col xs={12} md={4} key={division.Name}><DivisionTable division={division} admin={admin}/></Col>
 			);
 		});
 		return (
@@ -81,7 +82,7 @@ var ConferenceContainer = React.createClass({
 		var admin = "true";
 		this.state.season.Conferences.forEach(function(conference) {
 			conferences.push(
-				<ConferenceTable conference={conference} admin={admin} />
+				<ConferenceTable conference={conference} admin={admin} key={conference.Name} />
 			);
 		});
 		return (

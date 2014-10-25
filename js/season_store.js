@@ -1,9 +1,27 @@
 
 var _weekly_scenarios = [["1", "2"], ["7", "8"], ["3", "4"], ["11", "12"], ["9", "10"], ["5", "6"], ["11", "12"], ["3", "4"]];
 
+var _playerSort = function(a, b) {
+	if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
+		return -1;
+	} else if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
+		return 1;
+	} else {
+		return 0;
+	}
+};
+
+var appActions = Reflux.createActions([
+	"updateInjuries",
+]);
+
 window.seasonStore = Reflux.createStore({
 	init: function() {
 		this.season = null;
+		this.refreshSeasonFromServer();
+		this.listenTo(appActions.updateInjuries, this.updateInjuries);
+	},
+	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {
 			this.loadActiveSeasonFromServer();
 		} else {
@@ -11,6 +29,26 @@ window.seasonStore = Reflux.createStore({
 			this.seasonId = path[path.length - 1];
 			this.loadSeasonFromServer();
 		}
+	},
+	updateInjuries: function(playerName, newInjuries) {
+		console.log("update injuries called");
+		$.ajax({url:"/admin/api/players/injuries/",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				Player: playerName,
+				Injuries: newInjuries,
+			},
+			success: function(data) {
+				console.log("Injury update finished");
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Injury update failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});
 	},
 	loadActiveSeasonFromServer: function() {
 		$.ajax({url:"/api/seasons/latest/" + this.seasonId,
@@ -45,6 +83,7 @@ window.seasonStore = Reflux.createStore({
 			this.loadActiveSeasonFromServer();
 			return;
 		}
+		season.Players.sort(_playerSort);
 		players = {};
 		for (i = 0; i < season.Players.length; i++) {
 			players[season.Players[i].Name] = season.Players[i];

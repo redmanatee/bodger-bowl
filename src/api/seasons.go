@@ -23,8 +23,12 @@ func getAllSeasons(w http.ResponseWriter, r *http.Request) {
 
 func LoadSeasonById(c appengine.Context, seasonId string) *model.Season {
 	seasonArr := strings.Split(seasonId, ";")
-	season := model.LoadSeason(c, seasonArr[0], seasonArr[1])
-	return season
+	return LoadSeasonByNameYear(c, seasonArr[0], seasonArr[1])
+}
+
+func LoadSeasonByNameYear(c appengine.Context, seasonName string, seasonYear string) *model.Season {
+	season := model.LoadSeason(c, seasonName, seasonYear)
+	return season	
 }
 
 func getOneSeason(w http.ResponseWriter, r *http.Request, seasonInfo string) {

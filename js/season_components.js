@@ -19,7 +19,10 @@ var PlayerCell = React.createClass({
 			playerLink = (<a href={hrefTarget} target="_blank">{this.props.player.Name}</a>);
 		}
 		return (
-			<td>{img}{playerLink}</td>
+			<div>
+				{img}
+				{playerLink}
+			</div>
 		);
 	}
 });
@@ -41,7 +44,7 @@ var GameRow = React.createClass({
 		});
 	},
 	render: function() {
-		var winnerRow = (<PlayerCell player={this.props.winner} admin={this.props.admin} />);
+		var winnerRow = (<td><PlayerCell player={this.props.winner} admin={this.props.admin} /></td>);
 		var player1Selected = this.props.winner? this.props.player1.Name === this.props.winner.Name : false;
 		var player2Selected = this.props.winner? this.props.player2.Name === this.props.winner.Name : false;
 		if (this.props.admin && this.props.admin !== "false") {
@@ -55,7 +58,7 @@ var GameRow = React.createClass({
 			winnerRow = (
 				<td>
 					<select name="" onChange={this.handleChange} defaultValue={defaultValue}>
-						<option value={baseString} selected={!player1Selected && player2Selected}>-</option>
+						<option value={baseString}>-</option>
 						<option value={baseString + this.props.player1.Name}>{this.props.player1.Name}</option>
 						<option value={baseString + this.props.player2.Name}>{this.props.player2.Name}</option>
 					</select>
@@ -64,8 +67,8 @@ var GameRow = React.createClass({
 		}
 		return (
 			<tr>
-				<PlayerCell player={this.props.player1} admin={this.props.admin} />
-				<PlayerCell player={this.props.player2} admin={this.props.admin} />
+				<td><PlayerCell player={this.props.player1} admin={this.props.admin} /></td>
+				<td><PlayerCell player={this.props.player2} admin={this.props.admin} /></td>
 				{winnerRow}
 			</tr>
 		);
@@ -77,6 +80,7 @@ var WeekGroup = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		var number = this.props.week.Number;
+		var count = 0;
 		this.props.week.Games.forEach(function(game) {
 			rows.push(
 					<GameRow player1={game.Players[0]} 
@@ -84,8 +88,10 @@ var WeekGroup = React.createClass({
 							   hasWinner={game.Winner !== null}
 							   winner={game.Winner}
 							   week={number}
+							   key={count}
 							   admin={admin} />
 			);
+			count++;
 		});
 		return (
 			<Table striped bordered hover>
