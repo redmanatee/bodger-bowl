@@ -155,11 +155,17 @@ var PlayerBonds = React.createClass({
 });
 
 var PlayerPotentialBondDetail = React.createClass({
+	deleteBond: function(event) {
+		appActions.deletePotentialBond(this.props.bond.Warcaster,
+									   this.props.bond.Warjack,
+									   this.props.bond.Bonus,
+									   this.props.playerName);
+	},
 	render: function() {
 		deleteButton = [];
 		if (this.props.admin) {
 			deleteButton = (
-				<td><Button bsStyle="danger" bsSize="xsmall">Delete</Button></td>
+				<td><Button bsStyle="danger" bsSize="xsmall" onClick={this.deleteBond}>Delete</Button></td>
 			);
 		}
 		return (
@@ -188,7 +194,7 @@ var PlayerPotentialBonds = React.createClass({
 		if (this.props.player !== null && this.props.player.Bonds !== null && this.props.player.Bonds.PotentialBonds !== null) {
 			for (i = 0; i < this.props.player.Bonds.PotentialBonds.length; i++) {
 				bonds.push(
-					<PlayerPotentialBondDetail bond={this.props.player.Bonds.PotentialBonds[i]} key={i} admin={this.props.admin} />
+					<PlayerPotentialBondDetail bond={this.props.player.Bonds.PotentialBonds[i]} key={i} admin={this.props.admin} playerName={this.props.player.Name}/>
 				);
 			}
 		}
