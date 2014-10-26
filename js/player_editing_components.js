@@ -69,7 +69,7 @@ var PlayerBondDetail = React.createClass({
 									this.props.playerName);
 	},
 	render: function() {
-		deleteButton = [];
+		var deleteButton = [];
 		if (this.props.admin) {
 			deleteButton = (
 				<td><Button bsStyle="danger" bsSize="xsmall" onClick={this.deleteBond}>Delete</Button></td>
@@ -161,18 +161,28 @@ var PlayerPotentialBondDetail = React.createClass({
 									   this.props.bond.Bonus,
 									   this.props.playerName);
 	},
+	incrementBond: function(event) {
+		appActions.incrementPotentialBond(this.props.bond.Warcaster,
+									   this.props.bond.Warjack,
+									   this.props.bond.Bonus,
+									   this.props.playerName);
+	},
 	render: function() {
-		deleteButton = [];
+		var deleteButton = [];
+		var incrementButton = [];
 		if (this.props.admin) {
 			deleteButton = (
 				<td><Button bsStyle="danger" bsSize="xsmall" onClick={this.deleteBond}>Delete</Button></td>
+			);
+			incrementButton = (
+				<Button bsSize="xsmall" onClick={this.incrementBond}>+</Button>
 			);
 		}
 		return (
 			<tr>
 				<td>{this.props.bond.Warcaster}</td>
 				<td>{this.props.bond.Warjack}</td>
-				<td>{this.props.bond.Bonus}</td>
+				<td>{this.props.bond.Bonus}{incrementButton}</td>
 				{deleteButton}
 			</tr>
 		);

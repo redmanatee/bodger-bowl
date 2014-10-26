@@ -134,9 +134,8 @@ func PlayerPotentialBondAddHandler(w http.ResponseWriter, r *http.Request) {
 	model.SavePlayer(c, season, &updatedPlayer)
 }
 
-func PlayerPotentialBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
+func PlayerPotentialBondIncrementHandler(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
-	c.Infof("Called delete potential bonds")
 	seasonName := r.FormValue("SeasonName")
 	seasonYear := r.FormValue("SeasonYear")
 	playerName := r.FormValue("Player")
@@ -146,7 +145,6 @@ func PlayerPotentialBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	c.Infof("'%v' '%v' '%v' '%v' '%v' '%d'", seasonName, seasonYear, playerName, warcasterName, warjackName, bonus)
 	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
 	player := model.LoadPlayer(c, season, playerName)
 	playerJson := player.CreatePlayerJson()
@@ -161,7 +159,36 @@ func PlayerPotentialBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
 	if index >= len(playerJson.Bonds.PotentialBonds) {
 		http.Error(w, "Could not find matching potential bond", 400)
 	}
-	c.Infof("'%d'", index)
+	playerJson.Bonds.PotentialBonds[index].Bonus++
+	updatedPlayer := playerJson.CreatePlayer()
+	model.SavePlayer(c, season, &updatedPlayer)
+}
+
+func PlayerPotentialBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
+	playerName := r.FormValue("Player")
+	warcasterName := r.FormValue("Warcaster")
+	warjackName := r.FormValue("Warjack")
+	bonus, err := strconv.Atoi(r.FormValue("Bonus"))
+	if err != nil {
+		panic(err)
+	}
+	season := api.LoadSeasonByNameYear(c, seasonName, seasonYear)
+	player := model.LoadPlayer(c, season, playerName)
+	playerJson := player.CreatePlayerJson()
+	index := 0
+	for ; index < len(playerJson.Bonds.PotentialBonds); index++ {
+		bond := playerJson.Bonds.PotentialBonds[index]
+		if bond.Warcaster == warcasterName && bond.Warjack == warjackName && bond.Bonus == bonus {
+			//We have found the match
+			break
+		}
+	}
+	if index >= len(playerJson.Bonds.PotentialBonds) {
+		http.Error(w, "Could not find matching potential bond", 400)
+	}
 	playerJson.Bonds.PotentialBonds = append(playerJson.Bonds.PotentialBonds[:index], playerJson.Bonds.PotentialBonds[index+1:]...)
 	updatedPlayer := playerJson.CreatePlayer()
 	model.SavePlayer(c, season, &updatedPlayer)

@@ -65,9 +65,29 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(appActions.deleteActiveBond, this.deleteActiveBond);
 		this.listenTo(appActions.addPotentialBond, this.addPotentialBond);
 		this.listenTo(appActions.deletePotentialBond, this.deletePotentialBond);
+		this.listenTo(appActions.incrementPotentialBond, this.incrementPotentialBond);
+	},
+	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
+		$.ajax({url:"/admin/api/players/bonds/potential/increment/",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				Player: playerName,
+				Warcaster: warcaster,
+				Warjack: warjack,
+				Bonus: bonus,
+			},
+			success: function(data) {
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Bond Deletion Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});
 	},
 	deletePotentialBond: function(warcaster, warjack, bonus, playerName) {
-		console.log("Called delete potential bonds");
 		$.ajax({url:"/admin/api/players/bonds/potential/delete/",
 			type: 'POST',
 			data: {
