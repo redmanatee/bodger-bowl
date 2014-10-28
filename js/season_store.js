@@ -1,6 +1,8 @@
 
 var _weekly_scenarios = [["1", "2"], ["7", "8"], ["3", "4"], ["11", "12"], ["9", "10"], ["5", "6"], ["11", "12"], ["3", "4"]];
 
+var _weekly_dates = ["October 22, 2014", "October 29, 2014", "November 5, 2014", "November 12, 2014", "November 19, 2014", "December 3, 2014", "December 10, 2014", "December 17, 2014"];
+
 var _playerSort = function(a, b) {
 	if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
 		return -1;
@@ -265,6 +267,7 @@ window.seasonStore = Reflux.createStore({
 		for (i = 0; i < season.Weeks.length; i++) {
 			var week = season.Weeks[i];
 			week.Scenarios = _weekly_scenarios[i];
+			week.PlayDate = _weekly_dates[i];
 			for (j = 0; j < week.Games.length; j++) {
 				var game = week.Games[j];
 				game.Players = $.map(game.PlayerIds, lookupPlayer);

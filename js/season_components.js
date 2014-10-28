@@ -129,17 +129,21 @@ var SeasonScheduleTable = React.createClass({
 		var admin = this.props.admin;
 		this.state.season.Weeks.forEach(function(week) {
 			rows.push(
-					<Panel header={"Week " + week.Number + "-" +  "Scenario Numbers: (" + week.Scenarios[0] + ", " + week.Scenarios[1] + ")"} key={week.Number}>
+					<Panel header={"Week " + week.Number + " (" + week.PlayDate + ") -" +  "Scenario Numbers: [" + week.Scenarios[0] + ", " + week.Scenarios[1] + "]"} key={week.Number}>
 						<WeekGroup week={week} admin={admin} key={week.Number}/>
 					</Panel>
 			);
 		});
 		return (
 			<div className="text-center">
-				<div>
-					<PageHeader>{this.state.season.Name + " (" + this.state.season.Year + ")"}</PageHeader>
-					<Accordion>{rows}</Accordion>
-				</div>
+				<Grid>
+					<Row>
+						<PageHeader>{this.state.season.Name + " (" + this.state.season.Year + ")"}</PageHeader>
+					</Row>
+					<Row>
+						<Accordion>{rows}</Accordion>
+					</Row>
+				</Grid>
 			</div>
 		);
 	}
