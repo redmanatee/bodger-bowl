@@ -79,7 +79,7 @@ var ConferenceContainer = React.createClass({
 			return (<div></div>);
 		}
 		var conferences = [];
-		var admin = "true";
+		var admin = this.props.admin;
 		this.state.season.Conferences.forEach(function(conference) {
 			conferences.push(
 				<ConferenceTable conference={conference} admin={admin} key={conference.Name} />
