@@ -1,10 +1,10 @@
 package admin
 
 import (
-    "html/template"
-    "net/http"
-    "strings"
-    "log"
+	"html/template"
+	"net/http"
+	"strings"
+	"log"
 )
 
 func init() {
@@ -44,13 +44,5 @@ func AddSeasonHandler(w http.ResponseWriter, r *http.Request) {
 	err := tmpl.Execute(w, nil)
 	if err != nil {
 		panic(err)
-	}	
-}
-
-func PlayerHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/admin/admin_player.html"))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		panic(err)
-	}	
+	}
 }
