@@ -56,6 +56,7 @@ var appActions = Reflux.createActions([
 	"addPotentialBond",
 	"deletePotentialBond",
 	"incrementPotentialBond",
+	"viewPlayer",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -86,7 +87,7 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Bond Deletion Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	deletePotentialBond: function(warcaster, warjack, bonus, playerName) {
