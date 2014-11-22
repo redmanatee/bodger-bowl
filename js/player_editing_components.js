@@ -261,7 +261,7 @@ var PlayerEditorPanel = React.createClass({
 		}
 		this.setState({
 			season: data,
-			selectedPlayer: selectedPlayer,
+			selectedPlayer: this.getSelectedPlayer(selectedPlayer.Name, data)
 		});
 	},
 	getInitialState: function() {
@@ -277,15 +277,15 @@ var PlayerEditorPanel = React.createClass({
 		this.listenTo(window.seasonStore, this.onStatusChange);
 		this.listenTo(window.viewPlayerStore, this.viewPlayer);
 	},
-	viewPlayer: function(playerName) {
-		var player = null;
+	getSelectedPlayer: function(playerName, season) {
 		for (var i = 0; i < this.state.season.Players.length; i++) {
-			if (this.state.season.Players[i].Name === playerName) {
-				player = this.state.season.Players[i];
-				break;
+			if (season.Players[i].Name === playerName) {
+				return season.Players[i];
 			}
 		}
-		this.setState({ selectedPlayer: player });
+	},
+	viewPlayer: function(playerName) {
+		this.setState({ selectedPlayer: this.getSelectedPlayer(playerName, this.state.season) });
 	},
 	render: function() {
 		var players = [];
