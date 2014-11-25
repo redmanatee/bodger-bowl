@@ -3,49 +3,33 @@ var _weekly_scenarios = [["1", "2"], ["7", "8"], ["3", "4"], ["11", "12"], ["9",
 
 var _weekly_dates = ["October 22, 2014", "October 29, 2014", "November 5, 2014", "November 12, 2014", "November 19, 2014", "December 3, 2014", "December 10, 2014", "December 17, 2014"];
 
-var _playerSort = function(a, b) {
-	if (a.Name.toLowerCase() < b.Name.toLowerCase()) {
-		return -1;
-	} else if (a.Name.toLowerCase() > b.Name.toLowerCase()) {
-		return 1;
-	} else {
-		return 0;
-	}
-};
-var _ActiveBondSort = function(a, b) {
-	if (a.Warcaster.toLowerCase() < b.Warcaster.toLowerCase()) {
-		return -1;
-	} else if (a.Warcaster.toLowerCase() > b.Warcaster.toLowerCase()) {
-		return 1;
-	} else if (a.Warjack.toLowerCase() < b.Warjack.toLowerCase()) {
-		return -1;
-	} else if (a.Warjack.toLowerCase() > b.Warjack.toLowerCase()) {
-		return 1;
-	} else if (a.BondNumber < b.BondNumber) {
-		return -1;
-	} else if (a.BondNumber > b.BondNumber) {
-		return 1;
-	} else {
-		return 0;
+
+function compareBy(func) {
+	return function(a, b) {
+		var a1 = func(a), b1 = func(b)
+		if (a1 < b1)
+			return -1;
+		if (a1 > b1)
+			return  1;
+		return  0;
 	}
 }
 
+
+var _playerSort = compareBy(function(p) { return p.Name.toLowerCase(); });
+
+
+var _ActiveBondSort = function(a, b) {
+	return compareBy(function(bond) { return bond.Warcaster.toLowerCase() })(a, b) ||
+		compareBy(function(bond) { return bond.Warjack.toLowerCase() })(a, b) ||
+		a.BondNumber - b.BondNumber;
+}
+
+
 var _PotentialBondSort = function(a, b) {
-	if (a.Warcaster.toLowerCase() < b.Warcaster.toLowerCase()) {
-		return -1;
-	} else if (a.Warcaster.toLowerCase() > b.Warcaster.toLowerCase()) {
-		return 1;
-	} else if (a.Warjack.toLowerCase() < b.Warjack.toLowerCase()) {
-		return -1;
-	} else if (a.Warjack.toLowerCase() > b.Warjack.toLowerCase()) {
-		return 1;
-	} else if (a.Bonus < b.Bonus) {
-		return -1;
-	} else if (a.Bonus > b.Bonus) {
-		return 1;
-	} else {
-		return 0;
-	}
+	return compareBy(function(potentialBond) { return potentialBond.Warcaster.toLowerCase() })(a, b) ||
+		compareBy(function(potentialBond) { return potentialBond.Warjack.toLowerCase() })(a, b) ||
+		a.Bonus - b.Bonus;
 }
 
 
