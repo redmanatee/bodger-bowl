@@ -6,14 +6,14 @@ var PlayerSelector = React.createClass({
 		this.props.players.forEach(function(player) {
 			rows.push(
 				<option value={player.Name} key={player.Name}>
-					<PlayerCell player={player} table={false} />
+					{player.Name}
 				</option>
 			);
 		}.bind(this));
 		return (
-			<select onChange={this.props.onChangeFunction} 
-					defaultValue={this.props.selectedPlayer !== null? this.props.selectedPlayer.Name : ""}>
-						{rows}
+			<select onChange={this.props.onChangeFunction} value={this.props.selectedPlayer !== null? this.props.selectedPlayer.Name : ""}>
+				<option></option>
+				{rows}
 			</select>
 		);
 	}
@@ -127,7 +127,7 @@ var PlayerBonds = React.createClass({
 					<td><input type="number" ref="bondNumberInput" placeholder="Number" /></td>
 					<td><Button bsStyle="primary" onClick={this.submitBond}>Submit</Button></td>
 				</tr>
-			);			
+			);
 		}
 		//TODO: adding or deleting bonds
 		return (
@@ -271,20 +271,21 @@ var PlayerEditorPanel = React.createClass({
 		};
 	},
 	playerSelectionChange: function(event) {
-		var selectedPlayer = null;
-		var selectedPlayerName = event.target.value;
-		for (var i = 0; i < this.state.season.Players.length; i++) {
-			if (this.state.season.Players[i].Name === selectedPlayerName) {
-				selectedPlayer = this.state.season.Players[i];
-				break;
-			}
-		}
-		this.setState({
-			selectedPlayer: selectedPlayer,
-		});
+		appActions.viewPlayer(event.target.value);
 	},
 	componentDidMount: function() {
 		this.listenTo(window.seasonStore, this.onStatusChange);
+		this.listenTo(window.viewPlayerStore, this.viewPlayer);
+	},
+	viewPlayer: function(playerName) {
+		var player = null;
+		for (var i = 0; i < this.state.season.Players.length; i++) {
+			if (this.state.season.Players[i].Name === playerName) {
+				player = this.state.season.Players[i];
+				break;
+			}
+		}
+		this.setState({ selectedPlayer: player });
 	},
 	render: function() {
 		var players = [];
@@ -294,7 +295,7 @@ var PlayerEditorPanel = React.createClass({
 		var admin = this.props.admin;
 		return (
 			<div>
-				<PlayerSelector players={players} 
+				<PlayerSelector players={players}
 								selectedPlayer={this.state.selectedPlayer}
 								onChangeFunction={this.playerSelectionChange} />
 				<PlayerCell player={this.state.selectedPlayer} />

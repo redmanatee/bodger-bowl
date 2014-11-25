@@ -4,8 +4,8 @@ import (
 	"appengine"
 	"admin"
 	"api"
-    "net/http"
-    "html/template"
+	"net/http"
+	"html/template"
 )
 
 func init() {
@@ -17,8 +17,6 @@ func init() {
 	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
 	http.HandleFunc("/admin/api/weeks/", admin.UpdateWeek)
 	http.HandleFunc("/api/players/", api.GetPlayer)
-	http.HandleFunc("/players/", PlayerRequest)
-	http.HandleFunc("/admin/players/", admin.PlayerHandler)
 	http.HandleFunc("/admin/api/players/injuries/", admin.PlayerInjuryUpdateHandler)
 	http.HandleFunc("/admin/api/players/bonds/add/", admin.PlayerBondAddHandler)
 	http.HandleFunc("/admin/api/players/bonds/delete/", admin.PlayerBondDeleteHandler)
@@ -37,13 +35,3 @@ func HomeRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
-func PlayerRequest(w http.ResponseWriter, r *http.Request) {
-	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/player_page.html"))
-	err := tmpl.Execute(w, nil)
-	if err != nil {
-		panic(err)
-	}
-
-}
-
