@@ -12,7 +12,7 @@ var PlayerSelector = React.createClass({
 		}.bind(this));
 		return (
 			<select onChange={this.props.onChangeFunction} value={this.props.selectedPlayer !== null? this.props.selectedPlayer.Name : ""}>
-				<option></option>
+				<option disabled value="">Select a Player</option>
 				{rows}
 			</select>
 		);
@@ -288,29 +288,39 @@ var PlayerEditorPanel = React.createClass({
 		this.setState({ selectedPlayer: player });
 	},
 	render: function() {
+		var admin = this.props.admin;
 		var players = [];
+		var tabbedArea = <p>No player selected.</p>;
 		if (this.state.season !== null) {
 			players = this.state.season.Players;
 		}
-		var admin = this.props.admin;
+		if (this.state.selectedPlayer) {
+			tabbedArea =
+				<div>
+					<PlayerCell player={this.state.selectedPlayer} noLink={true} />
+					<TabbedArea defaultActiveKey={1}>
+						<TabPane key={1} tab="Injuries">
+							<PlayerInjuries player={this.state.selectedPlayer} admin={admin} />
+						</TabPane>
+						<TabPane key={2} tab="Bonds">
+							<PlayerBonds player={this.state.selectedPlayer} admin={admin} />
+						</TabPane>
+						<TabPane key={3} tab="Potential Bonds">
+							<PlayerPotentialBonds player={this.state.selectedPlayer} admin={admin} />
+						</TabPane>
+					</TabbedArea>
+				</div>;
+		}
+
 		return (
-			<div>
-				<PlayerSelector players={players}
-								selectedPlayer={this.state.selectedPlayer}
-								onChangeFunction={this.playerSelectionChange} />
-				<PlayerCell player={this.state.selectedPlayer} />
-				<TabbedArea defaultActiveKey={1}>
-					<TabPane key={1} tab="Injuries">
-						<PlayerInjuries player={this.state.selectedPlayer} admin={admin} />
-					</TabPane>
-					<TabPane key={2} tab="Bonds">
-						<PlayerBonds player={this.state.selectedPlayer} admin={admin} />
-					</TabPane>
-					<TabPane key={3} tab="Potential Bonds">
-						<PlayerPotentialBonds player={this.state.selectedPlayer} admin={admin} />
-					</TabPane>
-				</TabbedArea>
-			</div>
+			<Grid id="player-info">
+				<Row>
+					<PlayerSelector players={players}
+									selectedPlayer={this.state.selectedPlayer}
+									onChangeFunction={this.playerSelectionChange} />
+					{tabbedArea}
+				</Row>
+			</Grid>
 		);
 	}
 });
