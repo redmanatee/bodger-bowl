@@ -17,6 +17,7 @@ func init() {
 	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
 	http.HandleFunc("/admin/api/weeks/", admin.UpdateWeek)
 	http.HandleFunc("/admin/api/players/setName", admin.SetPlayerName)
+	http.HandleFunc("/admin/api/players/setFaction", admin.SetPlayerFaction)
 	http.HandleFunc("/api/players/", api.GetPlayer)
 	http.HandleFunc("/admin/api/players/injuries/", admin.PlayerInjuryUpdateHandler)
 	http.HandleFunc("/admin/api/players/bonds/add/", admin.PlayerBondAddHandler)

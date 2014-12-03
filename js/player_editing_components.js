@@ -341,7 +341,10 @@ var PlayerEditorPanel = React.createClass({
 		}
 	},
 	updateFaction: function() {
-		alert('Update faction pressed');
+		newFaction = prompt('Enter new faction', this.state.selectedPlayer.Faction);
+		if (newFaction && newFaction !== this.state.selectedPlayer.Faction) {
+			appActions.updatePlayerFaction(this.state.selectedPlayer, newFaction);
+		}
 	},
 	render: function() {
 		var admin = this.props.admin;

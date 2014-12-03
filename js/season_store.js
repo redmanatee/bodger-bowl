@@ -42,6 +42,7 @@ var appActions = Reflux.createActions([
 	"incrementPotentialBond",
 	"viewPlayer",
 	"updatePlayerName",
+	"updatePlayerFaction",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -55,6 +56,7 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(appActions.deletePotentialBond, this.deletePotentialBond);
 		this.listenTo(appActions.incrementPotentialBond, this.incrementPotentialBond);
 		this.listenTo(appActions.updatePlayerName, this.updatePlayerName)
+		this.listenTo(appActions.updatePlayerFaction, this.updatePlayerFaction)
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.ajax({url:"/admin/api/players/bonds/potential/increment/",
@@ -172,6 +174,24 @@ window.seasonStore = Reflux.createStore({
 			}.bind(this),
 			error: function(xhr, status, err) {
 				alert("Player Rename Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});		
+	},
+	updatePlayerFaction: function(player, newFaction) {
+		$.ajax({url:"/admin/api/players/setFaction",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				PlayerId: player.Name,
+				NewFaction: newFaction
+			},
+			success: function(data) {
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Player Faction Update Failed!");
 				this.refreshSeasonFromServer();
   			}.bind(this)
 		});		

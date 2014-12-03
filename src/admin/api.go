@@ -285,6 +285,24 @@ func SetPlayerName(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func SetPlayerFaction(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
+	playerId := r.FormValue("PlayerId")
+	newFaction := r.FormValue("NewFaction")
+	var season *model.Season
+	if seasonName == "" || seasonYear == "" {
+		c.Infof("Lookup season")
+		tmpSeason := api.GetActiveSeasonWithContext(c)
+		season = &tmpSeason
+	} else {
+		season = api.LoadSeasonByNameYear(c, seasonName, seasonYear)
+	}
+	player := model.LoadPlayer(c, season, playerId)
+	player.Faction = newFaction
+	model.SavePlayer(c, season, player)
+}
 
 // Handles update week API calls.
 func UpdateWeek(w http.ResponseWriter, r *http.Request) {
