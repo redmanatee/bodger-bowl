@@ -278,6 +278,7 @@ var PlayerEditorPanel = React.createClass({
 		this.listenTo(window.viewPlayerStore, this.viewPlayer);
 	},
 	getSelectedPlayer: function(playerName, season) {
+		if (!this.state.season) return null;
 		for (var i = 0; i < this.state.season.Players.length; i++) {
 			if (season.Players[i].Name === playerName) {
 				return season.Players[i];
