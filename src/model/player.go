@@ -36,7 +36,7 @@ func SavePlayer(c appengine.Context, s *Season, player *Player) {
 	}
 }
 
-func SavePlayers(c appengine.Context, s *Season, players []Player) {
+func SavePlayers(c appengine.Context, s *Season, players []Player) []*datastore.Key {
 	keys := make([]*datastore.Key, len(players))
 	var name, year string
 	if s != nil {
@@ -50,6 +50,7 @@ func SavePlayers(c appengine.Context, s *Season, players []Player) {
 	if err != nil {
 		panic(err)
 	}
+	return keys
 }
 
 func LoadPlayer(c appengine.Context, s *Season, playerName string) *Player {

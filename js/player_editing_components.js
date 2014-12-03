@@ -337,9 +337,7 @@ var PlayerEditorPanel = React.createClass({
 	updateName: function() {
 		newName = prompt('Enter new name', this.state.selectedPlayer.Name);
 		if (newName && newName !== this.state.selectedPlayer.Name) {
-			alert('Update pressed with ' + newName);
-		} else {
-			alert('Update name cancelled');
+			appActions.updatePlayerName(this.state.selectedPlayer.Name, newName);
 		}
 	},
 	updateFaction: function() {
@@ -354,8 +352,11 @@ var PlayerEditorPanel = React.createClass({
 		}
 		var playerEditing = [];
 		if (admin) {
-			playerEditing.push(<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>);
-			playerEditing.push(<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>);
+			playerEditing = 
+				<div>
+					<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>
+					<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>
+				</div>;
 		}
 		if (this.state.selectedPlayer) {
 			tabbedArea =

@@ -16,7 +16,7 @@ func GetPlayer(w http.ResponseWriter, r *http.Request) {
 	var season *model.Season
 	if seasonId == "" {
 		c.Infof("Lookup season")
-		tmpSeason := getActiveSeasonWithContext(c)
+		tmpSeason := GetActiveSeasonWithContext(c)
 		season = &tmpSeason
 	} else {
 		season = LoadSeasonById(c, seasonId)

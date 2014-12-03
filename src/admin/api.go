@@ -3,6 +3,7 @@ package admin
 import (
 	"api"
 	"appengine"
+	"appengine/datastore"
 	"encoding/json"
 	"model"
 	"net/http"
@@ -241,6 +242,49 @@ func PlayerInjuryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	model.SavePlayer(c, season, player)
 }
+
+func playerIndex(players []*model.Player, name string) int {
+	for p, v := range players {
+        if (v.Name == name) {
+            return p
+        }
+    }
+    return -1
+}
+
+func SetPlayerName(w http.ResponseWriter, r *http.Request) {
+	c := appengine.NewContext(r)
+	seasonName := r.FormValue("SeasonName")
+	seasonYear := r.FormValue("SeasonYear")
+	playerId := r.FormValue("PlayerId")
+	newPlayerName := r.FormValue("NewPlayerName")
+	c.Infof("Replaceing '%v' with '%v' for season '%v' '%v'", playerId, newPlayerName, seasonName, seasonYear)
+	var season *model.Season
+	if seasonName == "" || seasonYear == "" {
+		c.Infof("Lookup season")
+		tmpSeason := api.GetActiveSeasonWithContext(c)
+		season = &tmpSeason
+	} else {
+		season = api.LoadSeasonByNameYear(c, seasonName, seasonYear)
+	}
+	players := season.GetPlayers(c)
+	targetIndex := playerIndex(players, playerId)
+	replacePlayer := players[targetIndex]
+	replacePlayer.Name = newPlayerName
+	season.Schedule = []byte(strings.Replace(string(season.Schedule), playerId, newPlayerName, -1))
+	season.Conferences = []byte(strings.Replace(string(season.Conferences), playerId, newPlayerName, -1))
+	pkey := model.PlayerKey(c, season.Name, season.Year, newPlayerName)
+	season.Players[targetIndex] = pkey
+	err := datastore.RunInTransaction(c, func(c appengine.Context) error {
+		model.SavePlayer(c, season, replacePlayer)
+		err := model.SaveSeason(c, *season)
+		return err
+	}, nil)
+	if err != nil {
+		panic(err)
+	}
+}
+
 
 // Handles update week API calls.
 func UpdateWeek(w http.ResponseWriter, r *http.Request) {

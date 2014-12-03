@@ -41,6 +41,7 @@ var appActions = Reflux.createActions([
 	"deletePotentialBond",
 	"incrementPotentialBond",
 	"viewPlayer",
+	"updatePlayerName",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -53,6 +54,7 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(appActions.addPotentialBond, this.addPotentialBond);
 		this.listenTo(appActions.deletePotentialBond, this.deletePotentialBond);
 		this.listenTo(appActions.incrementPotentialBond, this.incrementPotentialBond);
+		this.listenTo(appActions.updatePlayerName, this.updatePlayerName)
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.ajax({url:"/admin/api/players/bonds/potential/increment/",
@@ -156,6 +158,24 @@ window.seasonStore = Reflux.createStore({
   			}.bind(this)
 		});
 	},
+	updatePlayerName: function(oldPlayerName, newPlayerName) {
+		$.ajax({url:"/admin/api/players/setName",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				PlayerId: oldPlayerName,
+				NewPlayerName: newPlayerName
+			},
+			success: function(data) {
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Player Rename Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});		
+	},
 	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {
 			this.loadActiveSeasonFromServer();
@@ -197,6 +217,7 @@ window.seasonStore = Reflux.createStore({
 		});
 	},
 	loadSeasonFromServer: function() {
+		appActions.viewPlayer(null);
 		$.ajax({url:"/api/seasons/" + this.seasonId,
 				type: 'GET',
 				dataType: 'json',
