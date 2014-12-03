@@ -1,5 +1,52 @@
 /** @jsx React.DOM */
 
+var PlayerSchedule = React.createClass({
+	render: function() {
+		var rows = [];
+		var player = this.props.player
+		if (!player) {
+			return <p>No data found</p>;
+		} else {
+			this.props.season.Weeks.forEach(function(week, weekIndex) {
+				var weekRows = []
+				var weekText = week.Number + " (" + week.PlayDate + ")"
+				var scenarios = week.Scenarios[0] + " or " + week.Scenarios[1]
+				week.Games.forEach(function(game) {
+					if(game.PlayerIds.indexOf(player.Name) != -1) {
+						var opponent = game.Players.filter(function(p) { return p.Name != player.Name })[0];
+						weekRows.push(<tr key={weekIndex}><td>{weekText}</td><td><PlayerCell player={opponent} /></td><td>{scenarios}</td><td>{game.WinnerId}</td></tr>);
+					}
+				});
+				if(weekRows.length == 0) {
+					weekRows = [<tr key={0}><td>{weekText}</td><td>Bye</td><td>{scenarios}</td><td>{player.Name}</td></tr>];
+				}
+				rows = rows.concat(weekRows);
+			});
+		}
+		return (
+			<Grid>
+				<Row>
+					<Col xs={12}>
+						<Table striped bordered condensed hover>
+							<thead>
+								<tr>
+									<td>Week</td>
+									<td>Opponent</td>
+									<td>Scenario</td>
+									<td>Winner</td>
+								</tr>
+							</thead>
+							<tbody>
+								{rows}
+							</tbody>
+						</Table>
+					</Col>
+				</Row>
+			</Grid>
+		);
+	}
+});
+
 var PlayerSelector = React.createClass({
 	render: function() {
 		var rows = [];
@@ -300,13 +347,16 @@ var PlayerEditorPanel = React.createClass({
 				<div>
 					<PlayerCell player={this.state.selectedPlayer} noLink={true} />
 					<TabbedArea defaultActiveKey={1}>
-						<TabPane key={1} tab="Injuries">
+						<TabPane key={1} tab="Schedule">
+							<PlayerSchedule player={this.state.selectedPlayer} season={this.state.season} />
+						</TabPane>
+						<TabPane key={2} tab="Injuries">
 							<PlayerInjuries player={this.state.selectedPlayer} admin={admin} />
 						</TabPane>
-						<TabPane key={2} tab="Bonds">
+						<TabPane key={3} tab="Bonds">
 							<PlayerBonds player={this.state.selectedPlayer} admin={admin} />
 						</TabPane>
-						<TabPane key={3} tab="Potential Bonds">
+						<TabPane key={4} tab="Potential Bonds">
 							<PlayerPotentialBonds player={this.state.selectedPlayer} admin={admin} />
 						</TabPane>
 					</TabbedArea>
