@@ -275,7 +275,6 @@ var PlayerPotentialBonds = React.createClass({
 				</tr>
 			);
 		}
-		//TODO: adding or deleting bonds
 		return (
 			<Grid>
 				<Row>
@@ -335,6 +334,17 @@ var PlayerEditorPanel = React.createClass({
 	viewPlayer: function(playerName) {
 		this.setState({ selectedPlayer: this.getSelectedPlayer(playerName, this.state.season) });
 	},
+	updateName: function() {
+		newName = prompt('Enter new name', this.state.selectedPlayer.Name);
+		if (newName && newName !== this.state.selectedPlayer.Name) {
+			alert('Update pressed with ' + newName);
+		} else {
+			alert('Update name cancelled');
+		}
+	},
+	updateFaction: function() {
+		alert('Update faction pressed');
+	},
 	render: function() {
 		var admin = this.props.admin;
 		var players = [];
@@ -342,10 +352,16 @@ var PlayerEditorPanel = React.createClass({
 		if (this.state.season !== null) {
 			players = this.state.season.Players;
 		}
+		var playerEditing = [];
+		if (admin) {
+			playerEditing.push(<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>);
+			playerEditing.push(<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>);
+		}
 		if (this.state.selectedPlayer) {
 			tabbedArea =
 				<div>
 					<PlayerCell player={this.state.selectedPlayer} noLink={true} />
+					{playerEditing}
 					<TabbedArea defaultActiveKey={1}>
 						<TabPane key={1} tab="Schedule">
 							<PlayerSchedule player={this.state.selectedPlayer} season={this.state.season} />
