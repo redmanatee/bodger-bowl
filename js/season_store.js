@@ -148,7 +148,6 @@ window.seasonStore = Reflux.createStore({
 				BondNumber: bondNumber,
 			},
 			success: function(data) {
-				console.log("Bond addition finished");
 				this.refreshSeasonFromServer();
 			}.bind(this),
 			error: function(xhr, status, err) {
@@ -167,7 +166,6 @@ window.seasonStore = Reflux.createStore({
 		}
 	},
 	updateInjuries: function(playerName, newInjuries) {
-		console.log("update injuries called");
 		$.ajax({url:"/admin/api/players/injuries/",
 			type: 'POST',
 			data: {
