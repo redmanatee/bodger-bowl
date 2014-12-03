@@ -346,6 +346,9 @@ var PlayerEditorPanel = React.createClass({
 			appActions.updatePlayerFaction(this.state.selectedPlayer, newFaction);
 		}
 	},
+	toggleStandin: function() {
+		appActions.toggleStandin(this.state.selectedPlayer.Name);
+	},
 	render: function() {
 		var admin = this.props.admin;
 		var players = [];
@@ -353,15 +356,17 @@ var PlayerEditorPanel = React.createClass({
 		if (this.state.season !== null) {
 			players = this.state.season.Players;
 		}
-		var playerEditing = [];
-		if (admin) {
-			playerEditing = 
-				<div>
-					<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>
-					<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>
-				</div>;
-		}
 		if (this.state.selectedPlayer) {
+			var playerEditing = [];
+			if (admin) {
+				playerEditing = 
+					<div>
+						<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>
+						<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>
+						<Button bsStyle="primary" onClick={this.toggleStandin}>Toggle Standin</Button>
+						<div>{this.state.selectedPlayer.Standin? "Standin" : "Full Player"}</div>
+					</div>;
+			}
 			tabbedArea =
 				<div>
 					<PlayerCell player={this.state.selectedPlayer} noLink={true} />

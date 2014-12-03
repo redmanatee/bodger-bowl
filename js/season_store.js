@@ -43,6 +43,7 @@ var appActions = Reflux.createActions([
 	"viewPlayer",
 	"updatePlayerName",
 	"updatePlayerFaction",
+	"toggleStandin",
 ]);
 
 window.seasonStore = Reflux.createStore({
@@ -55,8 +56,9 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(appActions.addPotentialBond, this.addPotentialBond);
 		this.listenTo(appActions.deletePotentialBond, this.deletePotentialBond);
 		this.listenTo(appActions.incrementPotentialBond, this.incrementPotentialBond);
-		this.listenTo(appActions.updatePlayerName, this.updatePlayerName)
-		this.listenTo(appActions.updatePlayerFaction, this.updatePlayerFaction)
+		this.listenTo(appActions.updatePlayerName, this.updatePlayerName);
+		this.listenTo(appActions.updatePlayerFaction, this.updatePlayerFaction);
+		this.listenTo(appActions.toggleStandin, this.toggleStandin);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.ajax({url:"/admin/api/players/bonds/potential/increment/",
@@ -195,6 +197,24 @@ window.seasonStore = Reflux.createStore({
 				this.refreshSeasonFromServer();
   			}.bind(this)
 		});		
+	},
+	toggleStandin: function(playerName) {
+		console.log("Toggle standin called");
+		$.ajax({url:"/admin/api/players/toggleStandin",
+			type: 'POST',
+			data: {
+				SeasonName: this.season.Name,
+				SeasonYear: this.season.Year,
+				PlayerId: playerName,
+			},
+			success: function(data) {
+				this.refreshSeasonFromServer();
+			}.bind(this),
+			error: function(xhr, status, err) {
+				alert("Player Standin Update Failed!");
+				this.refreshSeasonFromServer();
+  			}.bind(this)
+		});
 	},
 	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {
