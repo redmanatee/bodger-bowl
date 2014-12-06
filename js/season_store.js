@@ -61,69 +61,47 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(appActions.toggleStandin, this.toggleStandin);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
-		$.ajax({url:"/admin/api/players/bonds/potential/increment/",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/bonds/potential/increment/",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				Player: playerName,
 				Warcaster: warcaster,
 				Warjack: warjack,
 				Bonus: bonus,
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Bond Deletion Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Potential Bond Incrementation Failed!"); });
 	},
 	deletePotentialBond: function(warcaster, warjack, bonus, playerName) {
-		$.ajax({url:"/admin/api/players/bonds/potential/delete/",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/bonds/potential/delete/",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				Player: playerName,
 				Warcaster: warcaster,
 				Warjack: warjack,
 				Bonus: bonus,
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Bond Deletion Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Potential Bond Deletion Failed!"); });
 	},
 	addPotentialBond: function(warcaster, warjack, bonus, playerName) {
-		$.ajax({url:"/admin/api/players/bonds/potential/add/",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/bonds/potential/add/",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				Player: playerName,
 				Warcaster: warcaster,
 				Warjack: warjack,
 				Bonus: bonus,
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Bond Deletion Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Pontential Bond Addition Failed!"); });
 	},
 	deleteActiveBond: function(warcaster, warjack, bondNum, bondName, playerName) {
-		$.ajax({url:"/admin/api/players/bonds/delete/",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/bonds/delete/",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				Player: playerName,
@@ -131,20 +109,13 @@ window.seasonStore = Reflux.createStore({
 				Warjack: warjack,
 				BondText: bondName,
 				BondNumber: bondNum,
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Bond Deletion Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Bond Deletion Failed!"); });
 	},
 	addActiveBond: function(warcasterName, warjackName, bondText, bondNumber, playerName) {
-		$.ajax({url:"/admin/api/players/bonds/add/",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/bonds/add/",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				Player: playerName,
@@ -152,69 +123,46 @@ window.seasonStore = Reflux.createStore({
 				Warjack: warjackName,
 				BondText: bondText,
 				BondNumber: bondNumber,
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Bond Addition Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Bond Addition Failed!"); });
 	},
 	updatePlayerName: function(oldPlayerName, newPlayerName) {
-		$.ajax({url:"/admin/api/players/setName",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/setName",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				PlayerId: oldPlayerName,
 				NewPlayerName: newPlayerName
-			},
-			success: function(data) {
+			})
+			.done(function() {
 				this.refreshSeasonFromServer().success(function() { appActions.viewPlayer(newPlayerName); });
-			}.bind(this),
-			error: function(xhr, status, err) {
+			}.bind(this))
+			.fail(function() {
 				alert("Player Rename Failed!");
 				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			}.bind(this))
 	},
 	updatePlayerFaction: function(player, newFaction) {
-		$.ajax({url:"/admin/api/players/setFaction",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/setFaction",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				PlayerId: player.Name,
 				NewFaction: newFaction
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Player Faction Update Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Player Faction Update Failed!"); });
 	},
 	toggleStandin: function(playerName) {
-		console.log("Toggle standin called");
-		$.ajax({url:"/admin/api/players/toggleStandin",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/toggleStandin",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				PlayerId: playerName,
-			},
-			success: function(data) {
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Player Standin Update Failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Player Standin Update Failed!"); });
 	},
 	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {
@@ -226,47 +174,25 @@ window.seasonStore = Reflux.createStore({
 		}
 	},
 	updateInjuries: function(playerName, newInjuries) {
-		$.ajax({url:"/admin/api/players/injuries/",
-			type: 'POST',
-			data: {
+		$.post("/admin/api/players/injuries/",
+			{
 				SeasonName: this.season.Name,
 				SeasonYear: this.season.Year,
 				Player: playerName,
 				Injuries: newInjuries,
-			},
-			success: function(data) {
-				console.log("Injury update finished");
-				this.refreshSeasonFromServer();
-			}.bind(this),
-			error: function(xhr, status, err) {
-				alert("Injury update failed!");
-				this.refreshSeasonFromServer();
-			}.bind(this)
-		});
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function() { alert("Injury update failed!"); });
 	},
 	loadActiveSeasonFromServer: function() {
-		return $.ajax({url:"/api/seasons/latest/" + this.seasonId,
-				type: 'GET',
-				dataType: 'json',
-				success: function(data) {
-					this.loadSeason(data);
-				}.bind(this),
-				error: function(xhr, status, err) {
-					console.error(this.props.url, status, err.toString());
-				}.bind(this)
-		});
+		return $.get("/api/seasons/latest/" + this.seasonId, {}, null, 'json')
+			.success(function(data) { this.loadSeason(data); }.bind(this))
+			.fail(function(xhr, status, err) { console.error(this.props.url, status, err.toString()); }.bind(this));
 	},
 	loadSeasonFromServer: function() {
-		return $.ajax({url:"/api/seasons/" + this.seasonId,
-				type: 'GET',
-				dataType: 'json',
-				success: function(data) {
-					this.loadSeason(data);
-				}.bind(this),
-				error: function(xhr, status, err) {
-					this.loadActiveSeasonFromServer();
-				}.bind(this)
-		});
+		return $.get("/api/seasons/" + this.seasonId, {}, null, 'json')
+			.success(function(data) { this.loadSeason(data) }.bind(this))
+			.fail(function(xhr, status, err) { this.loadActiveSeasonFromServer(); }.bind(this));
 	},
 	loadSeason: function(season) {
 		//setup player map lookup for quick lookup
