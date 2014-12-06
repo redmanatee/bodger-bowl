@@ -58,7 +58,7 @@ var PlayerSelector = React.createClass({
 			);
 		}.bind(this));
 		return (
-			<select onChange={this.props.onChangeFunction} value={this.props.selectedPlayer !== null? this.props.selectedPlayer.Name : ""}>
+			<select onChange={this.props.onChangeFunction} value={this.props.selectedPlayer? this.props.selectedPlayer.Name : ""}>
 				<option disabled value="">Select a Player</option>
 				{rows}
 			</select>
@@ -307,7 +307,7 @@ var PlayerEditorPanel = React.createClass({
 		}
 		this.setState({
 			season: data,
-			selectedPlayer: this.getSelectedPlayer(selectedPlayer.Name, data)
+			selectedPlayer: selectedPlayer && this.getSelectedPlayer(selectedPlayer.Name, data)
 		});
 	},
 	getInitialState: function() {
@@ -364,7 +364,7 @@ var PlayerEditorPanel = React.createClass({
 						<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>
 						<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>
 						<Button bsStyle="primary" onClick={this.toggleStandin}>Toggle Standin</Button>
-						<div>{this.state.selectedPlayer.Standin? "Standin" : "Full Player"}</div>
+						<div>{this.state.selectedPlayer && this.state.selectedPlayer.Standin? "Standin" : "Full Player"}</div>
 					</div>;
 			}
 			tabbedArea =

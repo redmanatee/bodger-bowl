@@ -10,8 +10,8 @@ function compareBy(func) {
 		if (a1 < b1)
 			return -1;
 		if (a1 > b1)
-			return  1;
-		return  0;
+			return	1;
+		return	0;
 	}
 }
 
@@ -97,7 +97,7 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Bond Deletion Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	addPotentialBond: function(warcaster, warjack, bonus, playerName) {
@@ -117,7 +117,7 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Bond Deletion Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	deleteActiveBond: function(warcaster, warjack, bondNum, bondName, playerName) {
@@ -138,7 +138,7 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Bond Deletion Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	addActiveBond: function(warcasterName, warjackName, bondText, bondNumber, playerName) {
@@ -159,7 +159,7 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Bond Addition Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	updatePlayerName: function(oldPlayerName, newPlayerName) {
@@ -172,13 +172,13 @@ window.seasonStore = Reflux.createStore({
 				NewPlayerName: newPlayerName
 			},
 			success: function(data) {
-				this.refreshSeasonFromServer();
+				this.refreshSeasonFromServer().success(function() { appActions.viewPlayer(newPlayerName); });
 			}.bind(this),
 			error: function(xhr, status, err) {
 				alert("Player Rename Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
-		});		
+			}.bind(this)
+		});
 	},
 	updatePlayerFaction: function(player, newFaction) {
 		$.ajax({url:"/admin/api/players/setFaction",
@@ -195,8 +195,8 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Player Faction Update Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
-		});		
+			}.bind(this)
+		});
 	},
 	toggleStandin: function(playerName) {
 		console.log("Toggle standin called");
@@ -213,16 +213,16 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Player Standin Update Failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {
-			this.loadActiveSeasonFromServer();
+			return this.loadActiveSeasonFromServer();
 		} else {
 			var path = window.location.pathname.split('/');
 			this.seasonId = path[path.length - 1];
-			this.loadSeasonFromServer();
+			return this.loadSeasonFromServer();
 		}
 	},
 	updateInjuries: function(playerName, newInjuries) {
@@ -241,32 +241,31 @@ window.seasonStore = Reflux.createStore({
 			error: function(xhr, status, err) {
 				alert("Injury update failed!");
 				this.refreshSeasonFromServer();
-  			}.bind(this)
+			}.bind(this)
 		});
 	},
 	loadActiveSeasonFromServer: function() {
-		$.ajax({url:"/api/seasons/latest/" + this.seasonId,
+		return $.ajax({url:"/api/seasons/latest/" + this.seasonId,
 				type: 'GET',
 				dataType: 'json',
 				success: function(data) {
 					this.loadSeason(data);
 				}.bind(this),
 				error: function(xhr, status, err) {
-        			console.error(this.props.url, status, err.toString());
-      			}.bind(this)
+					console.error(this.props.url, status, err.toString());
+				}.bind(this)
 		});
 	},
 	loadSeasonFromServer: function() {
-		appActions.viewPlayer(null);
-		$.ajax({url:"/api/seasons/" + this.seasonId,
+		return $.ajax({url:"/api/seasons/" + this.seasonId,
 				type: 'GET',
 				dataType: 'json',
 				success: function(data) {
 					this.loadSeason(data);
 				}.bind(this),
 				error: function(xhr, status, err) {
-        			this.loadActiveSeasonFromServer();
-      			}.bind(this)
+					this.loadActiveSeasonFromServer();
+				}.bind(this)
 		});
 	},
 	loadSeason: function(season) {
