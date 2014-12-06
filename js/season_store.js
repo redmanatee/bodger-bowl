@@ -4,13 +4,15 @@ var _weekly_scenarios = [["1", "2"], ["7", "8"], ["3", "4"], ["11", "12"], ["9",
 var _weekly_dates = ["October 22, 2014", "October 29, 2014", "November 5, 2014", "November 12, 2014", "November 19, 2014", "December 3, 2014", "December 10, 2014", "December 17, 2014"];
 
 
-function compareBy(func) {
+function compareBy(func, invert) {
 	return function(a, b) {
 		var a1 = func(a), b1 = func(b)
+		invert = (typeof invert === "undefined")? false : invert;
+		invertWeight = invert? -1 : 1;
 		if (a1 < b1)
-			return -1;
+			return -1 * invertWeight;
 		if (a1 > b1)
-			return	1;
+			return	1 * invertWeight;
 		return	0;
 	}
 }
@@ -30,6 +32,11 @@ var _PotentialBondSort = function(a, b) {
 	return compareBy(function(potentialBond) { return potentialBond.Warcaster.toLowerCase() })(a, b) ||
 		compareBy(function(potentialBond) { return potentialBond.Warjack.toLowerCase() })(a, b) ||
 		a.Bonus - b.Bonus;
+}
+
+var _PLayerRankingSort = function(a, b) {
+	return compareBy(function(player) { return player.Wins}, true)(a, b) ||
+		compareBy(function(player) { return player.Losses})(a, b)
 }
 
 
@@ -230,6 +237,7 @@ window.seasonStore = Reflux.createStore({
 			for (j = 0; j < conference.Divisions.length; j++) {
 				var division = conference.Divisions[j];
 				division.Players = $.map(division.PlayerIds, lookupPlayer);
+				division.Players.sort(_PLayerRankingSort);
 			}
 		}
 		//Map the players to their games

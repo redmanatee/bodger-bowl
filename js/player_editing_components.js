@@ -176,7 +176,6 @@ var PlayerBonds = React.createClass({
 				</tr>
 			);
 		}
-		//TODO: adding or deleting bonds
 		return (
 			<Grid>
 				<Row>
