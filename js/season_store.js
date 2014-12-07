@@ -47,10 +47,13 @@ var appActions = Reflux.createActions([
 	"addPotentialBond",
 	"deletePotentialBond",
 	"incrementPotentialBond",
-	"viewPlayer",
 	"updatePlayerName",
 	"updatePlayerFaction",
 	"toggleStandin",
+
+	"viewMainTab",
+	"viewPlayerTab",
+	"viewPlayer",
 ]);
 
 window.seasonStore = Reflux.createStore({

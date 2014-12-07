@@ -311,6 +311,7 @@ var PlayerEditorPanel = React.createClass({
 	},
 	getInitialState: function() {
 		return {
+			activeKey: 1,
 			season: window.seasonStore.season,
 			selectedPlayer: null,
 		};
@@ -320,7 +321,7 @@ var PlayerEditorPanel = React.createClass({
 	},
 	componentDidMount: function() {
 		this.listenTo(window.seasonStore, this.onStatusChange);
-		this.listenTo(window.viewPlayerStore, this.viewPlayer);
+		this.listenTo(window.viewStore,   this.view);
 	},
 	getSelectedPlayer: function(playerName, season) {
 		if (!this.state.season) return null;
@@ -330,8 +331,11 @@ var PlayerEditorPanel = React.createClass({
 			}
 		}
 	},
-	viewPlayer: function(playerName) {
-		this.setState({ selectedPlayer: this.getSelectedPlayer(playerName, this.state.season) });
+	view: function(viewState) {
+		this.setState({
+			selectedPlayer: this.getSelectedPlayer(viewState.playerName, this.state.season),
+			activeKey: viewState.playerTab
+		});
 	},
 	updateName: function() {
 		newName = prompt('Enter new name', this.state.selectedPlayer.Name);
@@ -370,7 +374,7 @@ var PlayerEditorPanel = React.createClass({
 				<div>
 					<PlayerCell player={this.state.selectedPlayer} noLink={true} />
 					{playerEditing}
-					<TabbedArea defaultActiveKey={1}>
+					<TabbedArea activeKey={this.state.activeKey} onSelect={appActions.viewPlayerTab}>
 						<TabPane key={1} tab="Schedule">
 							<PlayerSchedule player={this.state.selectedPlayer} season={this.state.season} />
 						</TabPane>
