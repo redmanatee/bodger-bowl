@@ -10,7 +10,7 @@ var PlayerCell = React.createClass({
 			if(this.props.noLink) {
 				player = <span>{this.props.player.Name}</span>;
 			} else {
-				player = <a onClick={function() { appActions.viewPlayer(name) }}>{this.props.player.Name}</a>;
+				player = <a onClick={function() { window.appActions.viewPlayer(name) }}>{this.props.player.Name}</a>;
 			}
 		}
 		return (
@@ -34,8 +34,8 @@ var GameRow = React.createClass({
 				//TODO: this
 			}.bind(this),
 			error: function(xhr, status, err) {
-    			//TODO: this
-  			}.bind(this)
+				//TODO: this
+			}.bind(this)
 		});
 	},
 	render: function() {
@@ -78,8 +78,8 @@ var WeekGroup = React.createClass({
 		var count = 0;
 		this.props.week.Games.forEach(function(game) {
 			rows.push(
-					<GameRow player1={game.Players[0]} 
-							   player2={game.Players[1]} 
+					<GameRow player1={game.Players[0]}
+							   player2={game.Players[1]}
 							   hasWinner={game.Winner !== null}
 							   winner={game.Winner}
 							   week={number}
@@ -106,7 +106,7 @@ var SeasonScheduleTable = React.createClass({
 	onStatusChange: function(data) {
 		this.setState({
 			season: data,
-		});		
+		});
 	},
 	getInitialState: function() {
 		return {
@@ -115,7 +115,7 @@ var SeasonScheduleTable = React.createClass({
 	},
 	componentDidMount: function() {
 		this.listenTo(window.seasonStore, this.onStatusChange);
-  	},
+	},
 	render: function() {
 		if (this.state.season === null) {
 			return (<div></div>);

@@ -11,7 +11,7 @@ var SeasonData = React.createClass({
 	render: function() {
 		var admin = window.location.pathname.indexOf("admin") > -1;
 		return (
-			<TabbedArea className="main-nav" activeKey={this.state.activeKey} justified onSelect={appActions.viewMainTab}>
+			<TabbedArea className="main-nav" activeKey={this.state.activeKey} justified onSelect={window.appActions.viewMainTab}>
 				<TabPane key={1} tab="Season Schedule">
 					<SeasonScheduleTable admin={admin} />
 				</TabPane>
