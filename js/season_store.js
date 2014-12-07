@@ -54,6 +54,7 @@ var appActions = Reflux.createActions([
 	"viewMainTab",
 	"viewPlayerTab",
 	"viewPlayer",
+	"popHistoryState",
 ]);
 
 window.seasonStore = Reflux.createStore({
