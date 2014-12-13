@@ -158,7 +158,7 @@ window.seasonStore = Reflux.createStore({
 	refreshSeasonFromServer: function() {
 		if (window.location.pathname === "/") {
 			return this.loadActiveSeasonFromServer();
-		} else {
+		} else if(window.location.pathname !== "/admin/") {
 			var path = window.location.pathname.split('/');
 			this.seasonId = path[path.length - 1];
 			return this.loadSeasonFromServer();
