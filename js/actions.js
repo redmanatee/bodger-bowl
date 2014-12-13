@@ -12,5 +12,6 @@ window.appActions = Reflux.createActions([
 	"viewMainTab",
 	"viewPlayerTab",
 	"viewPlayer",
+	"viewRenamedPlayer",
 	"popHistoryState",
 ]);

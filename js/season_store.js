@@ -130,7 +130,7 @@ window.seasonStore = Reflux.createStore({
 				NewPlayerName: newPlayerName
 			})
 			.done(function() {
-				this.refreshSeasonFromServer().success(function() { window.appActions.viewPlayer(newPlayerName); });
+				this.refreshSeasonFromServer().success(function() { window.appActions.viewRenamedPlayer(oldPlayerName, newPlayerName); });
 			}.bind(this))
 			.fail(function() {
 				alert("Player Rename Failed!");
