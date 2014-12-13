@@ -52,4 +52,7 @@ var SeasonTable = React.createClass({
 	}
 });
 
-React.renderComponent(<SeasonTable pollInterval="1000" />, document.getElementById('seasons'));
+$(function() {
+	var seasons = $('#seasons')[0];
+	if(seasons) React.renderComponent(<SeasonTable pollInterval="1000" />, seasons);
+});

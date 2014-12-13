@@ -26,4 +26,8 @@ var SeasonData = React.createClass({
 	},
 });
 
-React.renderComponent(<SeasonData />, document.getElementById('season-schedule'));
+
+$(function() {
+	var schedule = $('#season-schedule')[0];
+	if(schedule) React.renderComponent(<SeasonData />, schedule);
+});
