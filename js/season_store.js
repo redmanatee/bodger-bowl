@@ -1,6 +1,6 @@
 function compareBy(func, invert) {
 	return function(a, b) {
-		var a1 = func(a), b1 = func(b)
+		var a1 = func(a), b1 = func(b);
 		invert = (typeof invert === "undefined")? false : invert;
 		invertWeight = invert? -1 : 1;
 		if (a1 < b1)
@@ -8,7 +8,7 @@ function compareBy(func, invert) {
 		if (a1 > b1)
 			return	1 * invertWeight;
 		return	0;
-	}
+	};
 }
 
 
@@ -16,22 +16,22 @@ var _playerSort = compareBy(function(p) { return p.Name.toLowerCase(); });
 
 
 var _ActiveBondSort = function(a, b) {
-	return compareBy(function(bond) { return bond.Warcaster.toLowerCase() })(a, b) ||
-		compareBy(function(bond) { return bond.Warjack.toLowerCase() })(a, b) ||
+	return compareBy(function(bond) { return bond.Warcaster.toLowerCase(); })(a, b) ||
+		compareBy(function(bond) { return bond.Warjack.toLowerCase(); })(a, b) ||
 		a.BondNumber - b.BondNumber;
-}
+};
 
 
 var _PotentialBondSort = function(a, b) {
-	return compareBy(function(potentialBond) { return potentialBond.Warcaster.toLowerCase() })(a, b) ||
-		compareBy(function(potentialBond) { return potentialBond.Warjack.toLowerCase() })(a, b) ||
+	return compareBy(function(potentialBond) { return potentialBond.Warcaster.toLowerCase(); })(a, b) ||
+		compareBy(function(potentialBond) { return potentialBond.Warjack.toLowerCase(); })(a, b) ||
 		a.Bonus - b.Bonus;
-}
+};
 
 var _PLayerRankingSort = function(a, b) {
-	return compareBy(function(player) { return player.Wins}, true)(a, b) ||
-		compareBy(function(player) { return player.Losses})(a, b)
-}
+	return compareBy(function(player) { return player.Wins; }, true)(a, b) ||
+		compareBy(function(player) { return player.Losses; })(a, b);
+};
 
 
 
@@ -132,7 +132,7 @@ window.seasonStore = Reflux.createStore({
 			.fail(function() {
 				alert("Player Rename Failed!");
 				this.refreshSeasonFromServer();
-			}.bind(this))
+			}.bind(this));
 	},
 	updatePlayerFaction: function(player, newFaction) {
 		$.post("/admin/api/players/setFaction",
@@ -180,7 +180,7 @@ window.seasonStore = Reflux.createStore({
 		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", player1Name, player2Name].map(encodeURIComponent)).join("/"),
 			{ winnerName: winnerName })
 			.always(this.refreshSeasonFromServer.bind(this))
-			.fail(function(xhr, status, err) { alert("Winner selection failed!") });
+			.fail(function(xhr, status, err) { alert("Winner selection failed!"); });
 	},
 	updateWeek: function(weekNumber, playDate, scenarios) {
 		// URL: /admin/api/seasons/SEASON/week/WEEK
@@ -190,7 +190,7 @@ window.seasonStore = Reflux.createStore({
 				scenarios: scenarios
 			})
 			.always(this.refreshSeasonFromServer.bind(this))
-			.fail(function(xhr, status, err) { alert("Update week failed!") });
+			.fail(function(xhr, status, err) { alert("Update week failed!"); });
 	},
 	loadActiveSeasonFromServer: function() {
 		return $.get("/api/seasons/latest/" + this.seasonId, {}, null, 'json')
@@ -199,7 +199,7 @@ window.seasonStore = Reflux.createStore({
 	},
 	loadSeasonFromServer: function() {
 		return $.get("/api/seasons/" + this.seasonId, {}, null, 'json')
-			.success(function(data) { this.loadSeason(data) }.bind(this))
+			.success(function(data) { this.loadSeason(data); }.bind(this))
 			.fail(function(xhr, status, err) { this.loadActiveSeasonFromServer(); }.bind(this));
 	},
 	loadSeason: function(season) {
@@ -213,11 +213,11 @@ window.seasonStore = Reflux.createStore({
 		}
 		season.Players.sort(_playerSort);
 		season.Players.forEach(function(player) {
-			if (player.Bonds != null) {
-				if (player.Bonds.ActiveBonds != null) {
+			if (player.Bonds) {
+				if (player.Bonds.ActiveBonds) {
 					player.Bonds.ActiveBonds.sort(_ActiveBondSort);
 				}
-				if (player.Bonds.PotentialBonds != null) {
+				if (player.Bonds.PotentialBonds) {
 					player.Bonds.PotentialBonds.sort(_PotentialBondSort);
 				}
 			}
