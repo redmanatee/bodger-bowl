@@ -68,7 +68,7 @@ var PlayerSelector = React.createClass({
 
 var PlayerInjuries = React.createClass({
 	updateData: function(event) {
-		appActions.updateInjuries(this.props.player.Name, this.refs.injuryText.getDOMNode().value);
+		window.appActions.updateInjuries(this.props.player.Name, this.refs.injuryText.getDOMNode().value);
 		this.refs.injuryText.getDOMNode().value = "";
 	},
 	render: function() {
@@ -109,7 +109,7 @@ var PlayerInjuries = React.createClass({
 
 var PlayerBondDetail = React.createClass({
 	deleteBond: function(event) {
-		appActions.deleteActiveBond(this.props.bond.Warcaster,
+		window.appActions.deleteActiveBond(this.props.bond.Warcaster,
 									this.props.bond.Warjack,
 									this.props.bond.BondNumber,
 									this.props.bond.BondName,
@@ -140,7 +140,7 @@ var PlayerBonds = React.createClass({
 		var warjackName = this.refs.warjackInput.getDOMNode().value;
 		var bondText = this.refs.bondNameInput.getDOMNode().value;
 		var bondNumber = this.refs.bondNumberInput.getDOMNode().value;
-		appActions.addActiveBond(warcasterName, warjackName, bondText, bondNumber, this.props.player.Name);
+		window.appActions.addActiveBond(warcasterName, warjackName, bondText, bondNumber, this.props.player.Name);
 		this.refs.warcasterInput.getDOMNode().value = "";
 		this.refs.warjackInput.getDOMNode().value = "";
 		this.refs.bondNameInput.getDOMNode().value = "";
@@ -202,13 +202,13 @@ var PlayerBonds = React.createClass({
 
 var PlayerPotentialBondDetail = React.createClass({
 	deleteBond: function(event) {
-		appActions.deletePotentialBond(this.props.bond.Warcaster,
+		window.appActions.deletePotentialBond(this.props.bond.Warcaster,
 									   this.props.bond.Warjack,
 									   this.props.bond.Bonus,
 									   this.props.playerName);
 	},
 	incrementBond: function(event) {
-		appActions.incrementPotentialBond(this.props.bond.Warcaster,
+		window.appActions.incrementPotentialBond(this.props.bond.Warcaster,
 									   this.props.bond.Warjack,
 									   this.props.bond.Bonus,
 									   this.props.playerName);
@@ -240,7 +240,7 @@ var PlayerPotentialBonds = React.createClass({
 		var warcasterName = this.refs.warcasterPotential.getDOMNode().value;
 		var warjackName = this.refs.warjackPotential.getDOMNode().value;
 		var bonus = this.refs.bonusPotential.getDOMNode().value;
-		appActions.addPotentialBond(warcasterName, warjackName, bonus, this.props.player.Name);
+		window.appActions.addPotentialBond(warcasterName, warjackName, bonus, this.props.player.Name);
 		this.refs.warcasterPotential.getDOMNode().value = "";
 		this.refs.warjackPotential.getDOMNode().value = "";
 		this.refs.bonusPotential.getDOMNode().value = "";
@@ -311,16 +311,17 @@ var PlayerEditorPanel = React.createClass({
 	},
 	getInitialState: function() {
 		return {
+			activeKey: 1,
 			season: window.seasonStore.season,
 			selectedPlayer: null,
 		};
 	},
 	playerSelectionChange: function(event) {
-		appActions.viewPlayer(event.target.value);
+		window.appActions.viewPlayer(event.target.value);
 	},
 	componentDidMount: function() {
 		this.listenTo(window.seasonStore, this.onStatusChange);
-		this.listenTo(window.viewPlayerStore, this.viewPlayer);
+		this.listenTo(window.viewStore,   this.view);
 	},
 	getSelectedPlayer: function(playerName, season) {
 		if (!this.state.season) return null;
@@ -330,23 +331,26 @@ var PlayerEditorPanel = React.createClass({
 			}
 		}
 	},
-	viewPlayer: function(playerName) {
-		this.setState({ selectedPlayer: this.getSelectedPlayer(playerName, this.state.season) });
+	view: function(viewState) {
+		this.setState({
+			selectedPlayer: this.getSelectedPlayer(viewState.playerName, this.state.season),
+			activeKey: viewState.playerTab
+		});
 	},
 	updateName: function() {
 		newName = prompt('Enter new name', this.state.selectedPlayer.Name);
 		if (newName && newName !== this.state.selectedPlayer.Name) {
-			appActions.updatePlayerName(this.state.selectedPlayer.Name, newName);
+			window.appActions.updatePlayerName(this.state.selectedPlayer.Name, newName);
 		}
 	},
 	updateFaction: function() {
 		newFaction = prompt('Enter new faction', this.state.selectedPlayer.Faction);
 		if (newFaction && newFaction !== this.state.selectedPlayer.Faction) {
-			appActions.updatePlayerFaction(this.state.selectedPlayer, newFaction);
+			window.appActions.updatePlayerFaction(this.state.selectedPlayer, newFaction);
 		}
 	},
 	toggleStandin: function() {
-		appActions.toggleStandin(this.state.selectedPlayer.Name);
+		window.appActions.toggleStandin(this.state.selectedPlayer.Name);
 	},
 	render: function() {
 		var admin = this.props.admin;
@@ -370,7 +374,7 @@ var PlayerEditorPanel = React.createClass({
 				<div>
 					<PlayerCell player={this.state.selectedPlayer} noLink={true} />
 					{playerEditing}
-					<TabbedArea defaultActiveKey={1}>
+					<TabbedArea activeKey={this.state.activeKey} onSelect={window.appActions.viewPlayerTab}>
 						<TabPane key={1} tab="Schedule">
 							<PlayerSchedule player={this.state.selectedPlayer} season={this.state.season} />
 						</TabPane>
