@@ -43,8 +43,10 @@
 			this.trigger(this.state);
 		},
 		popHistoryState: function(event) {
-			this.state = event.state;
-			this.trigger(this.state);
+			if(event.state) {
+				this.state = event.state;
+				this.trigger(this.state);
+			}
 		}
 	});
 })();
