@@ -65,7 +65,7 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 			//else
 			game.WinnerId = winnerName
 			c.Infof("After updating the winner id: '%v'", game)
-			c.Infof("After updating the winner id, the full week:\n%v", weeks[weekNumber])
+			// c.Infof("After updating the winner id, the full week:\n%v", weeks[weekIndex])
 			newData, err := json.Marshal(weeks)
 			if err != nil {
 				panic(err)
