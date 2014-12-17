@@ -9,7 +9,7 @@ var SeasonData = React.createClass({
 		this.setState({activeKey: state.mainTab});
 	},
 	render: function() {
-		var admin = window.location.pathname.indexOf("admin") > -1;
+		var admin = $('#seasonSchedule').data('admin');
 		return (
 			<TabbedArea className="main-nav" activeKey={this.state.activeKey} justified onSelect={window.appActions.viewMainTab}>
 				<TabPane key={1} tab="Season Schedule">
