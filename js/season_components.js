@@ -99,14 +99,16 @@ var SeasonScheduleTable = React.createClass({
 		this.listenTo(window.seasonStore, this.onStatusChange);
 	},
 	render: function() {
-		if (this.state.season === null) {
-			return (<div></div>);
-		}
-		var rows = [];
+		if (!this.state.season) return <div></div>;
 		var admin = this.props.admin;
-		this.state.season.Weeks.forEach(function(week) {
-			rows.push(
-					<Panel header={"Week " + week.Number + " (" + week.PlayDate + ") -" +  "Scenario Numbers: [" + week.Scenarios[0] + ", " + week.Scenarios[1] + "]"} key={week.Number}>
+		rows = this.state.season.Weeks.map(function(week) {
+			var header = "Week " + week.Number;
+			if(week.PlayDate)
+				header += " (" + week.PlayDate + ")";
+			if(week.Scenarios)
+				header += " - Scenario Numbers: [" + week.Scenarios.join(", ") + "]";
+			return(
+					<Panel header={header} key={week.Number}>
 						<WeekGroup week={week} admin={admin} key={week.Number}/>
 					</Panel>
 			);

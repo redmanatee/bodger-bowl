@@ -3,14 +3,15 @@
 var PlayerSchedule = React.createClass({
 	render: function() {
 		var rows = [];
-		var player = this.props.player
+		var player = this.props.player;
 		if (!player) {
 			return <p>No data found</p>;
 		} else {
 			this.props.season.Weeks.forEach(function(week, weekIndex) {
-				var weekRows = []
-				var weekText = week.Number + " (" + week.PlayDate + ")"
-				var scenarios = week.Scenarios[0] + " or " + week.Scenarios[1]
+				var weekRows = [];
+				var weekText = week.Number;
+				if(week.PlayDate) weekText += " (" + week.PlayDate + ")";
+				var scenarios = week.Scenarios && week.Scenarios.join(", ");
 				week.Games.forEach(function(game) {
 					if(game.PlayerIds.indexOf(player.Name) != -1) {
 						var opponent = game.Players.filter(function(p) { return p.Name != player.Name })[0];
@@ -362,7 +363,7 @@ var PlayerEditorPanel = React.createClass({
 		if (this.state.selectedPlayer) {
 			var playerEditing = [];
 			if (admin) {
-				playerEditing = 
+				playerEditing =
 					<div>
 						<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>
 						<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>
