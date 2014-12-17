@@ -53,6 +53,7 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(window.appActions.updatePlayerName, this.updatePlayerName);
 		this.listenTo(window.appActions.updatePlayerFaction, this.updatePlayerFaction);
 		this.listenTo(window.appActions.toggleStandin, this.toggleStandin);
+		this.listenTo(window.appActions.updateGame, this.updateGame);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.post("/admin/api/players/bonds/potential/increment/",
@@ -177,6 +178,13 @@ window.seasonStore = Reflux.createStore({
 			})
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function() { alert("Injury update failed!"); });
+	},
+	updateGame: function(weekNumber, player1Name, player2Name, winnerName) {
+			// URL: /admin/api/seasons/SEASON/week/WEEK/games/PLAYER1/PLAYER2
+			$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", player1Name, player2Name].map(encodeURIComponent)).join("/"),
+				{ winnerName: winnerName })
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Winner selection failed!") });
 	},
 	loadActiveSeasonFromServer: function() {
 		return $.get("/api/seasons/latest/" + this.seasonId, {}, null, 'json')

@@ -9,10 +9,11 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"regexp"
 )
 
 func init() {
-	
+
 }
 
 func createSeason(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +35,12 @@ func createSeason(w http.ResponseWriter, r *http.Request) {
 }
 
 // Splits the game update data.
-func splitGameUpdateData(c appengine.Context, data string) (weekNumber int, player1Name string, player2Name string, winnerName string) {
+func splitGameUpdateData(c appengine.Context, data string) (player1Name string, player2Name string, winnerName string) {
 	dataArr := strings.Split(data, ":")
-	weekNumber, err := strconv.Atoi(dataArr[0])
-	if err != nil {
-		panic(err)
-	}
-
-	return weekNumber, dataArr[1], dataArr[2], dataArr[3]
+	return dataArr[0], dataArr[1], dataArr[2]
 }
 
-func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, player1Name string, player2Name string, winnerName string) ([]byte, string) {
+func updateWeekDataWinnings(c appengine.Context, weekData []byte, weekNumber int, player1Name string, player2Name string, winnerName string) ([]byte, string) {
 	var weeks []model.Week
 	err := json.Unmarshal(weekData, &weeks)
 	if err != nil {
@@ -74,6 +70,23 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 		}
 	}
 	return weekData, ""
+}
+
+// dispatcher for routes beginning with /admin/api/seasons/
+func UpdateSeason(w http.ResponseWriter, r *http.Request) {
+	subpath := strings.TrimPrefix(r.URL.Path, "/admin/api/seasons/")
+
+	weekGameRegexp := regexp.MustCompile(`^([^/]+)/weeks/(\d+)/games/([^/]+)/([^/]+)$`)
+	weekGameMatches := weekGameRegexp.FindStringSubmatch(subpath)
+	if weekGameMatches != nil {
+		weekNumber, err := strconv.Atoi(weekGameMatches[2])
+		if err != nil {
+			panic(err)
+		}
+		updateWeekWinner(w, r, weekGameMatches[1], weekNumber, weekGameMatches[3], weekGameMatches[4])
+		return
+	}
+	panic("Unknown Path: " + r.URL.Path)
 }
 
 func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -323,15 +336,12 @@ func TogglePlayerStandin(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handles update week API calls.
-func UpdateWeek(w http.ResponseWriter, r *http.Request) {
+func updateWeekWinner(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, player1Name string, player2Name string) {
 	c := appengine.NewContext(r)
-	seasonId := r.FormValue("SeasonId")
-	c.Infof("Seasonid: %v", seasonId)
-	updateData := r.FormValue("Data")
-	c.Infof("data: %v", updateData)
+	winnerName := r.FormValue("winnerName")
+	c.Infof("winner: %v", winnerName)
 	season := api.LoadSeasonById(c, seasonId)
-	weekNumber, player1Name, player2Name, winnerName := splitGameUpdateData(c, updateData)
-	updateWeekData, originalWinnerName := updateWeekWinnings(c, season.Schedule, weekNumber, player1Name, player2Name, winnerName)
+	updateWeekData, originalWinnerName := updateWeekDataWinnings(c, season.Schedule, weekNumber, player1Name, player2Name, winnerName)
 	c.Infof("New Weekdata: \n\n'%v'\n\n", string(updateWeekData))
 	c.Infof("Old Weekdata: \n\n'%v'\n\n", string(season.Schedule))
 	season.Schedule = updateWeekData

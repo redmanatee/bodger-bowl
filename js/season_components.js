@@ -23,39 +23,21 @@ var PlayerCell = React.createClass({
 });
 
 var GameRow = React.createClass({
-	handleChange: function(event) {
-		$.ajax({url:"/admin/api/weeks/",
-			type: 'POST',
-			data: {
-				SeasonId: decodeURIComponent(window.seasonStore.seasonId),
-				Data: event.target.value
-			},
-			success: function(data) {
-				//TODO: this
-			}.bind(this),
-			error: function(xhr, status, err) {
-				//TODO: this
-			}.bind(this)
-		});
+	handleChange: function(weekNumber, player1Name, player2Name) {
+		return function(event) {
+			window.appActions.updateGame(weekNumber, player1Name, player2Name, event.target.value);
+		};
 	},
 	render: function() {
 		var winnerRow = (<td><PlayerCell player={this.props.winner} admin={this.props.admin} /></td>);
-		var player1Selected = this.props.winner? this.props.player1.Name === this.props.winner.Name : false;
-		var player2Selected = this.props.winner? this.props.player2.Name === this.props.winner.Name : false;
 		if (this.props.admin && this.props.admin !== "false") {
-			var baseString = this.props.week + ":" + this.props.player1.Name + ":" + this.props.player2.Name + ":";
-			var defaultValue = baseString;
-			if (player1Selected) {
-				defaultValue += this.props.player1.Name;
-			} else if (player2Selected) {
-				defaultValue += this.props.player2.Name;
-			}
 			winnerRow = (
 				<td>
-					<select name="" onChange={this.handleChange} defaultValue={defaultValue}>
-						<option value={baseString}>-</option>
-						<option value={baseString + this.props.player1.Name}>{this.props.player1.Name}</option>
-						<option value={baseString + this.props.player2.Name}>{this.props.player2.Name}</option>
+					<select onChange={this.handleChange(this.props.week, this.props.player1.Name, this.props.player2.Name)}
+						defaultValue={this.props.winner && this.props.winner.Name}>
+							<option value="">-</option>
+							<option value={this.props.player1.Name}>{this.props.player1.Name}</option>
+							<option value={this.props.player2.Name}>{this.props.player2.Name}</option>
 					</select>
 				</td>
 			);
