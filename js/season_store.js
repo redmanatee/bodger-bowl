@@ -1,8 +1,3 @@
-var _weekly_scenarios = [["1", "2"], ["7", "8"], ["3", "4"], ["11", "12"], ["9", "10"], ["5", "6"], ["11", "12"], ["3", "4"]];
-
-var _weekly_dates = ["October 22, 2014", "October 29, 2014", "November 5, 2014", "November 12, 2014", "November 19, 2014", "December 3, 2014", "December 10, 2014", "December 17, 2014"];
-
-
 function compareBy(func, invert) {
 	return function(a, b) {
 		var a1 = func(a), b1 = func(b)
@@ -54,6 +49,7 @@ window.seasonStore = Reflux.createStore({
 		this.listenTo(window.appActions.updatePlayerFaction, this.updatePlayerFaction);
 		this.listenTo(window.appActions.toggleStandin, this.toggleStandin);
 		this.listenTo(window.appActions.updateGame, this.updateGame);
+		this.listenTo(window.appActions.updateWeek, this.updateWeek);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.post("/admin/api/players/bonds/potential/increment/",
@@ -180,11 +176,21 @@ window.seasonStore = Reflux.createStore({
 			.fail(function() { alert("Injury update failed!"); });
 	},
 	updateGame: function(weekNumber, player1Name, player2Name, winnerName) {
-			// URL: /admin/api/seasons/SEASON/week/WEEK/games/PLAYER1/PLAYER2
-			$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", player1Name, player2Name].map(encodeURIComponent)).join("/"),
-				{ winnerName: winnerName })
+		// URL: /admin/api/seasons/SEASON/week/WEEK/games/PLAYER1/PLAYER2
+		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", player1Name, player2Name].map(encodeURIComponent)).join("/"),
+			{ winnerName: winnerName })
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function(xhr, status, err) { alert("Winner selection failed!") });
+	},
+	updateWeek: function(weekNumber, playDate, scenarios) {
+		// URL: /admin/api/seasons/SEASON/week/WEEK
+		$.post("/admin/api/seasons/" + [this.seasonId, "weeks", weekNumber].join("/"),
+			{
+				playDate: playDate,
+				scenarios: scenarios
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Update week failed!") });
 	},
 	loadActiveSeasonFromServer: function() {
 		return $.get("/api/seasons/latest/" + this.seasonId, {}, null, 'json')
@@ -238,8 +244,6 @@ window.seasonStore = Reflux.createStore({
 		//Map the players to their games
 		for (i = 0; i < season.Weeks.length; i++) {
 			var week = season.Weeks[i];
-			week.Scenarios = _weekly_scenarios[i];
-			week.PlayDate = _weekly_dates[i];
 			for (j = 0; j < week.Games.length; j++) {
 				var game = week.Games[j];
 				game.Players = $.map(game.PlayerIds, lookupPlayer);

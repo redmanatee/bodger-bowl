@@ -9,6 +9,7 @@ window.appActions = Reflux.createActions([
 	"updatePlayerFaction",
 	"toggleStandin",
 	"updateGame",
+	"updateWeek",
 
 	"viewMainTab",
 	"viewPlayerTab",

@@ -53,6 +53,11 @@ var GameRow = React.createClass({
 });
 
 var WeekGroup = React.createClass({
+	updateWeek: function(weekNumber) {
+		return function(event) {
+			window.appActions.updateWeek(weekNumber, this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
+		}.bind(this);
+	},
 	render: function() {
 		var rows = [];
 		var admin = this.props.admin;
@@ -70,15 +75,51 @@ var WeekGroup = React.createClass({
 			);
 			count++;
 		});
+		var weekEdit = "";
+		if(admin) {
+			var playDateId  = "play-date-" + number;
+			var scenariosId = "scenarios-" + number;
+			var dateDefault = "";
+			var playDate = this.props.week.PlayDate;
+
+			function pad(number) {
+				if (number < 10) {
+					return '0' + number;
+				}
+				return number;
+			}
+			if(playDate) {
+				playDate = new Date(playDate);
+				dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
+			}
+			weekEdit = (
+				<div className="text-left">
+					<div className="form-group">
+						<label htmlFor={playDateId}>Play Date</label>
+						<input id={playDateId} className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
+							defaultValue={dateDefault}  />
+					</div>
+					<div className="form-group">
+						<label htmlFor={scenariosId}>Scenarios (comma separated)</label>
+						<input id={scenariosId} className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
+							defaultValue={this.props.week.Scenarios && this.props.week.Scenarios.join(",")} />
+					</div>
+					<button type="submit" className="btn btn-default" onClick={this.updateWeek(number)}>Submit</button>
+				</div>
+			);
+		}
 		return (
-			<Table striped bordered hover>
-				<thead className="text-left">
-					<th>Player 1</th>
-					<th>Player 2</th>
-					<th>Winner</th>
-				</thead>
-				<tbody className="text-left">{rows}</tbody>
-			</Table>
+			<div>
+				{weekEdit}
+				<Table striped bordered hover>
+					<thead className="text-left">
+						<th>Player 1</th>
+						<th>Player 2</th>
+						<th>Winner</th>
+					</thead>
+					<tbody className="text-left">{rows}</tbody>
+				</Table>
+			</div>
 		);
 	}
 });
@@ -104,7 +145,7 @@ var SeasonScheduleTable = React.createClass({
 		rows = this.state.season.Weeks.map(function(week) {
 			var header = "Week " + week.Number;
 			if(week.PlayDate)
-				header += " (" + week.PlayDate + ")";
+				header += " (" + new Date(week.PlayDate).toLocaleDateString() + ")";
 			if(week.Scenarios)
 				header += " - Scenario Numbers: [" + week.Scenarios.join(", ") + "]";
 			return(
