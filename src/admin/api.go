@@ -9,10 +9,12 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"regexp"
+	"time"
 )
 
 func init() {
-	
+
 }
 
 func createSeason(w http.ResponseWriter, r *http.Request) {
@@ -34,17 +36,12 @@ func createSeason(w http.ResponseWriter, r *http.Request) {
 }
 
 // Splits the game update data.
-func splitGameUpdateData(c appengine.Context, data string) (weekNumber int, player1Name string, player2Name string, winnerName string) {
+func splitGameUpdateData(c appengine.Context, data string) (player1Name string, player2Name string, winnerName string) {
 	dataArr := strings.Split(data, ":")
-	weekNumber, err := strconv.Atoi(dataArr[0])
-	if err != nil {
-		panic(err)
-	}
-
-	return weekNumber, dataArr[1], dataArr[2], dataArr[3]
+	return dataArr[0], dataArr[1], dataArr[2]
 }
 
-func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, player1Name string, player2Name string, winnerName string) ([]byte, string) {
+func updateWeekDataWinnings(c appengine.Context, weekData []byte, weekNumber int, player1Name string, player2Name string, winnerName string) ([]byte, string) {
 	var weeks []model.Week
 	err := json.Unmarshal(weekData, &weeks)
 	if err != nil {
@@ -74,6 +71,35 @@ func updateWeekWinnings(c appengine.Context, weekData []byte, weekNumber int, pl
 		}
 	}
 	return weekData, ""
+}
+
+// dispatcher for routes beginning with /admin/api/seasons/
+func UpdateSeason(w http.ResponseWriter, r *http.Request) {
+	subpath := strings.TrimPrefix(r.URL.Path, "/admin/api/seasons/")
+
+	weekGameRegexp := regexp.MustCompile(`^([^/]+)/weeks/(\d+)/games/([^/]+)/([^/]+)$`)
+	weekGameMatches := weekGameRegexp.FindStringSubmatch(subpath)
+	if weekGameMatches != nil {
+		weekNumber, err := strconv.Atoi(weekGameMatches[2])
+		if err != nil {
+			panic(err)
+		}
+		updateWeekWinner(w, r, weekGameMatches[1], weekNumber, weekGameMatches[3], weekGameMatches[4])
+		return
+	}
+
+	weekRegexp := regexp.MustCompile(`^([^/]+)/weeks/(\d+)$`)
+	weekMatches := weekRegexp.FindStringSubmatch(subpath)
+	if weekMatches != nil {
+		weekNumber, err := strconv.Atoi(weekMatches[2])
+		if err != nil {
+			panic(err)
+		}
+		updateWeek(w, r, weekMatches[1], weekNumber)
+		return
+	}
+
+	panic("Unknown Path: " + r.URL.Path)
 }
 
 func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -322,16 +348,13 @@ func TogglePlayerStandin(w http.ResponseWriter, r *http.Request) {
 	model.SavePlayer(c, season, player)
 }
 
-// Handles update week API calls.
-func UpdateWeek(w http.ResponseWriter, r *http.Request) {
+// Handles updating the winner of a game
+func updateWeekWinner(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, player1Name string, player2Name string) {
 	c := appengine.NewContext(r)
-	seasonId := r.FormValue("SeasonId")
-	c.Infof("Seasonid: %v", seasonId)
-	updateData := r.FormValue("Data")
-	c.Infof("data: %v", updateData)
+	winnerName := r.FormValue("winnerName")
+	c.Infof("winner: %v", winnerName)
 	season := api.LoadSeasonById(c, seasonId)
-	weekNumber, player1Name, player2Name, winnerName := splitGameUpdateData(c, updateData)
-	updateWeekData, originalWinnerName := updateWeekWinnings(c, season.Schedule, weekNumber, player1Name, player2Name, winnerName)
+	updateWeekData, originalWinnerName := updateWeekDataWinnings(c, season.Schedule, weekNumber, player1Name, player2Name, winnerName)
 	c.Infof("New Weekdata: \n\n'%v'\n\n", string(updateWeekData))
 	c.Infof("Old Weekdata: \n\n'%v'\n\n", string(season.Schedule))
 	season.Schedule = updateWeekData
@@ -363,4 +386,51 @@ func UpdateWeek(w http.ResponseWriter, r *http.Request) {
 		}
 		model.SavePlayers(c, season, playersToSave[:])
 	}
+}
+
+// handles updating the scenarios and playdates for a week
+func updateWeek(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int) {
+	c := appengine.NewContext(r)
+	season := api.LoadSeasonById(c, seasonId)
+
+	playDate := r.FormValue("playDate")
+	var scenarios []int
+
+	if(r.FormValue("scenarios") != "") {
+		scenarioStrings := strings.Split(r.FormValue("scenarios"), ",")
+
+		scenarios = make([]int, len(scenarioStrings))
+		for i, v := range scenarioStrings {
+			scenario, err := strconv.Atoi(v)
+			if err != nil {
+				panic(err)
+			}
+			scenarios[i] = scenario
+		}
+	}
+
+	var weeks []model.Week
+	err := json.Unmarshal(season.Schedule, &weeks)
+	if err != nil {
+		panic(err)
+	}
+
+	var playDateTime *time.Time
+	if playDate == "" {
+		playDateTime = nil
+	} else {
+		playDateTimeP, err := time.Parse("2006-01-02", playDate)
+		playDateTime = &playDateTimeP
+		if err != nil {
+			panic(err)
+		}
+	}
+	weeks[weekNumber - 1].PlayDate = playDateTime
+	weeks[weekNumber - 1].Scenarios = scenarios
+	newData, err := json.Marshal(weeks)
+	if err != nil {
+		panic(err)
+	}
+	season.Schedule = newData
+	model.SaveSeason(c, *season)
 }
