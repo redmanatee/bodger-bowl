@@ -318,7 +318,7 @@ var PlayerPotentialBonds = React.createClass({
 	}
 });
 
-var PlayerEditorPanel = React.createClass({
+var PlayerContainer = React.createClass({
 	mixins: [Reflux.ListenerMixin],
 	onStatusChange: function(data) {
 		var selectedPlayer = this.state.selectedPlayer;

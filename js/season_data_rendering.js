@@ -19,7 +19,7 @@ var SeasonData = React.createClass({
 					<ConferenceContainer admin={admin} />
 				</TabPane>
 				<TabPane key={3} tab="Player Data">
-					<PlayerEditorPanel  admin={admin}  />
+					<PlayerContainer  admin={admin}  />
 				</TabPane>
 			</TabbedArea>
 		);
