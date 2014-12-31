@@ -20,17 +20,18 @@ var SeasonData = React.createClass({
 	},
 	render: function() {
 		var admin = $('#season-schedule').data('admin');
-		if(this.state.season) {
+		var season = this.state.season;
+		if(season) {
 			return (
 				<TabbedArea className="main-nav" activeKey={this.state.activeKey} justified onSelect={window.appActions.viewMainTab}>
 					<TabPane key={1} tab="Season Schedule">
-						<SeasonScheduleTable admin={admin} />
+						<SeasonScheduleTable admin={admin} season={season} />
 					</TabPane>
 					<TabPane key={2} tab="Conferences">
-						<ConferenceContainer admin={admin} />
+						<ConferenceContainer admin={admin} season={season} />
 					</TabPane>
 					<TabPane key={3} tab="Players">
-						<PlayerContainer  admin={admin}  />
+						<PlayerContainer admin={admin} season={season} />
 					</TabPane>
 				</TabbedArea>
 			);

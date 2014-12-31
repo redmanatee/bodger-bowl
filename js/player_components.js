@@ -23,6 +23,9 @@ var PlayerCell = React.createClass({
 });
 
 var PlayerSchedule = React.createClass({
+	propTypes: {
+		season: React.PropTypes.object.isRequired
+	},
 	render: function() {
 		var rows = [];
 		var player = this.props.player;
@@ -320,20 +323,12 @@ var PlayerPotentialBonds = React.createClass({
 
 var PlayerContainer = React.createClass({
 	mixins: [Reflux.ListenerMixin],
-	onStatusChange: function(data) {
-		var selectedPlayer = this.state.selectedPlayer;
-		if (selectedPlayer === null) {
-			selectedPlayer = data.Players[0];
-		}
-		this.setState({
-			season: data,
-			selectedPlayer: selectedPlayer && this.getSelectedPlayer(selectedPlayer.Name, data)
-		});
+	propTypes: {
+		season: React.PropTypes.object.isRequired
 	},
 	getInitialState: function() {
 		return {
 			activeKey: 1,
-			season: window.seasonStore.season,
 			selectedPlayer: null,
 		};
 	},
@@ -341,20 +336,18 @@ var PlayerContainer = React.createClass({
 		window.appActions.viewPlayer(event.target.value);
 	},
 	componentDidMount: function() {
-		this.listenTo(window.seasonStore, this.onStatusChange);
-		this.listenTo(window.viewStore,   this.view);
+		this.listenTo(window.viewStore, this.view);
 	},
-	getSelectedPlayer: function(playerName, season) {
-		if (!this.state.season) return null;
-		for (var i = 0; i < this.state.season.Players.length; i++) {
-			if (season.Players[i].Name === playerName) {
-				return season.Players[i];
+	getSelectedPlayer: function(playerName) {
+		for (var i = 0; i < this.props.season.Players.length; i++) {
+			if (this.props.season.Players[i].Name === playerName) {
+				return this.props.season.Players[i];
 			}
 		}
 	},
 	view: function(viewState) {
 		this.setState({
-			selectedPlayer: this.getSelectedPlayer(viewState.playerName, this.state.season),
+			selectedPlayer: this.getSelectedPlayer(viewState.playerName),
 			activeKey: viewState.playerTab
 		});
 	},
@@ -375,11 +368,8 @@ var PlayerContainer = React.createClass({
 	},
 	render: function() {
 		var admin = this.props.admin;
-		var players = [];
+		var players = this.props.season.Players;
 		var tabbedArea = <p>No player selected.</p>;
-		if (this.state.season !== null) {
-			players = this.state.season.Players;
-		}
 		if (this.state.selectedPlayer) {
 			var playerEditing = [];
 			if (admin) {
@@ -397,7 +387,7 @@ var PlayerContainer = React.createClass({
 					{playerEditing}
 					<TabbedArea activeKey={this.state.activeKey} onSelect={window.appActions.viewPlayerTab}>
 						<TabPane key={1} tab="Schedule">
-							<PlayerSchedule player={this.state.selectedPlayer} season={this.state.season} />
+							<PlayerSchedule player={this.state.selectedPlayer} season={this.props.season} />
 						</TabPane>
 						<TabPane key={2} tab="Injuries">
 							<PlayerInjuries player={this.state.selectedPlayer} admin={admin} />

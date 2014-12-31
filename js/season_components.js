@@ -103,24 +103,12 @@ var WeekGroup = React.createClass({
 });
 
 var SeasonScheduleTable = React.createClass({
-	mixins: [Reflux.ListenerMixin],
-	onStatusChange: function(data) {
-		this.setState({
-			season: data,
-		});
-	},
-	getInitialState: function() {
-		return {
-			season: window.seasonStore.season,
-		};
-	},
-	componentDidMount: function() {
-		this.listenTo(window.seasonStore, this.onStatusChange);
+	propTypes: {
+		season: React.PropTypes.object.isRequired
 	},
 	render: function() {
-		if (!this.state.season) return <div></div>;
 		var admin = this.props.admin;
-		rows = this.state.season.Weeks.map(function(week) {
+		rows = this.props.season.Weeks.map(function(week) {
 			var header = "Week " + week.Number;
 			if(week.PlayDate)
 				header += " (" + new Date(week.PlayDate).toLocaleDateString() + ")";
@@ -136,7 +124,7 @@ var SeasonScheduleTable = React.createClass({
 			<div className="text-center">
 				<Grid>
 					<Row>
-						<PageHeader>{this.state.season.Name + " (" + this.state.season.Year + ")"}</PageHeader>
+						<PageHeader>{this.props.season.Name + " (" + this.props.season.Year + ")"}</PageHeader>
 					</Row>
 					<Row>
 						<Accordion>{rows}</Accordion>

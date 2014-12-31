@@ -17,7 +17,7 @@ var DivisionTable = React.createClass({
 		var rows = [];
 		var admin = this.props.admin;
 		this.props.division.Players.forEach(function(player) {
-			rows.push(<PlayerDivisionRow player={player} 
+			rows.push(<PlayerDivisionRow player={player}
 										   rank={-1}
 										   key={player.Name}
 										   admin={admin} />);
@@ -60,27 +60,16 @@ var ConferenceTable = React.createClass({
 });
 
 var ConferenceContainer = React.createClass({
-	mixins: [Reflux.ListenerMixin],
-	onSeasonChange: function(season) {
-		this.setState({
-			season:season
-		});
-	},
-	getInitialState: function() {
-		return {
-			season: window.seasonStore.season,
-		};
-	},
-	componentDidMount: function() {
-		this.listenTo(window.seasonStore, this.onSeasonChange);
+	propTypes: {
+		season: React.PropTypes.object.isRequired
 	},
 	render: function() {
-		if (this.state.season === null) {
+		if (this.props.season === null) {
 			return (<div></div>);
 		}
 		var conferences = [];
 		var admin = this.props.admin;
-		this.state.season.Conferences.forEach(function(conference) {
+		this.props.season.Conferences.forEach(function(conference) {
 			conferences.push(
 				<ConferenceTable conference={conference} admin={admin} key={conference.Name} />
 			);
@@ -92,5 +81,3 @@ var ConferenceContainer = React.createClass({
 		);
 	}
 });
-
-
