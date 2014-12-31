@@ -1,5 +1,7 @@
 /** @jsx React.DOM */
 
+var React = require('react');
+
 var AdminSeasonRow = React.createClass({
 	render: function() {
 		hrefTarget = "/admin/seasons/" + encodeURIComponent(this.props.season.Name + ";" + this.props.season.Year);
@@ -13,7 +15,7 @@ var AdminSeasonRow = React.createClass({
 	}
 });
 
-var AdminSeasonTable = React.createClass({
+module.exports = React.createClass({
 	loadSeasonsFromServer: function() {
 		$.ajax({url:"/api/seasons/",
 				type: 'GET',

@@ -3,44 +3,41 @@ var gulp = require('gulp');
 
 // Include Our Plugins
 var del = require('del');
-var react = require('gulp-react');
-var jshint = require('gulp-jshint');
-var concat = require('gulp-concat');
+var jshintify = require('jshintify');
+var browserify = require('browserify');
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var reactify = require('reactify');
 var uglify = require('gulp-uglify');
 var rename = require('gulp-rename');
+
+var source_paths = ['js/*.js', 'js/components/*.js', 'js/stores/*.js'];
 
 // Delete the dist directory
 gulp.task('clean', function(cb) {
 	del(['js/dist'], cb)
 });
 
-// Lint Task
-gulp.task('lint', function() {
-	return gulp.src('js/*.js')
-		.pipe(react())
-		.pipe(jshint())
-		.pipe(jshint.reporter('default'));
-});
-
-// Concatenate & Minify JS
-gulp.task('scripts', ['clean'], function() {
-	return gulp.src([
-		"js/*.js",
-		"js/components/*.js",
-		"js/stores/*.js",
-	])
-		.pipe(react())
-		.pipe(concat('all.js'), {newLine: "\r\n"})
-		.pipe(gulp.dest('js/dist'))
-		.pipe(rename('all.min.js'))
-		.pipe(uglify())
-		.pipe(gulp.dest('js/dist'));
+gulp.task('compile', ['clean'], function() {
+	return browserify({
+		entries: ['./js/main.js'],
+		debug: (process.env.NODE_ENV == 'production')
+	})
+	.transform(reactify)
+	.transform(jshintify)
+	.bundle()
+	.pipe(source('all.js'))
+	.pipe(gulp.dest('js/dist'))
+	.pipe(buffer())
+	.pipe(uglify())
+	.pipe(rename('all.min.js'))
+	.pipe(gulp.dest('js/dist'));
 });
 
 // Watch Files For Changes
 gulp.task('watch', function() {
-	gulp.watch('js/*.js', ['lint', 'scripts']);
+	gulp.watch(source_paths, ['compile']);
 });
 
 // Default Task
-gulp.task('default', ['clean', 'lint', 'scripts', 'watch']);
+gulp.task('default', ['clean', 'compile', 'watch']);

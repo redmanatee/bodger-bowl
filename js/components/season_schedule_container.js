@@ -1,9 +1,20 @@
 /** @jsx React.DOM */
 
+var React = require('react');
+var AppActions = require('../actions.js');
+var PlayerCell = require('./player_cell.js');
+var Nav = require('react-bootstrap/Nav');
+var Table = require('react-bootstrap/Table');
+var Panel = require('react-bootstrap/Panel');
+var Grid = require('react-bootstrap/Grid');
+var Row = require('react-bootstrap/Row');
+var Accordion = require('react-bootstrap/Accordion');
+var PageHeader = require('react-bootstrap/PageHeader');
+
 var GameRow = React.createClass({
 	handleChange: function(weekNumber, player1Name, player2Name) {
 		return function(event) {
-			window.appActions.updateGame(weekNumber, player1Name, player2Name, event.target.value);
+			AppActions.updateGame(weekNumber, player1Name, player2Name, event.target.value);
 		};
 	},
 	render: function() {
@@ -33,7 +44,7 @@ var GameRow = React.createClass({
 var WeekGroup = React.createClass({
 	updateWeek: function(weekNumber) {
 		return function(event) {
-			window.appActions.updateWeek(weekNumber, this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
+			AppActions.updateWeek(weekNumber, this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
 		}.bind(this);
 	},
 	render: function() {
@@ -102,7 +113,7 @@ var WeekGroup = React.createClass({
 	}
 });
 
-var SeasonScheduleContainer = React.createClass({
+module.exports = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired
 	},

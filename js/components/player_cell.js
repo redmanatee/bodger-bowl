@@ -1,6 +1,9 @@
 /** @jsx React.DOM */
 
-var PlayerCell = React.createClass({
+var React = require('react');
+var AppActions = require('../actions.js');
+
+module.exports = React.createClass({
 	render: function() {
 		var img = (<div></div>);
 		var player = (<div>--</div>);
@@ -10,7 +13,7 @@ var PlayerCell = React.createClass({
 			if(this.props.noLink) {
 				player = <span>{this.props.player.Name}</span>;
 			} else {
-				player = <a onClick={function() { window.appActions.viewPlayer(name); }}>{this.props.player.Name}</a>;
+				player = <a onClick={function() { AppActions.viewPlayer(name); }}>{this.props.player.Name}</a>;
 			}
 		}
 		return (

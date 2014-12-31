@@ -1,4 +1,6 @@
-window.appActions = Reflux.createActions([
+var Reflux = require('reflux');
+
+module.exports = Reflux.createActions([
 	"updateInjuries",
 	"addActiveBond",
 	"deleteActiveBond",
