@@ -1,6 +1,6 @@
 /** @jsx React.DOM */
 
-var SeasonData = React.createClass({
+var Season = React.createClass({
 	mixins: [Reflux.ListenerMixin],
 	getInitialState: function() {
 		return {
@@ -35,7 +35,7 @@ var SeasonData = React.createClass({
 		var admin = $('#season-schedule').data('admin');
 		var season = this.state.season;
 		if(season) {
-			var content = <SeasonScheduleTable admin={admin} season={season} />;
+			var content = <SeasonScheduleContainer admin={admin} season={season} />;
 			if (this.state.activeKey == 2)
 				content = <ConferenceContainer admin={admin} season={season} />;
 			if (this.state.activeKey == 3)
@@ -71,10 +71,4 @@ var SeasonData = React.createClass({
 			return <h1>Loading Season Data</h1>;
 		}
 	},
-});
-
-
-$(function() {
-	var schedule = $('#season-schedule')[0];
-	if(schedule) React.renderComponent(<SeasonData />, schedule);
 });

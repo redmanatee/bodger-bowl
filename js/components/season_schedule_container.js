@@ -102,7 +102,7 @@ var WeekGroup = React.createClass({
 	}
 });
 
-var SeasonScheduleTable = React.createClass({
+var SeasonScheduleContainer = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired
 	},

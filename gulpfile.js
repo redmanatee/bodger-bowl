@@ -26,6 +26,7 @@ gulp.task('lint', function() {
 gulp.task('scripts', ['clean'], function() {
 	return gulp.src([
 		"js/*.js",
+		"js/components/*.js",
 		"js/stores/*.js",
 	])
 		.pipe(react())
