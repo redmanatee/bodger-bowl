@@ -25,15 +25,8 @@ gulp.task('lint', function() {
 // Concatenate & Minify JS
 gulp.task('scripts', ['clean'], function() {
 	return gulp.src([
-		"js/player_components.js",
-		"js/bootstrap_shortcuts.js",
-		"js/actions.js",
-		"js/season_store.js",
-		"js/view_store.js",
-		"js/season_components.js",
-		"js/conference_components.js",
-		"js/season_data_rendering.js",
-		"js/admin_home.js"
+		"js/*.js",
+		"js/stores/*.js",
 	])
 		.pipe(react())
 		.pipe(concat('all.js'), {newLine: "\r\n"})
