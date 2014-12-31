@@ -324,7 +324,7 @@ var PlayerPotentialBonds = React.createClass({
 var PlayerContainer = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired,
-		selectedPlayer: React.PropTypes.string,
+		selectedPlayer: React.PropTypes.object,
 		activeTab: React.PropTypes.number
 	},
 	getDefaultProps: function() { return { activeTab: 1 }; },

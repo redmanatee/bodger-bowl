@@ -35,18 +35,37 @@ var SeasonData = React.createClass({
 		var admin = $('#season-schedule').data('admin');
 		var season = this.state.season;
 		if(season) {
+			var content = <SeasonScheduleTable admin={admin} season={season} />;
+			if (this.state.activeKey == 2)
+				content = <ConferenceContainer admin={admin} season={season} />;
+			if (this.state.activeKey == 3)
+				content = <PlayerContainer admin={admin} season={season} selectedPlayer={this.state.selectedPlayer} activeTab={this.state.activePlayerTab} />;
+
 			return (
-				<TabbedArea className="main-nav" activeKey={this.state.activeKey} justified onSelect={window.appActions.viewMainTab}>
-					<TabPane key={1} tab="Season Schedule">
-						<SeasonScheduleTable admin={admin} season={season} />
-					</TabPane>
-					<TabPane key={2} tab="Conferences">
-						<ConferenceContainer admin={admin} season={season} />
-					</TabPane>
-					<TabPane key={3} tab="Players">
-						<PlayerContainer admin={admin} season={season} selectedPlayerName={this.state.selectedPlayerName} activeTab={this.state.activePlayerTab} />
-					</TabPane>
-				</TabbedArea>
+				<div>
+					<Navbar className="main-nav">
+						<Nav>
+							<NavItem className={this.state.activeKey == 1 ? "active" : ""}
+									eventKey={1}
+									onClick={function() { window.appActions.viewMainTab(1); }}>
+								Season Schedule
+							</NavItem>
+
+							<NavItem className={this.state.activeKey == 2 ? "active" : ""}
+									eventKey={2}
+									onClick={function() { window.appActions.viewMainTab(2); }}>
+								Conferences
+							</NavItem>
+
+							<NavItem className={this.state.activeKey == 3 ? "active" : ""}
+									eventKey={3}
+									onClick={function() { window.appActions.viewMainTab(3); }}>
+								Players
+							</NavItem>
+						</Nav>
+					</Navbar>
+				{content}
+				</div>
 			);
 		} else {
 			return <h1>Loading Season Data</h1>;

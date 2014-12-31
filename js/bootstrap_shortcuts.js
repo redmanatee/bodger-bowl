@@ -10,3 +10,6 @@ var TabPane = ReactBootstrap.TabPane;
 var PageHeader = ReactBootstrap.PageHeader;
 var Panel = ReactBootstrap.Panel;
 var Table = ReactBootstrap.Table;
+var Navbar = ReactBootstrap.Navbar;
+var Nav = ReactBootstrap.Nav;
+var NavItem = ReactBootstrap.NavItem;
