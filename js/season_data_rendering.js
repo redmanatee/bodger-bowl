@@ -5,7 +5,9 @@ var SeasonData = React.createClass({
 	getInitialState: function() {
 		return {
 			season: window.seasonStore.season,
-			activeKey: 1
+			activeKey: 1,
+			selectedPlayer: null,
+			activePlayerTab: 1
 		};
 	},
 	componentDidMount: function() {
@@ -16,7 +18,18 @@ var SeasonData = React.createClass({
 		this.setState({ season:season });
 	},
 	view: function(state) {
-		this.setState({activeKey: state.mainTab});
+		this.setState({
+			activeKey: state.mainTab,
+			selectedPlayer: this.getPlayer(state.playerName),
+			activePlayerTab: state.playerTab
+		});
+	},
+	getPlayer: function(playerName) {
+		for (var i = 0; i < this.state.season.Players.length; i++) {
+			if (this.state.season.Players[i].Name === playerName) {
+				return this.state.season.Players[i];
+			}
+		}
 	},
 	render: function() {
 		var admin = $('#season-schedule').data('admin');
@@ -31,7 +44,7 @@ var SeasonData = React.createClass({
 						<ConferenceContainer admin={admin} season={season} />
 					</TabPane>
 					<TabPane key={3} tab="Players">
-						<PlayerContainer admin={admin} season={season} />
+						<PlayerContainer admin={admin} season={season} selectedPlayerName={this.state.selectedPlayerName} activeTab={this.state.activePlayerTab} />
 					</TabPane>
 				</TabbedArea>
 			);

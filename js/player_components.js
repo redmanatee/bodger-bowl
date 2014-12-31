@@ -322,55 +322,35 @@ var PlayerPotentialBonds = React.createClass({
 });
 
 var PlayerContainer = React.createClass({
-	mixins: [Reflux.ListenerMixin],
 	propTypes: {
-		season: React.PropTypes.object.isRequired
+		season: React.PropTypes.object.isRequired,
+		selectedPlayer: React.PropTypes.string,
+		activeTab: React.PropTypes.number
 	},
-	getInitialState: function() {
-		return {
-			activeKey: 1,
-			selectedPlayer: null,
-		};
-	},
+	getDefaultProps: function() { return { activeTab: 1 }; },
 	playerSelectionChange: function(event) {
 		window.appActions.viewPlayer(event.target.value);
 	},
-	componentDidMount: function() {
-		this.listenTo(window.viewStore, this.view);
-	},
-	getSelectedPlayer: function(playerName) {
-		for (var i = 0; i < this.props.season.Players.length; i++) {
-			if (this.props.season.Players[i].Name === playerName) {
-				return this.props.season.Players[i];
-			}
-		}
-	},
-	view: function(viewState) {
-		this.setState({
-			selectedPlayer: this.getSelectedPlayer(viewState.playerName),
-			activeKey: viewState.playerTab
-		});
-	},
 	updateName: function() {
-		newName = prompt('Enter new name', this.state.selectedPlayer.Name);
-		if (newName && newName !== this.state.selectedPlayer.Name) {
-			window.appActions.updatePlayerName(this.state.selectedPlayer.Name, newName);
+		newName = prompt('Enter new name', this.props.selectedPlayer.Name);
+		if (newName && newName !== this.props.selectedPlayer.Name) {
+			window.appActions.updatePlayerName(this.props.selectedPlayer.Name, newName);
 		}
 	},
 	updateFaction: function() {
-		newFaction = prompt('Enter new faction', this.state.selectedPlayer.Faction);
-		if (newFaction && newFaction !== this.state.selectedPlayer.Faction) {
-			window.appActions.updatePlayerFaction(this.state.selectedPlayer, newFaction);
+		newFaction = prompt('Enter new faction', this.props.selectedPlayer.Faction);
+		if (newFaction && newFaction !== this.props.selectedPlayer.Faction) {
+			window.appActions.updatePlayerFaction(this.props.selectedPlayer, newFaction);
 		}
 	},
 	toggleStandin: function() {
-		window.appActions.toggleStandin(this.state.selectedPlayer.Name);
+		window.appActions.toggleStandin(this.props.selectedPlayer.Name);
 	},
 	render: function() {
 		var admin = this.props.admin;
 		var players = this.props.season.Players;
 		var tabbedArea = <p>No player selected.</p>;
-		if (this.state.selectedPlayer) {
+		if (this.props.selectedPlayer) {
 			var playerEditing = [];
 			if (admin) {
 				playerEditing =
@@ -378,25 +358,25 @@ var PlayerContainer = React.createClass({
 						<Button bsStyle="primary" onClick={this.updateName}>Update Name</Button>
 						<Button bsStyle="primary" onClick={this.updateFaction}>Update Faction</Button>
 						<Button bsStyle="primary" onClick={this.toggleStandin}>Toggle Standin</Button>
-						<div>{this.state.selectedPlayer && this.state.selectedPlayer.Standin? "Standin" : "Full Player"}</div>
+						<div>{this.props.selectedPlayer && this.props.selectedPlayer.Standin? "Standin" : "Full Player"}</div>
 					</div>;
 			}
 			tabbedArea =
 				<div>
-					<PlayerCell player={this.state.selectedPlayer} noLink={true} />
+					<PlayerCell player={this.props.selectedPlayer} noLink={true} />
 					{playerEditing}
-					<TabbedArea activeKey={this.state.activeKey} onSelect={window.appActions.viewPlayerTab}>
+					<TabbedArea activeKey={this.props.activeTab} onSelect={window.appActions.viewPlayerTab}>
 						<TabPane key={1} tab="Schedule">
-							<PlayerSchedule player={this.state.selectedPlayer} season={this.props.season} />
+							<PlayerSchedule player={this.props.selectedPlayer} season={this.props.season} />
 						</TabPane>
 						<TabPane key={2} tab="Injuries">
-							<PlayerInjuries player={this.state.selectedPlayer} admin={admin} />
+							<PlayerInjuries player={this.props.selectedPlayer} admin={admin} />
 						</TabPane>
 						<TabPane key={3} tab="Bonds">
-							<PlayerBonds player={this.state.selectedPlayer} admin={admin} />
+							<PlayerBonds player={this.props.selectedPlayer} admin={admin} />
 						</TabPane>
 						<TabPane key={4} tab="Potential Bonds">
-							<PlayerPotentialBonds player={this.state.selectedPlayer} admin={admin} />
+							<PlayerPotentialBonds player={this.props.selectedPlayer} admin={admin} />
 						</TabPane>
 					</TabbedArea>
 				</div>;
@@ -406,7 +386,7 @@ var PlayerContainer = React.createClass({
 			<Grid id="player-info">
 				<Row>
 					<PlayerSelector players={players}
-									selectedPlayer={this.state.selectedPlayer}
+									selectedPlayer={this.props.selectedPlayer}
 									onChangeFunction={this.playerSelectionChange} />
 					{tabbedArea}
 				</Row>
