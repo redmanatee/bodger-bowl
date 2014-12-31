@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react');
 var $ = require('jquery-browserify');
 var Season = require('./components/season.js');

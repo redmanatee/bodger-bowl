@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react');
 var AppActions = require('../actions.js');
 var PlayerCell = require('./player_cell.js');
@@ -126,7 +124,7 @@ module.exports = React.createClass({
 			if(week.Scenarios)
 				header += " - Scenario Numbers: [" + week.Scenarios.join(", ") + "]";
 			return(
-					<Panel header={header} key={week.Number}>
+					<Panel header={header} eventKey={week.Number}>
 						<WeekGroup week={week} admin={admin} key={week.Number}/>
 					</Panel>
 			);

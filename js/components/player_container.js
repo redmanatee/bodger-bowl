@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react');
 var AppActions = require('../actions.js');
 var PlayerCell = require('./player_cell.js');
@@ -355,16 +353,16 @@ module.exports = React.createClass({
 					<PlayerCell player={this.props.selectedPlayer} noLink={true} />
 					{playerEditing}
 					<TabbedArea activeKey={this.props.activeTab} onSelect={AppActions.viewPlayerTab}>
-						<TabPane key={1} tab="Schedule">
+						<TabPane eventKey={1} tab="Schedule">
 							<PlayerSchedule player={this.props.selectedPlayer} season={this.props.season} />
 						</TabPane>
-						<TabPane key={2} tab="Injuries">
+						<TabPane eventKey={2} tab="Injuries">
 							<PlayerInjuries player={this.props.selectedPlayer} admin={admin} />
 						</TabPane>
-						<TabPane key={3} tab="Bonds">
+						<TabPane eventKey={3} tab="Bonds">
 							<PlayerBonds player={this.props.selectedPlayer} admin={admin} />
 						</TabPane>
-						<TabPane key={4} tab="Potential Bonds">
+						<TabPane eventKey={4} tab="Potential Bonds">
 							<PlayerPotentialBonds player={this.props.selectedPlayer} admin={admin} />
 						</TabPane>
 					</TabbedArea>

@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react');
 var PlayerCell = require('./player_cell.js');
 var Table = require('react-bootstrap/Table');

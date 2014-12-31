@@ -1,5 +1,3 @@
-/** @jsx React.DOM */
-
 var React = require('react');
 var Reflux = require('reflux');
 var Navbar = require('react-bootstrap/Navbar');
