@@ -1,3 +1,4 @@
+/* @flow */
 var React = require('react');
 var Reflux = require('reflux');
 var Navbar = require('react-bootstrap/Navbar');
@@ -13,10 +14,11 @@ var PlayerContainer = require('./player_container.js');
 module.exports = React.createClass({
 	mixins: [Reflux.ListenerMixin],
 	getInitialState: function() {
+		var selectedPlayer: ?Object = null;
 		return {
 			season: SeasonStore.season,
 			activeKey: 1,
-			selectedPlayer: null,
+			selectedPlayer: selectedPlayer,
 			activePlayerTab: 1
 		};
 	},
@@ -24,24 +26,24 @@ module.exports = React.createClass({
 		this.listenTo(ViewStore, this.view);
 		this.listenTo(SeasonStore, this.onSeasonChange);
 	},
-	onSeasonChange: function(season) {
+	onSeasonChange: function(season: Object) {
 		this.setState({ season: season });
 	},
-	view: function(state) {
+	view: function(state: Object) {
 		this.setState({
 			activeKey: state.mainTab,
 			selectedPlayer: this.getPlayer(state.playerName),
 			activePlayerTab: state.playerTab
 		});
 	},
-	getPlayer: function(playerName) {
+	getPlayer: function(playerName: string): ?Object {
 		for (var i = 0; i < this.state.season.Players.length; i++) {
 			if (this.state.season.Players[i].Name === playerName) {
 				return this.state.season.Players[i];
 			}
 		}
 	},
-	render: function() {
+	render: function(): ?ReactElement {
 		var admin = $('#season-schedule').data('admin');
 		var season = this.state.season;
 		if(season) {
@@ -73,7 +75,7 @@ module.exports = React.createClass({
 							</NavItem>
 						</Nav>
 					</Navbar>
-				{content}
+					{content}
 				</div>
 			);
 		} else {

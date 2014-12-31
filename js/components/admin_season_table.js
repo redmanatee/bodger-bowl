@@ -1,8 +1,9 @@
+/* @flow */
 var React = require('react');
 
 var AdminSeasonRow = React.createClass({
 	render: function() {
-		hrefTarget = "/admin/seasons/" + encodeURIComponent(this.props.season.Name + ";" + this.props.season.Year);
+		var hrefTarget = "/admin/seasons/" + encodeURIComponent(this.props.season.Name + ";" + this.props.season.Year);
 		return (
 			<tr>
 				<td><a href={hrefTarget}>{this.props.season.Name}</a></td>
@@ -26,13 +27,13 @@ module.exports = React.createClass({
 				}.bind(this)
 		});
 	},
-	getInitialState: function() {
-		return {seasons:[]};
+	getInitialState: function(): {seasons: Array<Object>} {
+		return {seasons: []};
 	},
 	componentDidMount: function() {
 		this.loadSeasonsFromServer();
 	},
-	render: function() {
+	render: function(): ?ReactElement {
 		var rows = [];
 		this.state.seasons.forEach(function(season) {
 			rows.push(<AdminSeasonRow season={season} />);

@@ -1,15 +1,14 @@
+/* @flow */
 var Reflux = require('reflux');
 var AppActions = require('../actions.js');
 
-function compareBy(func, invert) {
+function compareBy(func) {
 	return function(a, b) {
 		var a1 = func(a), b1 = func(b);
-		invert = (typeof invert === "undefined")? false : invert;
-		invertWeight = invert? -1 : 1;
 		if (a1 < b1)
-			return -1 * invertWeight;
+			return -1;
 		if (a1 > b1)
-			return	1 * invertWeight;
+			return	1;
 		return	0;
 	};
 }
@@ -17,13 +16,11 @@ function compareBy(func, invert) {
 
 var _playerSort = compareBy(function(p) { return p.Name.toLowerCase(); });
 
-
 var _ActiveBondSort = function(a, b) {
 	return compareBy(function(bond) { return bond.Warcaster.toLowerCase(); })(a, b) ||
 		compareBy(function(bond) { return bond.Warjack.toLowerCase(); })(a, b) ||
 		a.BondNumber - b.BondNumber;
 };
-
 
 var _PotentialBondSort = function(a, b) {
 	return compareBy(function(potentialBond) { return potentialBond.Warcaster.toLowerCase(); })(a, b) ||
@@ -32,10 +29,9 @@ var _PotentialBondSort = function(a, b) {
 };
 
 var _PLayerRankingSort = function(a, b) {
-	return compareBy(function(player) { return player.Wins; }, true)(a, b) ||
+	return compareBy(function(player) { return -player.Wins; })(a, b) ||
 		compareBy(function(player) { return player.Losses; })(a, b);
 };
-
 
 
 module.exports = Reflux.createStore({
@@ -225,7 +221,8 @@ module.exports = Reflux.createStore({
 				}
 			}
 		});
-		players = {};
+		var players = {};
+		var i: number = 0, j: number = 0;
 		for (i = 0; i < season.Players.length; i++) {
 			players[season.Players[i].Name] = season.Players[i];
 		}

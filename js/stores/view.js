@@ -1,3 +1,4 @@
+/* @flow */
 var Reflux = require('reflux');
 var AppActions = require('../actions.js');
 
