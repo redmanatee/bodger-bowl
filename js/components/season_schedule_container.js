@@ -11,58 +11,80 @@ var Accordion = require('react-bootstrap/Accordion');
 var PageHeader = require('react-bootstrap/PageHeader');
 
 var GameRow = React.createClass({
+	propTypes: {
+		weekNumber: React.PropTypes.number.isRequired,
+		game: React.PropTypes.object.isRequired,
+		admin: React.PropTypes.bool
+	},
 	handleChange: function(weekNumber, player1Name, player2Name) {
 		return function(event) {
 			AppActions.updateGame(weekNumber, player1Name, player2Name, event.target.value);
 		};
 	},
 	render: function() {
-		var winnerRow = (<td><PlayerCell player={this.props.winner} admin={this.props.admin} /></td>);
-		if (this.props.admin && this.props.admin !== "false") {
+		var game = this.props.game;
+		var player1 = game.Players[0];
+		var player2 = game.Players[1];
+		var winner = game.Winner;
+		var admin = this.props.admin;
+		var winnerRow = <td><PlayerCell player={winner} admin={admin} /></td>;
+		if (admin) {
 			winnerRow = (
 				<td>
-					<select onChange={this.handleChange(this.props.week, this.props.player1.Name, this.props.player2.Name)}
-						defaultValue={this.props.winner && this.props.winner.Name}>
+					<select onChange={this.handleChange(this.props.weekNumber, player1.Name, player2.Name)}
+						defaultValue={winner && winner.Name}>
 							<option value="">-</option>
-							<option value={this.props.player1.Name}>{this.props.player1.Name}</option>
-							<option value={this.props.player2.Name}>{this.props.player2.Name}</option>
+							<option value={player1.Name}>{player1.Name}</option>
+							<option value={player2.Name}>{player2.Name}</option>
 					</select>
 				</td>
 			);
 		}
 		return (
 			<tr>
-				<td><PlayerCell player={this.props.player1} admin={this.props.admin} /></td>
-				<td><PlayerCell player={this.props.player2} admin={this.props.admin} /></td>
+				<td><PlayerCell player={player1} admin={admin} /></td>
+				<td><PlayerCell player={player2} admin={admin} /></td>
 				{winnerRow}
 			</tr>
 		);
 	}
 });
 
+var WeekTable = React.createClass({
+	propTypes: {
+		week: React.PropTypes.object.isRequired,
+		admin: React.PropTypes.bool
+	},
+	render: function() {
+		var rows = this.props.week.Games.map(function(game, i) {
+			return <GameRow game={game} weekNumber={this.props.week.Number} key={i} admin={this.props.admin} />;
+		}.bind(this));
+		return (
+			<Table striped bordered hover>
+				<thead className="text-left">
+					<th>Player 1</th>
+					<th>Player 2</th>
+					<th>Winner</th>
+				</thead>
+				<tbody className="text-left">{rows}</tbody>
+			</Table>
+		);
+	}
+});
+
 var WeekGroup = React.createClass({
+	propTypes: {
+		week: React.PropTypes.object.isRequired,
+		admin: React.PropTypes.bool
+	},
 	updateWeek: function(weekNumber) {
 		return function(event) {
 			AppActions.updateWeek(weekNumber, this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
 		}.bind(this);
 	},
 	render: function() {
-		var rows = [];
 		var admin = this.props.admin;
 		var number = this.props.week.Number;
-		var count = 0;
-		this.props.week.Games.forEach(function(game) {
-			rows.push(
-					<GameRow player1={game.Players[0]}
-							   player2={game.Players[1]}
-							   hasWinner={game.Winner !== null}
-							   winner={game.Winner}
-							   week={number}
-							   key={count}
-							   admin={admin} />
-			);
-			count++;
-		});
 		var weekEdit = "";
 		function pad(number) {
 			if (number < 10) {
@@ -99,14 +121,7 @@ var WeekGroup = React.createClass({
 		return (
 			<div>
 				{weekEdit}
-				<Table striped bordered hover>
-					<thead className="text-left">
-						<th>Player 1</th>
-						<th>Player 2</th>
-						<th>Winner</th>
-					</thead>
-					<tbody className="text-left">{rows}</tbody>
-				</Table>
+				<WeekTable week={this.props.week} admin={this.props.admin} />
 			</div>
 		);
 	}
