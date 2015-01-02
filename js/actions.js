@@ -15,6 +15,7 @@ module.exports = Reflux.createActions([
 	"updateWeek",
 
 	"viewMainTab",
+	"viewWeek",
 	"viewPlayerTab",
 	"viewPlayer",
 	"viewRenamedPlayer",

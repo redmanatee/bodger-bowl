@@ -38,25 +38,23 @@ var PlayerSchedule = React.createClass({
 			});
 		}
 		return (
-			<Grid>
-				<Row>
-					<Col xs={12}>
-						<Table striped bordered condensed hover>
-							<thead>
-								<tr>
-									<td>Week</td>
-									<td>Opponent</td>
-									<td>Scenario</td>
-									<td>Winner</td>
-								</tr>
-							</thead>
-							<tbody>
-								{rows}
-							</tbody>
-						</Table>
-					</Col>
-				</Row>
-			</Grid>
+			<Row>
+				<Col xs={12}>
+					<Table striped bordered condensed hover>
+						<thead>
+							<tr>
+								<td>Week</td>
+								<td>Opponent</td>
+								<td>Scenario</td>
+								<td>Winner</td>
+							</tr>
+						</thead>
+						<tbody>
+							{rows}
+						</tbody>
+					</Table>
+				</Col>
+			</Row>
 		);
 	}
 });
@@ -107,17 +105,15 @@ var PlayerInjuries = React.createClass({
 			);
 		}
 		return (
-			<Grid>
-				<Row>
-					<Col xs={this.props.admin? 6 : 12}>
-						<Table striped bordered condensed hover>
-							<thead><th>Injuries</th></thead>
-							<tbody>{rows}</tbody>
-						</Table>
-					</Col>
-					{adminCols}
-				</Row>
-			</Grid>
+			<Row>
+				<Col xs={this.props.admin? 6 : 12}>
+					<Table striped bordered condensed hover>
+						<thead><th>Injuries</th></thead>
+						<tbody>{rows}</tbody>
+					</Table>
+				</Col>
+				{adminCols}
+			</Row>
 		);
 	}
 });
@@ -192,25 +188,23 @@ var PlayerBonds = React.createClass({
 			);
 		}
 		return (
-			<Grid>
-				<Row>
-					<Col xs={this.props.admin? 6 : 12}>
-						<Table striped bordered hover >
-							<thead>
-								<th>Warcaster/Warlock</th>
-								<th>Warjack/Warbeast</th>
-								<th>Bond Name</th>
-								<th>Bond Number</th>
-								{adminHeader}
-							</thead>
-							<tbody>
-								{bonds}
-								{editingPanel}
-							</tbody>
-						</Table>
-					</Col>
-				</Row>
-			</Grid>
+			<Row>
+				<Col xs={this.props.admin? 6 : 12}>
+					<Table striped bordered hover >
+						<thead>
+							<th>Warcaster/Warlock</th>
+							<th>Warjack/Warbeast</th>
+							<th>Bond Name</th>
+							<th>Bond Number</th>
+							{adminHeader}
+						</thead>
+						<tbody>
+							{bonds}
+							{editingPanel}
+						</tbody>
+					</Table>
+				</Col>
+			</Row>
 		);
 	}
 });
@@ -290,24 +284,22 @@ var PlayerPotentialBonds = React.createClass({
 			);
 		}
 		return (
-			<Grid>
-				<Row>
-					<Col xs={12}>
-						<Table striped bordered hover >
-							<thead>
-								<th>Warcaster/Warlock</th>
-								<th>Warjack/Warbeast</th>
-								<th>Bonus</th>
-								{adminHeader}
-							</thead>
-							<tbody>
-								{bonds}
-								{editingPanel}
-							</tbody>
-						</Table>
-					</Col>
-				</Row>
-			</Grid>
+			<Row>
+				<Col xs={12}>
+					<Table striped bordered hover >
+						<thead>
+							<th>Warcaster/Warlock</th>
+							<th>Warjack/Warbeast</th>
+							<th>Bonus</th>
+							{adminHeader}
+						</thead>
+						<tbody>
+							{bonds}
+							{editingPanel}
+						</tbody>
+					</Table>
+				</Col>
+			</Row>
 		);
 	}
 });
@@ -385,7 +377,7 @@ module.exports = React.createClass({
 			<p>No player selected.</p>;
 
 		return (
-			<Grid id="player-info">
+			<Grid id="player-info" fluid>
 				<Row>
 					<PlayerSelector players={players} selectedPlayer={this.props.selectedPlayer} />
 					{playerInfo}
