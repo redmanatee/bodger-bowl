@@ -91,6 +91,9 @@ module.exports = React.createClass({
 								Players
 							</NavItem>
 						</Nav>
+						<Nav right>
+							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-ii/">About</NavItem>
+						</Nav>
 					</Navbar>
 					<Grid fluid>
 						{content}
