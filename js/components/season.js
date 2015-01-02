@@ -68,9 +68,10 @@ module.exports = React.createClass({
 					season={season}
 					selectedPlayer={this.state.selectedPlayer}
 					activeTab={this.state.activePlayerTab} />;
+			var brand = <a href="/">Bodger Bowl</a>;
 			return (
 				<div>
-					<Navbar staticTop fluid>
+					<Navbar staticTop fluid brand={brand}>
 						<Nav>
 							<NavItem className={this.state.activeKey == 1 ? "active" : ""}
 									eventKey={1}
