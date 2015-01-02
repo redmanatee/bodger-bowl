@@ -96,6 +96,9 @@ var WeekGroup = React.createClass({
 	hideEditor: function() {
 		this.setState({showWeekEditor: false});
 	},
+	scrollToSchedule: function() {
+		this.refs.weekGroup.getDOMNode().scrollIntoView();
+	},
 	render: function() {
 		var admin = this.props.admin;
 		var number = this.props.week.Number;
@@ -138,7 +141,7 @@ var WeekGroup = React.createClass({
 			}
 		}
 		return (
-			<div>
+			<div ref="weekGroup">
 				{weekEdit}
 				<WeekTable week={this.props.week} admin={this.props.admin} />
 			</div>
@@ -151,6 +154,10 @@ module.exports = React.createClass({
 		season: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
 		activeWeek: React.PropTypes.object,
+	},
+	// scroll to the schedule. useful when the schedule is below the button group, when the display width is small
+	scrollToSchedule: function() {
+		this.refs.weekGroup.scrollToSchedule();
 	},
 	render: function(): ?ReactElement {
 		var admin = this.props.admin;
@@ -183,7 +190,7 @@ module.exports = React.createClass({
 						</ButtonGroup>
 					</Col>
 					<Col sm={10} xs={12}>
-						<WeekGroup week={this.props.activeWeek} admin={admin} />
+						<WeekGroup ref="weekGroup" week={this.props.activeWeek} admin={admin}  />
 					</Col>
 				</Row>
 			</div>

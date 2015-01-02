@@ -33,12 +33,17 @@ module.exports = React.createClass({
 		this.setState({ season: season, activeWeek: season.Weeks[0] });
 	},
 	view: function(state: Object) {
+		var oldActiveWeek = this.state.activeWeek;
 		this.setState({
 			activeKey: state.mainTab,
 			selectedPlayer: this.getPlayer(state.playerName),
 			activePlayerTab: state.playerTab,
 			activeWeek: this.state.season.Weeks[state.weekNumber - 1],
 		});
+		if (oldActiveWeek != this.state.activeWeek &&
+			this.state.activeKey == 1) {
+				this.refs.seasonSchedule.scrollToSchedule();
+		}
 	},
 	getPlayer: function(playerName: string): ?Object {
 		for (var i = 0; i < this.state.season.Players.length; i++) {
@@ -51,7 +56,8 @@ module.exports = React.createClass({
 		var admin = $('#season-schedule').data('admin');
 		var season = this.state.season;
 		if(season) {
-			var content = <SeasonScheduleContainer admin={admin}
+			var content = <SeasonScheduleContainer ref="seasonSchedule"
+				admin={admin}
 				season={season}
 				activeWeek={this.state.activeWeek} />;
 			if (this.state.activeKey == 2)
