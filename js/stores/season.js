@@ -37,7 +37,6 @@ var _PLayerRankingSort = function(a, b) {
 module.exports = Reflux.createStore({
 	init: function() {
 		this.season = null;
-		this.refreshSeasonFromServer();
 		this.listenTo(AppActions.updateInjuries, this.updateInjuries);
 		this.listenTo(AppActions.addActiveBond, this.addActiveBond);
 		this.listenTo(AppActions.deleteActiveBond, this.deleteActiveBond);
@@ -49,6 +48,7 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.toggleStandin, this.toggleStandin);
 		this.listenTo(AppActions.updateGame, this.updateGame);
 		this.listenTo(AppActions.updateWeek, this.updateWeek);
+		this.listenTo(AppActions.loadSeason, this.refreshSeasonFromServer);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.post("/admin/api/players/bonds/potential/increment/",

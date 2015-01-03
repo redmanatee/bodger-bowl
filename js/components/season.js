@@ -18,14 +18,13 @@ module.exports = React.createClass({
 		admin: React.PropTypes.bool
 	},
 	getInitialState: function() {
-		var selectedPlayer: ?Object = null;
-		var season = SeasonStore.season;
+		var selectedPlayer: ?Object = null, season: ?Object = null, activeWeek: ?Object = null;
 		return {
 			season: season,
 			activeKey: 1,
 			selectedPlayer: selectedPlayer,
 			activePlayerTab: 1,
-			activeWeek: season && season.Weeks[0],
+			activeWeek: activeWeek,
 		};
 	},
 	componentDidMount: function() {
