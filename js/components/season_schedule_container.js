@@ -73,6 +73,48 @@ var WeekTable = React.createClass({
 	}
 });
 
+var WeekEditor = React.createClass({
+	propTypes: {
+		week: React.PropTypes.object.isRequired,
+		submitCallback: React.PropTypes.func.isRequired,
+		cancelCallback: React.PropTypes.func,
+	},
+	updateWeek: function() {
+		this.props.submitCallback(this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
+	},
+	render: function() {
+		var number = this.props.week.Number;
+		var playDateId  = "play-date-" + number;
+		var scenariosId = "scenarios-" + number;
+		var dateDefault = "";
+		var playDate = this.props.week.PlayDate;
+		var cancelButton = this.props.cancelCallback && <Button onClick={this.props.cancelCallback}>Cancel</Button>;
+
+		function pad(number) { return number < 10 ? '0' + number : number; }
+
+		if(playDate) {
+			playDate = new Date(playDate);
+			dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
+		}
+		return (
+			<Panel className="text-left">
+				<div className="form-group">
+					<label htmlFor={playDateId}>Play Date</label>
+					<input id={playDateId} className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
+						defaultValue={dateDefault}  />
+				</div>
+				<div className="form-group">
+					<label htmlFor={scenariosId}>Scenarios (comma separated)</label>
+					<input id={scenariosId} className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
+						defaultValue={this.props.week.Scenarios && this.props.week.Scenarios.join(",")} />
+				</div>
+				{cancelButton}
+				<Button onClick={this.updateWeek}>Submit</Button>
+			</Panel>
+		);
+	}
+});
+
 var WeekGroup = React.createClass({
 	propTypes: {
 		week: React.PropTypes.object.isRequired,
@@ -81,14 +123,14 @@ var WeekGroup = React.createClass({
 	getInitialState: function() {
 		return { showWeekEditor: false };
 	},
-	updateWeek: function(weekNumber) {
-		return function(event) {
-			AppActions.updateWeek(weekNumber, this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
-			this.hideEditor();
-		}.bind(this);
-	},
 	componentDidUpdate: function(prevProps) {
 		if(prevProps.week != this.props.week) this.hideEditor();
+	},
+	updateWeek: function(weekNumber) {
+		return function(playDate, scenarios) {
+			AppActions.updateWeek(weekNumber, playDate, scenarios);
+			this.hideEditor();
+		}.bind(this);
 	},
 	showEditor: function() {
 		this.setState({showWeekEditor: true});
@@ -101,41 +143,10 @@ var WeekGroup = React.createClass({
 	},
 	render: function() {
 		var admin = this.props.admin;
-		var number = this.props.week.Number;
 		var weekEdit = "";
-		function pad(number) {
-			if (number < 10) {
-				return '0' + number;
-			}
-			return number;
-		}
 		if(admin) {
 			if(this.state.showWeekEditor) {
-				var playDateId  = "play-date-" + number;
-				var scenariosId = "scenarios-" + number;
-				var dateDefault = "";
-				var playDate = this.props.week.PlayDate;
-
-				if(playDate) {
-					playDate = new Date(playDate);
-					dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
-				}
-				weekEdit = (
-					<Panel className="text-left">
-						<div className="form-group">
-							<label htmlFor={playDateId}>Play Date</label>
-							<input id={playDateId} className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
-								defaultValue={dateDefault}  />
-						</div>
-						<div className="form-group">
-							<label htmlFor={scenariosId}>Scenarios (comma separated)</label>
-							<input id={scenariosId} className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
-								defaultValue={this.props.week.Scenarios && this.props.week.Scenarios.join(",")} />
-						</div>
-						<Button onClick={this.hideEditor}>Cancel</Button>
-						<Button onClick={this.updateWeek(number)}>Submit</Button>
-					</Panel>
-				);
+				weekEdit = <WeekEditor week={this.props.week} cancelCallback={this.hideEditor} submitCallback={this.updateWeek(this.props.week.Number)} />;
 			} else {
 				weekEdit = <div id="edit-week-button"><Button onClick={this.showEditor}>Edit Week</Button></div>;
 			}
