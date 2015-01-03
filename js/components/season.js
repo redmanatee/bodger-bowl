@@ -14,6 +14,9 @@ var PlayerContainer = require('./player_container.js');
 
 module.exports = React.createClass({
 	mixins: [Reflux.ListenerMixin],
+	propTypes: {
+		admin: React.PropTypes.bool
+	},
 	getInitialState: function() {
 		var selectedPlayer: ?Object = null;
 		var season = SeasonStore.season;
@@ -53,18 +56,17 @@ module.exports = React.createClass({
 		}
 	},
 	render: function(): ?ReactElement {
-		var admin = $('#season-schedule').data('admin');
 		var season = this.state.season;
 		if(season) {
 			var content = <SeasonScheduleContainer ref="seasonSchedule"
-				admin={admin}
+				admin={this.props.admin}
 				season={season}
 				activeWeek={this.state.activeWeek} />;
 			if (this.state.activeKey == 2)
-				content = <ConferenceContainer admin={admin} season={season} />;
+				content = <ConferenceContainer admin={this.props.admin} season={season} />;
 			if (this.state.activeKey == 3)
 				content = <PlayerContainer
-					admin={admin}
+					admin={this.props.admin}
 					season={season}
 					selectedPlayer={this.state.selectedPlayer}
 					activeTab={this.state.activePlayerTab} />;
