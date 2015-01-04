@@ -84,7 +84,7 @@ func UpdateSeason(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		updateWeekWinner(w, r, weekGameMatches[1], weekNumber, weekGameMatches[3], weekGameMatches[4])
+		updateGame(w, r, weekGameMatches[1], weekNumber, weekGameMatches[3], weekGameMatches[4])
 		return
 	}
 
@@ -356,7 +356,7 @@ func TogglePlayerStandin(w http.ResponseWriter, r *http.Request) {
 }
 
 // Handles updating the winner of a game
-func updateWeekWinner(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, player1Name string, player2Name string) {
+func updateGame(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, player1Name string, player2Name string) {
 	c := appengine.NewContext(r)
 	winnerName := r.FormValue("winnerName")
 	c.Infof("winner: %v", winnerName)
@@ -367,31 +367,6 @@ func updateWeekWinner(w http.ResponseWriter, r *http.Request, seasonId string, w
 	season.Schedule = updateWeekData
 	if originalWinnerName != winnerName {
 		model.SaveSeason(c, *season)
-		var playersToSave [2]model.Player
-		if winnerName == "" {
-			oldLoserName := player1Name
-			if oldLoserName == originalWinnerName {
-				oldLoserName = player2Name
-			}
-			playersToSave[0] = *model.LoadPlayer(c, season, originalWinnerName)
-			playersToSave[1] = *model.LoadPlayer(c, season, oldLoserName)
-			playersToSave[0].Wins -= 1
-			playersToSave[1].Losses -= 1
-		} else {
-			loserName := player1Name
-			if loserName == winnerName {
-				loserName = player2Name
-			}
-			playersToSave[0] = *model.LoadPlayer(c, season, winnerName)
-			playersToSave[1] = *model.LoadPlayer(c, season, loserName)
-			playersToSave[0].Wins += 1
-			playersToSave[1].Losses += 1
-			if originalWinnerName != "" {
-				playersToSave[0].Losses -= 1
-				playersToSave[1].Wins -= 1
-			}
-		}
-		model.SavePlayers(c, season, playersToSave[:])
 	}
 }
 

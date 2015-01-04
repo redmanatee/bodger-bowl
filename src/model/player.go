@@ -11,8 +11,8 @@ import (
 type Player struct {
 	Name string
 	Faction string
-	Wins int
-	Losses int
+	Wins int   // unused
+	Losses int // unused
 	Standin bool
 	Injuries []string `datastore:",noindex"`
 	Bonds []byte `datastore:",noindex"`
@@ -58,7 +58,7 @@ func LoadPlayer(c appengine.Context, s *Season, playerName string) *Player {
 	if s != nil {
 		name = s.Name
 		year = s.Year
-	}	
+	}
 	key := PlayerKey(c, name, year, playerName)
 	var p Player
 	err := datastore.Get(c, key, &p)
@@ -91,5 +91,3 @@ func createPlayersFromCsv(csvData string) []PlayerJson {
 	}
 	return players
 }
-
-

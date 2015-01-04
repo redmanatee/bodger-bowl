@@ -232,34 +232,36 @@ module.exports = Reflux.createStore({
 					player.Bonds.PotentialBonds.sort(_PotentialBondSort);
 				}
 			}
+			player.Wins = 0;
+			player.Losses = 0;
 		});
 		var players = {};
 		var i: number = 0, j: number = 0;
 		for (i = 0; i < season.Players.length; i++) {
 			players[season.Players[i].Name] = season.Players[i];
 		}
-		var lookupPlayer = function(playerId, i) {
-			if (playerId in players) {
-				return players[playerId];
-			}
-			return null;
-		};
-		//map the players to their divisions
-		for (i = 0; i < season.Conferences.length; i++) {
-			var conference = season.Conferences[i];
-			for (j = 0; j < conference.Divisions.length; j++) {
-				var division = conference.Divisions[j];
-				division.Players = $.map(division.PlayerIds, lookupPlayer);
-				division.Players.sort(_PLayerRankingSort);
-			}
-		}
+		var lookupPlayer = function(playerId) { return players[playerId]; };
 		//Map the players to their games
 		for (i = 0; i < season.Weeks.length; i++) {
 			var week = season.Weeks[i];
 			for (j = 0; j < week.Games.length; j++) {
 				var game = week.Games[j];
-				game.Players = $.map(game.PlayerIds, lookupPlayer);
-				game.Winner = lookupPlayer(game.WinnerId, 0);
+				game.Players = game.PlayerIds.map(lookupPlayer);
+				game.Winner = lookupPlayer(game.WinnerId);
+				if(game.Winner) {
+					game.Winner.Wins++;
+					for(var k in game.Players)
+						if(game.Players[k] != game.Winner) game.Players[k].Losses++;
+				}
+			}
+		}
+		//map the players to their divisions
+		for (i = 0; i < season.Conferences.length; i++) {
+			var conference = season.Conferences[i];
+			for (j = 0; j < conference.Divisions.length; j++) {
+				var division = conference.Divisions[j];
+				division.Players = division.PlayerIds.map(lookupPlayer);
+				division.Players.sort(_PLayerRankingSort);
 			}
 		}
 		//Set the season to ourselves

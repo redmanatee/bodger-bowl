@@ -31,8 +31,6 @@ type Game struct {
 type PlayerJson struct {
 	Name string
 	Faction string
-	Wins int
-	Losses int
 	Standin bool
 	Injuries []string
 	Bonds BondSet
@@ -96,8 +94,6 @@ func (player Player) CreatePlayerJson() PlayerJson {
 	//Note: we don't apply the email or phone number to help our end users keep that information private.
 	return PlayerJson {
 			Name: player.Name,
-			Wins: player.Wins,
-			Losses: player.Losses,
 			Faction: player.Faction,
 			Standin: player.Standin,
 			Injuries: player.Injuries,
@@ -145,8 +141,6 @@ func (p PlayerJson) CreatePlayer() Player {
 	}
 	return Player {
 		Name: p.Name,
-		Wins: p.Wins,
-		Losses: p.Losses,
 		Standin: p.Standin,
 		Faction: p.Faction,
 		Injuries: p.Injuries,
