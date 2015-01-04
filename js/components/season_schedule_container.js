@@ -13,40 +13,70 @@ var PageHeader = require('react-bootstrap/PageHeader');
 
 var GameRow = React.createClass({
 	propTypes: {
+		players: React.PropTypes.array.isRequired,
 		weekNumber: React.PropTypes.number.isRequired,
-		game: React.PropTypes.object.isRequired,
 		gameIndex: React.PropTypes.number.isRequired,
+		game: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool
 	},
 	handleChange: function(weekNumber, gameIndex) {
 		return function(event) {
-			AppActions.updateGame(weekNumber, gameIndex, event.target.value);
-		};
+			var player1Name = this.refs.player1.getDOMNode().value;
+			var player2Name = this.refs.player2.getDOMNode().value;
+			var winnerNumber = this.refs.winner.getDOMNode().value;
+			var winner = null;
+			if(winnerNumber == 1)
+				winner = player1Name;
+			if(winnerNumber == 2)
+				winner = player2Name;
+			AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+		}.bind(this);
 	},
 	render: function() {
 		var game = this.props.game;
 		var player1 = game.Players[0];
 		var player2 = game.Players[1];
-		var winner = game.Winner;
+		var winner = null;
+		if(game.Winner) {
+			if(game.Winner == player1)
+				winner = 1;
+			if(game.Winner == player2)
+				winner = 2;
+		}
 		var admin = this.props.admin;
-		var winnerRow = <td><PlayerCell player={winner} admin={admin} /></td>;
+		var player1Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
+		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		if (admin) {
-			winnerRow = (
-				<td>
-					<select onChange={this.handleChange(this.props.weekNumber, this.props.gameIndex)}
-						defaultValue={winner && winner.Name}>
+			return (
+				<tr>
+					<td>
+						<select ref="player1" defaultValue={player1 && player1.Name}>
 							<option value="">-</option>
-							<option value={player1.Name}>{player1.Name}</option>
-							<option value={player2.Name}>{player2.Name}</option>
-					</select>
-				</td>
+							{player1Options}
+						</select>
+					</td>
+					<td>
+						<select ref="player2" defaultValue={player2 && player2.Name}>
+							<option value="">-</option>
+							{player2Options}
+						</select>
+					</td>
+					<td>
+						<select ref="winner" defaultValue={winner}>
+							<option value="">-</option>
+							<option value={1}>Player 1</option>
+							<option value={2}>Player 2</option>
+						</select>
+					</td>
+					<td><Button onClick={this.handleChange(this.props.weekNumber, this.props.gameIndex)}>Update</Button></td>
+				</tr>
 			);
 		}
 		return (
 			<tr>
-				<td><PlayerCell player={player1} admin={admin} /></td>
-				<td><PlayerCell player={player2} admin={admin} /></td>
-				{winnerRow}
+				<td><PlayerCell player={player1} /></td>
+				<td><PlayerCell player={player2} /></td>
+				<td><PlayerCell player={game.Winner} /></td>
 			</tr>
 		);
 	}
@@ -54,19 +84,26 @@ var GameRow = React.createClass({
 
 var WeekTable = React.createClass({
 	propTypes: {
+		players: React.PropTypes.array.isRequired,
+		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.weekNumber} key={i} admin={this.props.admin} gameIndex={i} />;
+			return <GameRow game={game} weekNumber={this.props.weekNumber} key={this.props.weekNumber + "-" + i} admin={this.props.admin} gameIndex={i} players={this.props.players} />;
 		}.bind(this));
+		var opsColumn = "";
+		if(this.props.admin) {
+			opsColumn = <th></th>;
+		}
 		return (
 			<Table striped bordered hover>
 				<thead className="text-left">
 					<th>Player 1</th>
 					<th>Player 2</th>
 					<th>Winner</th>
+					{opsColumn}
 				</thead>
 				<tbody className="text-left">{rows}</tbody>
 			</Table>
@@ -118,6 +155,7 @@ var WeekEditor = React.createClass({
 
 var WeekGroup = React.createClass({
 	propTypes: {
+		players: React.PropTypes.array.isRequired,
 		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
@@ -156,7 +194,7 @@ var WeekGroup = React.createClass({
 		return (
 			<div ref="weekGroup">
 				{weekEdit}
-				<WeekTable week={this.props.week} admin={this.props.admin} />
+				<WeekTable week={this.props.week} weekNumber={this.props.weekNumber} admin={this.props.admin} players={this.props.players} />
 			</div>
 		);
 	}
@@ -222,7 +260,7 @@ module.exports = React.createClass({
 				<WeekEditor cancelCallback={this.hideAddWeek} submitCallback={this.addWeek} />
 			</div>;
 		} else {
-			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} />;
+			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} players={this.props.season.Players} />;
 		}
 		return (
 			<div>

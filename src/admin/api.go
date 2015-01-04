@@ -331,6 +331,8 @@ func TogglePlayerStandin(w http.ResponseWriter, r *http.Request) {
 func updateGame(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, gameIndex int) {
 	c := appengine.NewContext(r)
 	winnerName := r.FormValue("winnerName")
+	player1Name := r.FormValue("player1Name")
+	player2Name := r.FormValue("player2Name")
 	season := api.LoadSeasonById(c, seasonId)
 	var weeks []model.Week
 	err := json.Unmarshal(season.Schedule, &weeks)
@@ -339,6 +341,8 @@ func updateGame(w http.ResponseWriter, r *http.Request, seasonId string, weekNum
 	}
 	game := &(weeks[weekNumber-1].Games[gameIndex])
 	game.WinnerId = winnerName
+	game.PlayerIds[0] = player1Name
+	game.PlayerIds[1] = player2Name
 	newSchedule, err := json.Marshal(weeks)
 	if err != nil {
 		panic(err)

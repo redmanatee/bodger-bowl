@@ -6,7 +6,7 @@ module.exports = React.createClass({
 	render: function(): ?ReactElement {
 		var img = (<div></div>);
 		var player = (<div>--</div>);
-		if (this.props.player !== null) {
+		if (this.props.player) {
 			img = <span className="faction">
 					<img src={"/img/" + this.props.player.Faction + ".jpg"}
 						alt={"(" + this.props.player.Faction + ")"}

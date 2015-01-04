@@ -175,12 +175,12 @@ module.exports = Reflux.createStore({
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function() { alert("Injury update failed!"); });
 	},
-	updateGame: function(weekNumber, gameIndex, winnerName) {
+	updateGame: function(weekNumber, gameIndex, player1Name, player2Name, winnerName) {
 		// URL: /admin/api/seasons/SEASON/week/WEEK/games/GAME_INDEX
 		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", gameIndex].map(encodeURIComponent)).join("/"),
-			{ winnerName: winnerName })
+			{ player1Name: player1Name, player2Name: player2Name, winnerName: winnerName })
 			.always(this.refreshSeasonFromServer.bind(this))
-			.fail(function(xhr, status, err) { alert("Winner selection failed!"); });
+			.fail(function(xhr, status, err) { alert("Update game failed!"); });
 	},
 	addWeek: function(playDate, scenarios) {
 		console.log('addWeek');
