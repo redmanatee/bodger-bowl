@@ -192,17 +192,28 @@ var WeekGroup = React.createClass({
 	hideEditor: function() {
 		this.setState({showWeekEditor: false});
 	},
+	deleteWeek: function() {
+		if(window.confirm("Are you sure you want to delete this week?")) {
+			AppActions.deleteWeek(this.props.weekNumber);
+			AppActions.viewWeek(1);
+		}
+	},
 	scrollToSchedule: function() {
 		this.refs.weekGroup.getDOMNode().scrollIntoView();
 	},
 	render: function() {
 		var admin = this.props.admin;
-		var weekEdit = "";
+		var weekEdit = null;
 		if(admin) {
 			if(this.state.showWeekEditor) {
 				weekEdit = <WeekEditor week={this.props.week} cancelCallback={this.hideEditor} submitCallback={this.updateWeek(this.props.weekNumber)} />;
 			} else {
-				weekEdit = <div id="edit-week-button"><Button onClick={this.showEditor}>Edit Week</Button></div>;
+				weekEdit = (
+					<div id="week-buttons">
+						<Button onClick={this.showEditor}>Edit Week</Button>
+						<Button onClick={this.deleteWeek} bsStyle="danger">Delete Week</Button>
+					</div>
+				);
 			}
 		}
 		return (

@@ -50,6 +50,7 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.updateGame, this.updateGame);
 		this.listenTo(AppActions.addWeek, this.addWeek);
 		this.listenTo(AppActions.updateWeek, this.updateWeek);
+		this.listenTo(AppActions.deleteWeek, this.deleteWeek);
 		this.listenTo(AppActions.loadSeason, this.refreshSeasonFromServer);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
@@ -203,13 +204,25 @@ module.exports = Reflux.createStore({
 	},
 	updateWeek: function(weekNumber, playDate, scenarios) {
 		// URL: /admin/api/seasons/SEASON/weeks/WEEK
-		$.post("/admin/api/seasons/" + [this.seasonId, "weeks", weekNumber].join("/"),
-			{
+		$.ajax({
+			url: "/admin/api/seasons/" + [this.seasonId, "weeks", weekNumber].join("/"),
+			type: "PUT",
+			data: {
 				playDate: playDate,
 				scenarios: scenarios
-			})
+			}
+		})
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function(xhr, status, err) { alert("Update week failed!"); });
+	},
+	deleteWeek: function(weekNumber) {
+		// URL: /admin/api/seasons/SEASON/weeks/WEEK
+		$.ajax({
+			url: "/admin/api/seasons/" + [this.seasonId, "weeks", weekNumber].join("/"),
+			type: "DELETE",
+		})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Delete week failed!"); });
 	},
 	loadActiveSeasonFromServer: function() {
 		return $.get("/api/seasons/latest/" + this.seasonId, {}, null, 'json')

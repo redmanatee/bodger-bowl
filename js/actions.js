@@ -15,6 +15,7 @@ module.exports = Reflux.createActions([
 	"updateGame",
 	"addWeek",
 	"updateWeek",
+	"deleteWeek",
 	"loadSeason",
 
 	"viewMainTab",

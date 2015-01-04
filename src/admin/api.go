@@ -78,8 +78,15 @@ func UpdateSeason(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			panic(err)
 		}
-		updateWeek(w, r, weekMatches[1], weekNumber)
-		return
+		if r.Method == "PUT" {
+			updateWeek(w, r, weekMatches[1], weekNumber)
+			return
+		} else if r.Method == "DELETE" {
+			deleteWeek(w, r, weekMatches[1], weekNumber)
+			return
+		} else {
+			panic("Bad Method (Path, Method): (" + r.URL.Path + ", " + r.Method + ")")
+		}
 	}
 
 	addWeekRegexp := regexp.MustCompile(`^([^/]+)/weeks$`)
@@ -89,7 +96,7 @@ func UpdateSeason(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	panic("Unknown Path: " + r.URL.Path)
+	panic("Unknown (Path, Method): (" + r.URL.Path + ", " + r.Method + ")")
 }
 
 func PlayerBondDeleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -485,5 +492,23 @@ func updateWeek(w http.ResponseWriter, r *http.Request, seasonId string, weekNum
 		panic(err)
 	}
 	season.Schedule = newData
+	model.SaveSeason(c, *season)
+}
+
+func deleteWeek(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int) {
+	c := appengine.NewContext(r)
+	season := api.LoadSeasonById(c, seasonId)
+	var weeks []model.Week
+	err := json.Unmarshal(season.Schedule, &weeks)
+	if err != nil {
+		panic(err)
+	}
+	weekIndex := weekNumber - 1
+	weeks = append(weeks[:weekIndex], weeks[weekIndex+1:]...)
+	newSchedule, err := json.Marshal(weeks)
+	if err != nil {
+		panic(err)
+	}
+	season.Schedule = newSchedule
 	model.SaveSeason(c, *season)
 }
