@@ -84,7 +84,7 @@ var WeekEditor = React.createClass({
 	},
 	render: function() {
 		var dateDefault = "";
-		var cancelButton = this.props.cancelCallback && <Button onClick={this.props.cancelCallback}>Cancel</Button>;
+		var cancelLink = this.props.cancelCallback && <span> <a onClick={this.props.cancelCallback}>Cancel</a></span>;
 		var week = this.props.week;
 
 		function pad(number) { return number < 10 ? '0' + number : number; }
@@ -108,8 +108,8 @@ var WeekEditor = React.createClass({
 					<input id="scenarios" className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
 						defaultValue={week && week.Scenarios && week.Scenarios.join(",")} />
 				</div>
-				{cancelButton}
 				<Button onClick={this.updateWeek}>Submit</Button>
+				{cancelLink}
 			</Panel>
 		);
 	}
