@@ -47,6 +47,7 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.updatePlayerFaction, this.updatePlayerFaction);
 		this.listenTo(AppActions.toggleStandin, this.toggleStandin);
 		this.listenTo(AppActions.updateGame, this.updateGame);
+		this.listenTo(AppActions.addWeek, this.addWeek);
 		this.listenTo(AppActions.updateWeek, this.updateWeek);
 		this.listenTo(AppActions.loadSeason, this.refreshSeasonFromServer);
 	},
@@ -181,8 +182,19 @@ module.exports = Reflux.createStore({
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function(xhr, status, err) { alert("Winner selection failed!"); });
 	},
+	addWeek: function(playDate, scenarios) {
+		console.log('addWeek');
+		// URL: /admin/api/seasons/SEASON/weeks
+		$.post("/admin/api/seasons/" + this.seasonId + "/weeks",
+			   {
+				playDate: playDate,
+				scenarios: scenarios
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Add week failed!"); });
+	},
 	updateWeek: function(weekNumber, playDate, scenarios) {
-		// URL: /admin/api/seasons/SEASON/week/WEEK
+		// URL: /admin/api/seasons/SEASON/weeks/WEEK
 		$.post("/admin/api/seasons/" + [this.seasonId, "weeks", weekNumber].join("/"),
 			{
 				playDate: playDate,

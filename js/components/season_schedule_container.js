@@ -75,7 +75,7 @@ var WeekTable = React.createClass({
 
 var WeekEditor = React.createClass({
 	propTypes: {
-		week: React.PropTypes.object.isRequired,
+		week: React.PropTypes.object,
 		submitCallback: React.PropTypes.func.isRequired,
 		cancelCallback: React.PropTypes.func,
 	},
@@ -83,30 +83,30 @@ var WeekEditor = React.createClass({
 		this.props.submitCallback(this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
 	},
 	render: function() {
-		var number = this.props.week.Number;
-		var playDateId  = "play-date-" + number;
-		var scenariosId = "scenarios-" + number;
 		var dateDefault = "";
-		var playDate = this.props.week.PlayDate;
 		var cancelButton = this.props.cancelCallback && <Button onClick={this.props.cancelCallback}>Cancel</Button>;
+		var week = this.props.week;
 
 		function pad(number) { return number < 10 ? '0' + number : number; }
 
-		if(playDate) {
-			playDate = new Date(playDate);
-			dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
+		if(week) {
+			var playDate = week.PlayDate;
+			if(playDate) {
+				playDate = new Date(playDate);
+				dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
+			}
 		}
 		return (
 			<Panel className="text-left">
 				<div className="form-group">
-					<label htmlFor={playDateId}>Play Date</label>
-					<input id={playDateId} className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
+					<label htmlFor="play-date">Play Date</label>
+					<input id="play-date" className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
 						defaultValue={dateDefault}  />
 				</div>
 				<div className="form-group">
-					<label htmlFor={scenariosId}>Scenarios (comma separated)</label>
-					<input id={scenariosId} className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
-						defaultValue={this.props.week.Scenarios && this.props.week.Scenarios.join(",")} />
+					<label htmlFor="scenarios">Scenarios (comma separated)</label>
+					<input id="scenarios" className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
+						defaultValue={week && week.Scenarios && week.Scenarios.join(",")} />
 				</div>
 				{cancelButton}
 				<Button onClick={this.updateWeek}>Submit</Button>
@@ -166,9 +166,28 @@ module.exports = React.createClass({
 		admin: React.PropTypes.bool,
 		activeWeek: React.PropTypes.object,
 	},
+	getInitialState: function() {
+		return { showAddWeek: false };
+	},
 	// scroll to the schedule. useful when the schedule is below the button group, when the display width is small
 	scrollToSchedule: function() {
 		this.refs.weekGroup.scrollToSchedule();
+	},
+	viewWeek: function(weekNumber: number): Function {
+		return function() {
+			this.hideAddWeek();
+			AppActions.viewWeek(weekNumber);
+		}.bind(this);
+	},
+	showAddWeek: function() {
+		this.setState({ showAddWeek: true });
+	},
+	hideAddWeek: function() {
+		this.setState({ showAddWeek: false });
+	},
+	addWeek: function(playDate: string, scenarios: string) {
+		AppActions.addWeek(playDate, scenarios);
+		this.hideAddWeek();
 	},
 	render: function(): ?ReactElement {
 		var admin = this.props.admin;
@@ -176,19 +195,32 @@ module.exports = React.createClass({
 			var header = "Week " + week.Number;
 			var playDateHtml = null;
 			var scenariosHtml = null;
-			var active = this.props.activeWeek == week;
+			var active = !this.state.showAddWeek && this.props.activeWeek == week;
 			if(week.PlayDate)
 				playDateHtml = <small><br />{new Date(week.PlayDate).toLocaleDateString()}</small>;
 			if(week.Scenarios)
 				scenariosHtml = <small><br />Scenarios: {week.Scenarios.join(", ")}</small>;
 			return (
-				<Button active={active} onClick={function() { AppActions.viewWeek(week.Number); }}>
+				<Button active={active} onClick={this.viewWeek(week.Number)}>
 					Week {header}
 					{playDateHtml}
 					{scenariosHtml}
 				</Button>
 			);
 		}.bind(this));
+		var addWeekButton = "";
+		if(admin) {
+			addWeekButton = <Button onClick={this.showAddWeek}>Add Week</Button>;
+		}
+		var content;
+		if(this.state.showAddWeek) {
+			content = <div>
+				<h2>Add Week</h2>
+				<WeekEditor cancelCallback={this.hideAddWeek} submitCallback={this.addWeek} />
+			</div>;
+		} else {
+			content = <WeekGroup ref="weekGroup" week={this.props.activeWeek} admin={admin} />;
+		}
 		return (
 			<div>
 				<Row className="text-center">
@@ -198,10 +230,11 @@ module.exports = React.createClass({
 					<Col sm={2} xs={12}>
 						<ButtonGroup vertical style={{width: "100%"}}>
 							{navButtons}
+							{addWeekButton}
 						</ButtonGroup>
 					</Col>
 					<Col sm={10} xs={12}>
-						<WeekGroup ref="weekGroup" week={this.props.activeWeek} admin={admin}  />
+						{content}
 					</Col>
 				</Row>
 			</div>

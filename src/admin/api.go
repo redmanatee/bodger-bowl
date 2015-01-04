@@ -99,6 +99,13 @@ func UpdateSeason(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	addWeekRegexp := regexp.MustCompile(`^([^/]+)/weeks$`)
+	addWeekMatches := addWeekRegexp.FindStringSubmatch(subpath)
+	if addWeekMatches != nil {
+		addWeek(w, r, addWeekMatches[1])
+		return
+	}
+
 	panic("Unknown Path: " + r.URL.Path)
 }
 
@@ -271,11 +278,11 @@ func PlayerInjuryUpdateHandler(w http.ResponseWriter, r *http.Request) {
 
 func playerIndex(players []*model.Player, name string) int {
 	for p, v := range players {
-        if (v.Name == name) {
-            return p
-        }
-    }
-    return -1
+		if (v.Name == name) {
+			return p
+		}
+	}
+	return -1
 }
 
 func SetPlayerName(w http.ResponseWriter, r *http.Request) {
@@ -386,6 +393,60 @@ func updateWeekWinner(w http.ResponseWriter, r *http.Request, seasonId string, w
 		}
 		model.SavePlayers(c, season, playersToSave[:])
 	}
+}
+
+// handles adding a week
+func addWeek(w http.ResponseWriter, r *http.Request, seasonId string) {
+	c := appengine.NewContext(r)
+	season := api.LoadSeasonById(c, seasonId)
+
+	playDate := r.FormValue("playDate")
+	var scenarios []int
+
+	if(r.FormValue("scenarios") != "") {
+		scenarioStrings := strings.Split(r.FormValue("scenarios"), ",")
+
+		scenarios = make([]int, len(scenarioStrings))
+		for i, v := range scenarioStrings {
+			scenario, err := strconv.Atoi(v)
+			if err != nil {
+				panic(err)
+			}
+			scenarios[i] = scenario
+		}
+	}
+
+	var weeks []model.Week
+	err := json.Unmarshal(season.Schedule, &weeks)
+	if err != nil {
+		panic(err)
+	}
+
+	var playDateTime *time.Time
+	if playDate == "" {
+		playDateTime = nil
+	} else {
+		playDateTimeP, err := time.Parse("2006-01-02", playDate)
+		playDateTime = &playDateTimeP
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	newWeek := model.Week {
+		Number: len(weeks) + 1,
+		PlayDate: playDateTime,
+		Scenarios: scenarios,
+		Games: make([]model.Game, 0),
+	}
+	weeks = append(weeks, newWeek)
+	newData, err := json.Marshal(weeks)
+	if err != nil {
+		panic(err)
+	}
+	c.Infof("Add week: '%v'", weeks)
+	season.Schedule = newData
+	model.SaveSeason(c, *season)
 }
 
 // handles updating the scenarios and playdates for a week
