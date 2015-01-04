@@ -10,11 +10,16 @@ a:hover {
   margin: 2rem 0;
 }
 
-img.faction {
-   height: 25px;
-   width: auto;
+.faction {
+   display: inline-block;
+   width: 40px;
+   text-align: center;
    padding-right: 5px;
    padding-left: 5px;
+}
+
+.faction img {
+   height: 25px;
 }
 
 #edit-week-button {
