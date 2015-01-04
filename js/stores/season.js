@@ -46,6 +46,7 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.updatePlayerName, this.updatePlayerName);
 		this.listenTo(AppActions.updatePlayerFaction, this.updatePlayerFaction);
 		this.listenTo(AppActions.toggleStandin, this.toggleStandin);
+		this.listenTo(AppActions.addGame, this.addGame);
 		this.listenTo(AppActions.updateGame, this.updateGame);
 		this.listenTo(AppActions.addWeek, this.addWeek);
 		this.listenTo(AppActions.updateWeek, this.updateWeek);
@@ -174,6 +175,13 @@ module.exports = Reflux.createStore({
 			})
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function() { alert("Injury update failed!"); });
+	},
+	addGame: function(weekNumber, player1Name, player2Name, winnerName) {
+		// URL: /admin/api/seasons/SEASON/week/WEEK/games
+		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games"].map(encodeURIComponent)).join("/"),
+			{ player1Name: player1Name, player2Name: player2Name, winnerName: winnerName })
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Add game failed!"); });
 	},
 	updateGame: function(weekNumber, gameIndex, player1Name, player2Name, winnerName) {
 		// URL: /admin/api/seasons/SEASON/week/WEEK/games/GAME_INDEX

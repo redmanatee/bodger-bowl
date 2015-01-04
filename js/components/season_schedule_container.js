@@ -15,8 +15,8 @@ var GameRow = React.createClass({
 	propTypes: {
 		players: React.PropTypes.array.isRequired,
 		weekNumber: React.PropTypes.number.isRequired,
-		gameIndex: React.PropTypes.number.isRequired,
-		game: React.PropTypes.object.isRequired,
+		gameIndex: React.PropTypes.number,
+		game: React.PropTypes.object,
 		admin: React.PropTypes.bool
 	},
 	handleChange: function(weekNumber, gameIndex) {
@@ -29,15 +29,19 @@ var GameRow = React.createClass({
 				winner = player1Name;
 			if(winnerNumber == 2)
 				winner = player2Name;
-			AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+			if(gameIndex) {
+				AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+			} else {
+				AppActions.addGame(weekNumber, player1Name, player2Name, winner);
+			}
 		}.bind(this);
 	},
 	render: function() {
 		var game = this.props.game;
-		var player1 = game.Players[0];
-		var player2 = game.Players[1];
+		var player1 = game && game.Players[0];
+		var player2 = game && game.Players[1];
 		var winner = null;
-		if(game.Winner) {
+		if(game && game.Winner) {
 			if(game.Winner == player1)
 				winner = 1;
 			if(game.Winner == player2)
@@ -48,7 +52,7 @@ var GameRow = React.createClass({
 		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		if (admin) {
 			return (
-				<tr>
+				<tr className={game ? "" : "warning"}>
 					<td>
 						<select ref="player1" defaultValue={player1 && player1.Name}>
 							<option value="">-</option>
@@ -68,7 +72,11 @@ var GameRow = React.createClass({
 							<option value={2}>Player 2</option>
 						</select>
 					</td>
-					<td><Button onClick={this.handleChange(this.props.weekNumber, this.props.gameIndex)}>Update</Button></td>
+					<td>
+						<Button onClick={this.handleChange(this.props.weekNumber, this.props.gameIndex)} className={game ? "" : "warning"}>
+							{game ? "Update" : "Add"}
+						</Button>
+					</td>
 				</tr>
 			);
 		}
@@ -76,7 +84,7 @@ var GameRow = React.createClass({
 			<tr>
 				<td><PlayerCell player={player1} /></td>
 				<td><PlayerCell player={player2} /></td>
-				<td><PlayerCell player={game.Winner} /></td>
+				<td><PlayerCell player={game && game.Winner} /></td>
 			</tr>
 		);
 	}
@@ -87,6 +95,7 @@ var WeekTable = React.createClass({
 		players: React.PropTypes.array.isRequired,
 		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
+		weekNumber: React.PropTypes.number.isRequired,
 		admin: React.PropTypes.bool,
 	},
 	render: function() {
@@ -94,8 +103,10 @@ var WeekTable = React.createClass({
 			return <GameRow game={game} weekNumber={this.props.weekNumber} key={this.props.weekNumber + "-" + i} admin={this.props.admin} gameIndex={i} players={this.props.players} />;
 		}.bind(this));
 		var opsColumn = "";
+		var addGameRow = "";
 		if(this.props.admin) {
 			opsColumn = <th></th>;
+			addGameRow = <GameRow weekNumber={this.props.weekNumber} key="add" admin={this.props.admin} players={this.props.players} />;
 		}
 		return (
 			<Table striped bordered hover>
@@ -105,7 +116,10 @@ var WeekTable = React.createClass({
 					<th>Winner</th>
 					{opsColumn}
 				</thead>
-				<tbody className="text-left">{rows}</tbody>
+				<tbody className="text-left">
+					{rows}
+					{addGameRow}
+				</tbody>
 			</Table>
 		);
 	}
