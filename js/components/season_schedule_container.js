@@ -58,7 +58,7 @@ var WeekTable = React.createClass({
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.week.Number} key={i} admin={this.props.admin} />;
+			return <GameRow game={game} weekNumber={this.props.weekNumber} key={i} admin={this.props.admin} />;
 		}.bind(this));
 		return (
 			<Table striped bordered hover>
@@ -117,6 +117,7 @@ var WeekEditor = React.createClass({
 
 var WeekGroup = React.createClass({
 	propTypes: {
+		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
 	},
@@ -146,7 +147,7 @@ var WeekGroup = React.createClass({
 		var weekEdit = "";
 		if(admin) {
 			if(this.state.showWeekEditor) {
-				weekEdit = <WeekEditor week={this.props.week} cancelCallback={this.hideEditor} submitCallback={this.updateWeek(this.props.week.Number)} />;
+				weekEdit = <WeekEditor week={this.props.week} cancelCallback={this.hideEditor} submitCallback={this.updateWeek(this.props.weekNumber)} />;
 			} else {
 				weekEdit = <div id="edit-week-button"><Button onClick={this.showEditor}>Edit Week</Button></div>;
 			}
@@ -164,7 +165,7 @@ module.exports = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
-		activeWeek: React.PropTypes.object,
+		activeWeekNumber: React.PropTypes.number.isRequired,
 	},
 	getInitialState: function() {
 		return { showAddWeek: false };
@@ -190,18 +191,19 @@ module.exports = React.createClass({
 		this.hideAddWeek();
 	},
 	render: function(): ?ReactElement {
+		var activeWeek = this.props.season.Weeks[this.props.activeWeekNumber - 1];
 		var admin = this.props.admin;
-		var navButtons = this.props.season.Weeks.map(function(week) {
-			var header = "Week " + week.Number;
+		var navButtons = this.props.season.Weeks.map(function(week, i) {
+			var header = "Week " + (i+1);
 			var playDateHtml = null;
 			var scenariosHtml = null;
-			var active = !this.state.showAddWeek && this.props.activeWeek == week;
+			var active = !this.state.showAddWeek && this.props.activeWeekNumber == i+1;
 			if(week.PlayDate)
 				playDateHtml = <small><br />{new Date(week.PlayDate).toLocaleDateString()}</small>;
 			if(week.Scenarios)
 				scenariosHtml = <small><br />Scenarios: {week.Scenarios.join(", ")}</small>;
 			return (
-				<Button active={active} onClick={this.viewWeek(week.Number)}>
+				<Button active={active} onClick={this.viewWeek(i+1)}>
 					Week {header}
 					{playDateHtml}
 					{scenariosHtml}
@@ -219,7 +221,7 @@ module.exports = React.createClass({
 				<WeekEditor cancelCallback={this.hideAddWeek} submitCallback={this.addWeek} />
 			</div>;
 		} else {
-			content = <WeekGroup ref="weekGroup" week={this.props.activeWeek} admin={admin} />;
+			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} />;
 		}
 		return (
 			<div>

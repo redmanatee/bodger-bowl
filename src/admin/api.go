@@ -434,7 +434,6 @@ func addWeek(w http.ResponseWriter, r *http.Request, seasonId string) {
 	}
 
 	newWeek := model.Week {
-		Number: len(weeks) + 1,
 		PlayDate: playDateTime,
 		Scenarios: scenarios,
 		Games: make([]model.Game, 0),
@@ -444,7 +443,6 @@ func addWeek(w http.ResponseWriter, r *http.Request, seasonId string) {
 	if err != nil {
 		panic(err)
 	}
-	c.Infof("Add week: '%v'", weeks)
 	season.Schedule = newData
 	model.SaveSeason(c, *season)
 }

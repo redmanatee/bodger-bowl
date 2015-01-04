@@ -18,13 +18,13 @@ module.exports = React.createClass({
 		admin: React.PropTypes.bool
 	},
 	getInitialState: function() {
-		var selectedPlayer: ?Object = null, season: ?Object = null, activeWeek: ?Object = null;
+		var selectedPlayer: ?Object = null, season: ?Object = null, activeWeekNumber: ?number = null;
 		return {
 			season: season,
 			activeKey: 1,
 			selectedPlayer: selectedPlayer,
 			activePlayerTab: 1,
-			activeWeek: activeWeek,
+			activeWeekNumber: activeWeekNumber,
 		};
 	},
 	componentDidMount: function() {
@@ -32,17 +32,20 @@ module.exports = React.createClass({
 		this.listenTo(SeasonStore, this.onSeasonChange);
 	},
 	onSeasonChange: function(season: Object) {
-		this.setState({ season: season, activeWeek: season.Weeks[0] });
+		this.setState({
+			season: season,
+			activeWeekNumber: this.state.activeWeekNumber || 1
+		});
 	},
 	view: function(state: Object) {
-		var oldActiveWeek = this.state.activeWeek;
+		var oldActiveWeekNumber = this.state.activeWeekNumber;
 		this.setState({
 			activeKey: state.mainTab,
 			selectedPlayer: this.getPlayer(state.playerName),
 			activePlayerTab: state.playerTab,
-			activeWeek: this.state.season.Weeks[state.weekNumber - 1],
+			activeWeekNumber: state.weekNumber,
 		});
-		if (oldActiveWeek != this.state.activeWeek &&
+		if (oldActiveWeekNumber != this.state.activeWeekNumber &&
 			this.state.activeKey == 1) {
 				this.refs.seasonSchedule.scrollToSchedule();
 		}
@@ -60,7 +63,7 @@ module.exports = React.createClass({
 			var content = <SeasonScheduleContainer ref="seasonSchedule"
 				admin={this.props.admin}
 				season={season}
-				activeWeek={this.state.activeWeek} />;
+				activeWeekNumber={this.state.activeWeekNumber} />;
 			if (this.state.activeKey == 2)
 				content = <ConferenceContainer admin={this.props.admin} season={season} />;
 			if (this.state.activeKey == 3)

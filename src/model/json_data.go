@@ -18,7 +18,6 @@ type Division struct {
 }
 
 type Week struct {
-	Number int
 	PlayDate *time.Time
 	Scenarios []int
 	Games []Game
