@@ -48,6 +48,7 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.toggleStandin, this.toggleStandin);
 		this.listenTo(AppActions.addGame, this.addGame);
 		this.listenTo(AppActions.updateGame, this.updateGame);
+		this.listenTo(AppActions.deleteGame, this.deleteGame);
 		this.listenTo(AppActions.addWeek, this.addWeek);
 		this.listenTo(AppActions.updateWeek, this.updateWeek);
 		this.listenTo(AppActions.deleteWeek, this.deleteWeek);
@@ -186,13 +187,28 @@ module.exports = Reflux.createStore({
 	},
 	updateGame: function(weekNumber, gameIndex, player1Name, player2Name, winnerName) {
 		// URL: /admin/api/seasons/SEASON/week/WEEK/games/GAME_INDEX
-		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", gameIndex].map(encodeURIComponent)).join("/"),
-			{ player1Name: player1Name, player2Name: player2Name, winnerName: winnerName })
+		$.ajax({
+			url: "/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", gameIndex].map(encodeURIComponent)).join("/"),
+			type: "PUT",
+			data: {
+				player1Name: player1Name,
+				player2Name: player2Name,
+				winnerName: winnerName
+			}
+		})
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function(xhr, status, err) { alert("Update game failed!"); });
 	},
+	deleteGame: function(weekNumber, gameIndex) {
+		// URL: /admin/api/seasons/SEASON/week/WEEK/games/GAME_INDEX
+		$.ajax({
+			url: "/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", gameIndex].map(encodeURIComponent)).join("/"),
+			type: "DELETE",
+		})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Delete game failed!"); });
+	},
 	addWeek: function(playDate, scenarios) {
-		console.log('addWeek');
 		// URL: /admin/api/seasons/SEASON/weeks
 		$.post("/admin/api/seasons/" + this.seasonId + "/weeks",
 			   {

@@ -26,6 +26,6 @@ a:hover {
   margin-bottom: 1em;
 }
 
-#week-buttons button + button {
+#week-buttons button + button, .game-buttons button + button {
   margin-left: 1em;
 }
