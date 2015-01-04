@@ -41,50 +41,22 @@ func splitGameUpdateData(c appengine.Context, data string) (player1Name string, 
 	return dataArr[0], dataArr[1], dataArr[2]
 }
 
-func updateWeekDataWinnings(c appengine.Context, weekData []byte, weekNumber int, player1Name string, player2Name string, winnerName string) ([]byte, string) {
-	var weeks []model.Week
-	err := json.Unmarshal(weekData, &weeks)
-	if err != nil {
-		panic(err)
-	}
-	weekIndex := weekNumber - 1
-	var originalWinnerName string
-	for index := 0; index < len(weeks[weekIndex].Games); index++ {
-		game := &(weeks[weekIndex].Games[index])
-		if game.PlayerIds[0] == player1Name || game.PlayerIds[1] == player1Name {
-			c.Infof("Found a game that matches: '%v'", game)
-			originalWinnerName = game.WinnerId
-			if game.WinnerId == winnerName {
-				c.Infof("No changes found - '%v' ==? '%v'", winnerName, game.WinnerId)
-				return weekData, originalWinnerName
-			}
-			c.Infof("Looks different - '%v' !=? '%v'", winnerName, game.WinnerId)
-			//else
-			game.WinnerId = winnerName
-			c.Infof("After updating the winner id: '%v'", game)
-			// c.Infof("After updating the winner id, the full week:\n%v", weeks[weekIndex])
-			newData, err := json.Marshal(weeks)
-			if err != nil {
-				panic(err)
-			}
-			return newData, originalWinnerName
-		}
-	}
-	return weekData, ""
-}
-
 // dispatcher for routes beginning with /admin/api/seasons/
 func UpdateSeason(w http.ResponseWriter, r *http.Request) {
 	subpath := strings.TrimPrefix(r.URL.Path, "/admin/api/seasons/")
 
-	weekGameRegexp := regexp.MustCompile(`^([^/]+)/weeks/(\d+)/games/([^/]+)/([^/]+)$`)
+	weekGameRegexp := regexp.MustCompile(`^([^/]+)/weeks/(\d+)/games/(\d+)`)
 	weekGameMatches := weekGameRegexp.FindStringSubmatch(subpath)
 	if weekGameMatches != nil {
 		weekNumber, err := strconv.Atoi(weekGameMatches[2])
 		if err != nil {
 			panic(err)
 		}
-		updateGame(w, r, weekGameMatches[1], weekNumber, weekGameMatches[3], weekGameMatches[4])
+		gameIndex, err := strconv.Atoi(weekGameMatches[3])
+		if err != nil {
+			panic(err)
+		}
+		updateGame(w, r, weekGameMatches[1], weekNumber, gameIndex)
 		return
 	}
 
@@ -355,19 +327,24 @@ func TogglePlayerStandin(w http.ResponseWriter, r *http.Request) {
 	model.SavePlayer(c, season, player)
 }
 
-// Handles updating the winner of a game
-func updateGame(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, player1Name string, player2Name string) {
+// Handles updating a game
+func updateGame(w http.ResponseWriter, r *http.Request, seasonId string, weekNumber int, gameIndex int) {
 	c := appengine.NewContext(r)
 	winnerName := r.FormValue("winnerName")
-	c.Infof("winner: %v", winnerName)
 	season := api.LoadSeasonById(c, seasonId)
-	updateWeekData, originalWinnerName := updateWeekDataWinnings(c, season.Schedule, weekNumber, player1Name, player2Name, winnerName)
-	c.Infof("New Weekdata: \n\n'%v'\n\n", string(updateWeekData))
-	c.Infof("Old Weekdata: \n\n'%v'\n\n", string(season.Schedule))
-	season.Schedule = updateWeekData
-	if originalWinnerName != winnerName {
-		model.SaveSeason(c, *season)
+	var weeks []model.Week
+	err := json.Unmarshal(season.Schedule, &weeks)
+	if err != nil {
+		panic(err)
 	}
+	game := &(weeks[weekNumber-1].Games[gameIndex])
+	game.WinnerId = winnerName
+	newSchedule, err := json.Marshal(weeks)
+	if err != nil {
+		panic(err)
+	}
+	season.Schedule = newSchedule
+	model.SaveSeason(c, *season)
 }
 
 // handles adding a week

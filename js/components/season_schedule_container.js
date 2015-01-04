@@ -15,11 +15,12 @@ var GameRow = React.createClass({
 	propTypes: {
 		weekNumber: React.PropTypes.number.isRequired,
 		game: React.PropTypes.object.isRequired,
+		gameIndex: React.PropTypes.number.isRequired,
 		admin: React.PropTypes.bool
 	},
-	handleChange: function(weekNumber, player1Name, player2Name) {
+	handleChange: function(weekNumber, gameIndex) {
 		return function(event) {
-			AppActions.updateGame(weekNumber, player1Name, player2Name, event.target.value);
+			AppActions.updateGame(weekNumber, gameIndex, event.target.value);
 		};
 	},
 	render: function() {
@@ -32,7 +33,7 @@ var GameRow = React.createClass({
 		if (admin) {
 			winnerRow = (
 				<td>
-					<select onChange={this.handleChange(this.props.weekNumber, player1.Name, player2.Name)}
+					<select onChange={this.handleChange(this.props.weekNumber, this.props.gameIndex)}
 						defaultValue={winner && winner.Name}>
 							<option value="">-</option>
 							<option value={player1.Name}>{player1.Name}</option>
@@ -58,7 +59,7 @@ var WeekTable = React.createClass({
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.weekNumber} key={i} admin={this.props.admin} />;
+			return <GameRow game={game} weekNumber={this.props.weekNumber} key={i} admin={this.props.admin} gameIndex={i} />;
 		}.bind(this));
 		return (
 			<Table striped bordered hover>

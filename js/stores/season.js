@@ -175,9 +175,9 @@ module.exports = Reflux.createStore({
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function() { alert("Injury update failed!"); });
 	},
-	updateGame: function(weekNumber, player1Name, player2Name, winnerName) {
-		// URL: /admin/api/seasons/SEASON/week/WEEK/games/PLAYER1/PLAYER2
-		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", player1Name, player2Name].map(encodeURIComponent)).join("/"),
+	updateGame: function(weekNumber, gameIndex, winnerName) {
+		// URL: /admin/api/seasons/SEASON/week/WEEK/games/GAME_INDEX
+		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", gameIndex].map(encodeURIComponent)).join("/"),
 			{ winnerName: winnerName })
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function(xhr, status, err) { alert("Winner selection failed!"); });
