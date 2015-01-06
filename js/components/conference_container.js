@@ -1,5 +1,13 @@
 /** @jsx React.DOM */
 
+var React = require('react');
+var PlayerCell = require('./player_cell.js');
+var Table = require('react-bootstrap/Table');
+var Col = require('react-bootstrap/Col');
+var PageHeader = require('react-bootstrap/PageHeader');
+var Grid = require('react-bootstrap/Grid');
+var Row = require('react-bootstrap/Row');
+
 var PlayerDivisionRow = React.createClass({
 	render: function() {
 		return (
@@ -59,7 +67,7 @@ var ConferenceTable = React.createClass({
 	}
 });
 
-var ConferenceContainer = React.createClass({
+module.exports = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired
 	},

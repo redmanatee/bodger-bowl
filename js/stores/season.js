@@ -1,3 +1,6 @@
+var Reflux = require('reflux');
+var AppActions = require('../actions.js');
+
 function compareBy(func, invert) {
 	return function(a, b) {
 		var a1 = func(a), b1 = func(b);
@@ -35,21 +38,21 @@ var _PLayerRankingSort = function(a, b) {
 
 
 
-window.seasonStore = Reflux.createStore({
+module.exports = Reflux.createStore({
 	init: function() {
 		this.season = null;
 		this.refreshSeasonFromServer();
-		this.listenTo(window.appActions.updateInjuries, this.updateInjuries);
-		this.listenTo(window.appActions.addActiveBond, this.addActiveBond);
-		this.listenTo(window.appActions.deleteActiveBond, this.deleteActiveBond);
-		this.listenTo(window.appActions.addPotentialBond, this.addPotentialBond);
-		this.listenTo(window.appActions.deletePotentialBond, this.deletePotentialBond);
-		this.listenTo(window.appActions.incrementPotentialBond, this.incrementPotentialBond);
-		this.listenTo(window.appActions.updatePlayerName, this.updatePlayerName);
-		this.listenTo(window.appActions.updatePlayerFaction, this.updatePlayerFaction);
-		this.listenTo(window.appActions.toggleStandin, this.toggleStandin);
-		this.listenTo(window.appActions.updateGame, this.updateGame);
-		this.listenTo(window.appActions.updateWeek, this.updateWeek);
+		this.listenTo(AppActions.updateInjuries, this.updateInjuries);
+		this.listenTo(AppActions.addActiveBond, this.addActiveBond);
+		this.listenTo(AppActions.deleteActiveBond, this.deleteActiveBond);
+		this.listenTo(AppActions.addPotentialBond, this.addPotentialBond);
+		this.listenTo(AppActions.deletePotentialBond, this.deletePotentialBond);
+		this.listenTo(AppActions.incrementPotentialBond, this.incrementPotentialBond);
+		this.listenTo(AppActions.updatePlayerName, this.updatePlayerName);
+		this.listenTo(AppActions.updatePlayerFaction, this.updatePlayerFaction);
+		this.listenTo(AppActions.toggleStandin, this.toggleStandin);
+		this.listenTo(AppActions.updateGame, this.updateGame);
+		this.listenTo(AppActions.updateWeek, this.updateWeek);
 	},
 	incrementPotentialBond: function(warcaster, warjack, bonus, playerName) {
 		$.post("/admin/api/players/bonds/potential/increment/",
@@ -127,7 +130,7 @@ window.seasonStore = Reflux.createStore({
 				NewPlayerName: newPlayerName
 			})
 			.done(function() {
-				this.refreshSeasonFromServer().success(function() { window.appActions.viewRenamedPlayer(oldPlayerName, newPlayerName); });
+				this.refreshSeasonFromServer().success(function() { AppActions.viewRenamedPlayer(oldPlayerName, newPlayerName); });
 			}.bind(this))
 			.fail(function() {
 				alert("Player Rename Failed!");

@@ -8,8 +8,6 @@ default_expiration: "1s"
 handlers:
 - url: /js
   static_dir: js/dist
-- url: /bower_components
-  static_dir: bower_components
 - url: /css
   static_dir: css
 - url: /img
