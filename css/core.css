@@ -15,4 +15,8 @@ img.faction {
    width: auto;
    padding-right: 5px;
    padding-left: 5px;
-}​
+}
+
+#edit-week-button {
+  margin-bottom: 1em;
+}

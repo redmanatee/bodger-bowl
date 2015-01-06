@@ -58,7 +58,7 @@ var ConferenceTable = React.createClass({
 		return (
 			<div>
 				<PageHeader>{this.props.conference.Name}</PageHeader>
-				<Grid>
+				<Grid fluid>
 					<Row>{rows}</Row>
 				</Grid>
 			</div>
