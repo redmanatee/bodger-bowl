@@ -28,4 +28,5 @@ skip_files:
 - ^(.*/)?.*/RCS/.*$
 - ^(.*/)?\..*$
 - ^/?node_modules/.*$
-
+- ^/?js/(components/|stores/)
+- ^/?js/[^/]*\.js
