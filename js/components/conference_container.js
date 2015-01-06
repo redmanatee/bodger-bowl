@@ -1,5 +1,4 @@
-/** @jsx React.DOM */
-
+/* @flow */
 var React = require('react');
 var PlayerCell = require('./player_cell.js');
 var Table = require('react-bootstrap/Table');
@@ -71,7 +70,7 @@ module.exports = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired
 	},
-	render: function() {
+	render: function(): ?ReactElement {
 		if (this.props.season === null) {
 			return (<div></div>);
 		}

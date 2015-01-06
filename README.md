@@ -18,3 +18,9 @@ Install [npm](http://npmjs.org), then install Bodger Bowl's node module dependen
 ````
 (bodger-bowl) $ ./node_modules/.bin/gulp
 ````
+
+# Type checking javascript
+
+````
+(bodger-bowl) $ ./node_modules/.bin/flow
+````

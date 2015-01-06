@@ -1,10 +1,9 @@
-/** @jsx React.DOM */
-
+/* @flow */
 var React = require('react');
 var AppActions = require('../actions.js');
 
 module.exports = React.createClass({
-	render: function() {
+	render: function(): ?ReactElement {
 		var img = (<div></div>);
 		var player = (<div>--</div>);
 		if (this.props.player !== null) {

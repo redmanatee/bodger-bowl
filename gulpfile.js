@@ -23,7 +23,7 @@ gulp.task('compile', ['clean'], function() {
 		entries: ['./js/main.js'],
 		debug: (process.env.NODE_ENV == 'production')
 	})
-	.transform(reactify)
+	.transform(reactify, {stripTypes: true})
 	.transform(jshintify)
 	.bundle()
 	.pipe(source('all.js'))

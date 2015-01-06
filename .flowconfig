@@ -1,0 +1,11 @@
+[ignore]
+.*/bower_components/.*
+.*/js/dist/.*
+.*/node_modules/flow-bin/.*
+
+[include]
+
+[libs]
+interfaces
+
+[options]

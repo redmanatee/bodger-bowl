@@ -1,5 +1,4 @@
-/** @jsx React.DOM */
-
+/* @flow */
 var React = require('react');
 var AppActions = require('../actions.js');
 var PlayerCell = require('./player_cell.js');
@@ -117,16 +116,16 @@ module.exports = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired
 	},
-	render: function() {
+	render: function(): ?ReactElement {
 		var admin = this.props.admin;
-		rows = this.props.season.Weeks.map(function(week) {
+		var rows = this.props.season.Weeks.map(function(week) {
 			var header = "Week " + week.Number;
 			if(week.PlayDate)
 				header += " (" + new Date(week.PlayDate).toLocaleDateString() + ")";
 			if(week.Scenarios)
 				header += " - Scenario Numbers: [" + week.Scenarios.join(", ") + "]";
 			return(
-					<Panel header={header} key={week.Number}>
+					<Panel header={header} eventKey={week.Number}>
 						<WeekGroup week={week} admin={admin} key={week.Number}/>
 					</Panel>
 			);
