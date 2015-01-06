@@ -20,3 +20,9 @@ This installs javascript libraries that are needed to run Bodger Bowl.
 ````
 (bodger-bowl) $ ./node_modules/.bin/bower install
 ````
+
+## Build javascript
+
+````
+(bodger-bowl) $ ./node_modules/.bin/gulp
+````

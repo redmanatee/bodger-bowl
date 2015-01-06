@@ -9,7 +9,7 @@ var SeasonData = React.createClass({
 		this.setState({activeKey: state.mainTab});
 	},
 	render: function() {
-		var admin = $('#seasonSchedule').data('admin');
+		var admin = $('#season-schedule').data('admin');
 		return (
 			<TabbedArea className="main-nav" activeKey={this.state.activeKey} justified onSelect={window.appActions.viewMainTab}>
 				<TabPane key={1} tab="Season Schedule">
@@ -26,5 +26,8 @@ var SeasonData = React.createClass({
 	},
 });
 
-React.renderComponent(<SeasonData />,
-					  document.getElementById('seasonSchedule'));
+
+$(function() {
+	var schedule = $('#season-schedule')[0];
+	if(schedule) React.renderComponent(<SeasonData />, schedule);
+});

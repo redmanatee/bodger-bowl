@@ -14,11 +14,11 @@ var PlayerSchedule = React.createClass({
 				var scenarios = week.Scenarios && week.Scenarios.join(", ");
 				week.Games.forEach(function(game) {
 					if(game.PlayerIds.indexOf(player.Name) != -1) {
-						var opponent = game.Players.filter(function(p) { return p.Name != player.Name })[0];
+						var opponent = game.Players.filter(function(p) { return p.Name != player.Name; })[0];
 						weekRows.push(<tr key={weekIndex}><td>{weekText}</td><td><PlayerCell player={opponent} /></td><td>{scenarios}</td><td>{game.WinnerId}</td></tr>);
 					}
 				});
-				if(weekRows.length == 0) {
+				if(!weekRows.length) {
 					weekRows = [<tr key={0}><td>{weekText}</td><td>Bye</td><td>{scenarios}</td><td>{player.Name}</td></tr>];
 				}
 				rows = rows.concat(weekRows);
@@ -73,15 +73,13 @@ var PlayerInjuries = React.createClass({
 		this.refs.injuryText.getDOMNode().value = "";
 	},
 	render: function() {
-		var rows = []
+		var rows = [];
 		if (this.props.player !== null && this.props.player.Injuries !== null && this.props.player.Injuries.length > 0) {
 			this.props.player.Injuries.forEach(function(injury) {
-				rows.push(
-					<tr key={injury}><td>{injury}</td></tr>
-				);
+				rows.push(<tr key={injury}><td>{injury}</td></tr>);
 			});
 		} else {
-			rows.push(<tr key={0}><td>--None--</td></tr>)
+			rows.push(<tr key={0}><td>--None--</td></tr>);
 		}
 		var adminCols = [];
 		if (this.props.admin) {
@@ -156,7 +154,7 @@ var PlayerBonds = React.createClass({
 				);
 			}
 		}
-		if (bonds.length === 0) {
+		if (!bonds.length) {
 			bonds.push(
 				<tr className="text-left" key={0}><td colSpan={this.props.admin? 5 : 4}>--None--</td></tr>
 			);
@@ -255,13 +253,13 @@ var PlayerPotentialBonds = React.createClass({
 				);
 			}
 		}
-		if (bonds.length === 0) {
+		if (!bonds.length) {
 			bonds.push(
 				<tr className="text-left" key={0}><td colSpan={this.props.admin? 4 : 3}>--None--</td></tr>
 			);
 		}
 		var adminHeader = [];
-		var editingPanel = []
+		var editingPanel = [];
 		if (this.props.admin) {
 			adminHeader = (
 				<th>Delete?</th>
