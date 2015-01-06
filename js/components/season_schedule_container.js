@@ -19,8 +19,8 @@ var GameRow = React.createClass({
 		game: React.PropTypes.object,
 		admin: React.PropTypes.bool
 	},
-	handleChange: function(weekNumber, gameIndex) {
-		return function(event) {
+	addGame: function(weekNumber, gameIndex) {
+		return function() {
 			var player1Name = this.refs.player1.getDOMNode().value;
 			var player2Name = this.refs.player2.getDOMNode().value;
 			var winnerNumber = this.refs.winner.getDOMNode().value;
@@ -29,12 +29,19 @@ var GameRow = React.createClass({
 				winner = player1Name;
 			if(winnerNumber == 2)
 				winner = player2Name;
-			if(gameIndex) {
+			if(gameIndex !== null) {
 				AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
 			} else {
 				AppActions.addGame(weekNumber, player1Name, player2Name, winner);
 			}
 		}.bind(this);
+	},
+	deleteGame: function(weekNumber, gameIndex) {
+		return function() {
+			if(confirm('Are you sure you want to delete this game?')) {
+				AppActions.deleteGame(weekNumber, gameIndex);
+			}
+		};
 	},
 	render: function() {
 		var game = this.props.game;
@@ -51,6 +58,10 @@ var GameRow = React.createClass({
 		var player1Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		if (admin) {
+			var deleteButton = null;
+			if(game) {
+					deleteButton = <Button onClick={this.deleteGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="danger">Delete</Button>;
+			}
 			return (
 				<tr className={game ? "" : "warning"}>
 					<td>
@@ -72,10 +83,11 @@ var GameRow = React.createClass({
 							<option value={2}>Player 2</option>
 						</select>
 					</td>
-					<td>
-						<Button onClick={this.handleChange(this.props.weekNumber, this.props.gameIndex)} className={game ? "" : "warning"}>
+					<td className="game-buttons">
+						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex)} bsStyle={game ? "default" : "warning"}>
 							{game ? "Update" : "Add"}
 						</Button>
+						{deleteButton}
 					</td>
 				</tr>
 			);
@@ -95,12 +107,15 @@ var WeekTable = React.createClass({
 		players: React.PropTypes.array.isRequired,
 		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
-		weekNumber: React.PropTypes.number.isRequired,
 		admin: React.PropTypes.bool,
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.weekNumber} key={this.props.weekNumber + "-" + i} admin={this.props.admin} gameIndex={i} players={this.props.players} />;
+			return <GameRow game={game} weekNumber={this.props.weekNumber}
+				key={this.props.weekNumber + "-" + i + "-" + game.Players.join("-") + "-" + game.Winner}
+				admin={this.props.admin}
+				gameIndex={i}
+				players={this.props.players} />;
 		}.bind(this));
 		var opsColumn = "";
 		var addGameRow = "";
@@ -192,17 +207,28 @@ var WeekGroup = React.createClass({
 	hideEditor: function() {
 		this.setState({showWeekEditor: false});
 	},
+	deleteWeek: function() {
+		if(window.confirm("Are you sure you want to delete this week?")) {
+			AppActions.deleteWeek(this.props.weekNumber);
+			AppActions.viewWeek(1);
+		}
+	},
 	scrollToSchedule: function() {
 		this.refs.weekGroup.getDOMNode().scrollIntoView();
 	},
 	render: function() {
 		var admin = this.props.admin;
-		var weekEdit = "";
+		var weekEdit = null;
 		if(admin) {
 			if(this.state.showWeekEditor) {
 				weekEdit = <WeekEditor week={this.props.week} cancelCallback={this.hideEditor} submitCallback={this.updateWeek(this.props.weekNumber)} />;
 			} else {
-				weekEdit = <div id="edit-week-button"><Button onClick={this.showEditor}>Edit Week</Button></div>;
+				weekEdit = (
+					<div id="week-buttons">
+						<Button onClick={this.showEditor}>Edit Week</Button>
+						<Button onClick={this.deleteWeek} bsStyle="danger">Delete Week</Button>
+					</div>
+				);
 			}
 		}
 		return (

@@ -22,6 +22,10 @@ a:hover {
    height: 25px;
 }
 
-#edit-week-button {
+#week-buttons {
   margin-bottom: 1em;
+}
+
+#week-buttons button + button, .game-buttons button + button {
+  margin-left: 1em;
 }
