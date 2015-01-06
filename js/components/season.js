@@ -93,7 +93,7 @@ module.exports = React.createClass({
 							</NavItem>
 						</Nav>
 						<Nav right>
-							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-ii/">About</NavItem>
+							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-iv/">About</NavItem>
 						</Nav>
 					</Navbar>
 					<Grid fluid>
