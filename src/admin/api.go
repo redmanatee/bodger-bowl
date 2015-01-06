@@ -472,7 +472,7 @@ func updateWeek(w http.ResponseWriter, r *http.Request, seasonId string, weekNum
 	if playDate == "" {
 		playDateTime = nil
 	} else {
-		playDateTimeP, err := time.Parse("2006-01-02", playDate)
+		playDateTimeP, err := time.Parse("2006-01-02 -0700 MST", playDate + " -0700 MST")
 		playDateTime = &playDateTimeP
 		if err != nil {
 			panic(err)
