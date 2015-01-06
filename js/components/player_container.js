@@ -22,7 +22,7 @@ var PlayerSchedule = React.createClass({
 		} else {
 			this.props.season.Weeks.forEach(function(week, weekIndex) {
 				var weekRows = [];
-				var weekText = week.Number;
+				var weekText = weekIndex + 1;
 				if(week.PlayDate) weekText += " (" + new Date(week.PlayDate).toLocaleDateString() + ")";
 				var scenarios = week.Scenarios && week.Scenarios.join(", ");
 				week.Games.forEach(function(game) {

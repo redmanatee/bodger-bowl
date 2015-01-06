@@ -46,7 +46,9 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.updatePlayerName, this.updatePlayerName);
 		this.listenTo(AppActions.updatePlayerFaction, this.updatePlayerFaction);
 		this.listenTo(AppActions.toggleStandin, this.toggleStandin);
+		this.listenTo(AppActions.addGame, this.addGame);
 		this.listenTo(AppActions.updateGame, this.updateGame);
+		this.listenTo(AppActions.addWeek, this.addWeek);
 		this.listenTo(AppActions.updateWeek, this.updateWeek);
 		this.listenTo(AppActions.loadSeason, this.refreshSeasonFromServer);
 	},
@@ -174,15 +176,33 @@ module.exports = Reflux.createStore({
 			.always(this.refreshSeasonFromServer.bind(this))
 			.fail(function() { alert("Injury update failed!"); });
 	},
-	updateGame: function(weekNumber, player1Name, player2Name, winnerName) {
-		// URL: /admin/api/seasons/SEASON/week/WEEK/games/PLAYER1/PLAYER2
-		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", player1Name, player2Name].map(encodeURIComponent)).join("/"),
-			{ winnerName: winnerName })
+	addGame: function(weekNumber, player1Name, player2Name, winnerName) {
+		// URL: /admin/api/seasons/SEASON/week/WEEK/games
+		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games"].map(encodeURIComponent)).join("/"),
+			{ player1Name: player1Name, player2Name: player2Name, winnerName: winnerName })
 			.always(this.refreshSeasonFromServer.bind(this))
-			.fail(function(xhr, status, err) { alert("Winner selection failed!"); });
+			.fail(function(xhr, status, err) { alert("Add game failed!"); });
+	},
+	updateGame: function(weekNumber, gameIndex, player1Name, player2Name, winnerName) {
+		// URL: /admin/api/seasons/SEASON/week/WEEK/games/GAME_INDEX
+		$.post("/admin/api/seasons/" + [this.seasonId].concat(["weeks", weekNumber, "games", gameIndex].map(encodeURIComponent)).join("/"),
+			{ player1Name: player1Name, player2Name: player2Name, winnerName: winnerName })
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Update game failed!"); });
+	},
+	addWeek: function(playDate, scenarios) {
+		console.log('addWeek');
+		// URL: /admin/api/seasons/SEASON/weeks
+		$.post("/admin/api/seasons/" + this.seasonId + "/weeks",
+			   {
+				playDate: playDate,
+				scenarios: scenarios
+			})
+			.always(this.refreshSeasonFromServer.bind(this))
+			.fail(function(xhr, status, err) { alert("Add week failed!"); });
 	},
 	updateWeek: function(weekNumber, playDate, scenarios) {
-		// URL: /admin/api/seasons/SEASON/week/WEEK
+		// URL: /admin/api/seasons/SEASON/weeks/WEEK
 		$.post("/admin/api/seasons/" + [this.seasonId, "weeks", weekNumber].join("/"),
 			{
 				playDate: playDate,
@@ -220,34 +240,36 @@ module.exports = Reflux.createStore({
 					player.Bonds.PotentialBonds.sort(_PotentialBondSort);
 				}
 			}
+			player.Wins = 0;
+			player.Losses = 0;
 		});
 		var players = {};
 		var i: number = 0, j: number = 0;
 		for (i = 0; i < season.Players.length; i++) {
 			players[season.Players[i].Name] = season.Players[i];
 		}
-		var lookupPlayer = function(playerId, i) {
-			if (playerId in players) {
-				return players[playerId];
-			}
-			return null;
-		};
-		//map the players to their divisions
-		for (i = 0; i < season.Conferences.length; i++) {
-			var conference = season.Conferences[i];
-			for (j = 0; j < conference.Divisions.length; j++) {
-				var division = conference.Divisions[j];
-				division.Players = $.map(division.PlayerIds, lookupPlayer);
-				division.Players.sort(_PLayerRankingSort);
-			}
-		}
+		var lookupPlayer = function(playerId) { return players[playerId]; };
 		//Map the players to their games
 		for (i = 0; i < season.Weeks.length; i++) {
 			var week = season.Weeks[i];
 			for (j = 0; j < week.Games.length; j++) {
 				var game = week.Games[j];
-				game.Players = $.map(game.PlayerIds, lookupPlayer);
-				game.Winner = lookupPlayer(game.WinnerId, 0);
+				game.Players = game.PlayerIds.map(lookupPlayer);
+				game.Winner = lookupPlayer(game.WinnerId);
+				if(game.Winner) {
+					game.Winner.Wins++;
+					for(var k in game.Players)
+						if(game.Players[k] != game.Winner) game.Players[k].Losses++;
+				}
+			}
+		}
+		//map the players to their divisions
+		for (i = 0; i < season.Conferences.length; i++) {
+			var conference = season.Conferences[i];
+			for (j = 0; j < conference.Divisions.length; j++) {
+				var division = conference.Divisions[j];
+				division.Players = division.PlayerIds.map(lookupPlayer);
+				division.Players.sort(_PLayerRankingSort);
 			}
 		}
 		//Set the season to ourselves

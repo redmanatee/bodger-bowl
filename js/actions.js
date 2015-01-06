@@ -11,7 +11,9 @@ module.exports = Reflux.createActions([
 	"updatePlayerName",
 	"updatePlayerFaction",
 	"toggleStandin",
+	"addGame",
 	"updateGame",
+	"addWeek",
 	"updateWeek",
 	"loadSeason",
 

@@ -13,39 +13,78 @@ var PageHeader = require('react-bootstrap/PageHeader');
 
 var GameRow = React.createClass({
 	propTypes: {
+		players: React.PropTypes.array.isRequired,
 		weekNumber: React.PropTypes.number.isRequired,
-		game: React.PropTypes.object.isRequired,
+		gameIndex: React.PropTypes.number,
+		game: React.PropTypes.object,
 		admin: React.PropTypes.bool
 	},
-	handleChange: function(weekNumber, player1Name, player2Name) {
+	handleChange: function(weekNumber, gameIndex) {
 		return function(event) {
-			AppActions.updateGame(weekNumber, player1Name, player2Name, event.target.value);
-		};
+			var player1Name = this.refs.player1.getDOMNode().value;
+			var player2Name = this.refs.player2.getDOMNode().value;
+			var winnerNumber = this.refs.winner.getDOMNode().value;
+			var winner = null;
+			if(winnerNumber == 1)
+				winner = player1Name;
+			if(winnerNumber == 2)
+				winner = player2Name;
+			if(gameIndex) {
+				AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+			} else {
+				AppActions.addGame(weekNumber, player1Name, player2Name, winner);
+			}
+		}.bind(this);
 	},
 	render: function() {
 		var game = this.props.game;
-		var player1 = game.Players[0];
-		var player2 = game.Players[1];
-		var winner = game.Winner;
+		var player1 = game && game.Players[0];
+		var player2 = game && game.Players[1];
+		var winner = null;
+		if(game && game.Winner) {
+			if(game.Winner == player1)
+				winner = 1;
+			if(game.Winner == player2)
+				winner = 2;
+		}
 		var admin = this.props.admin;
-		var winnerRow = <td><PlayerCell player={winner} admin={admin} /></td>;
+		var player1Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
+		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		if (admin) {
-			winnerRow = (
-				<td>
-					<select onChange={this.handleChange(this.props.weekNumber, player1.Name, player2.Name)}
-						defaultValue={winner && winner.Name}>
+			return (
+				<tr className={game ? "" : "warning"}>
+					<td>
+						<select ref="player1" defaultValue={player1 && player1.Name}>
 							<option value="">-</option>
-							<option value={player1.Name}>{player1.Name}</option>
-							<option value={player2.Name}>{player2.Name}</option>
-					</select>
-				</td>
+							{player1Options}
+						</select>
+					</td>
+					<td>
+						<select ref="player2" defaultValue={player2 && player2.Name}>
+							<option value="">-</option>
+							{player2Options}
+						</select>
+					</td>
+					<td>
+						<select ref="winner" defaultValue={winner}>
+							<option value="">-</option>
+							<option value={1}>Player 1</option>
+							<option value={2}>Player 2</option>
+						</select>
+					</td>
+					<td>
+						<Button onClick={this.handleChange(this.props.weekNumber, this.props.gameIndex)} className={game ? "" : "warning"}>
+							{game ? "Update" : "Add"}
+						</Button>
+					</td>
+				</tr>
 			);
 		}
 		return (
 			<tr>
-				<td><PlayerCell player={player1} admin={admin} /></td>
-				<td><PlayerCell player={player2} admin={admin} /></td>
-				{winnerRow}
+				<td><PlayerCell player={player1} /></td>
+				<td><PlayerCell player={player2} /></td>
+				<td><PlayerCell player={game && game.Winner} /></td>
 			</tr>
 		);
 	}
@@ -53,42 +92,99 @@ var GameRow = React.createClass({
 
 var WeekTable = React.createClass({
 	propTypes: {
+		players: React.PropTypes.array.isRequired,
+		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
+		weekNumber: React.PropTypes.number.isRequired,
 		admin: React.PropTypes.bool,
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.week.Number} key={i} admin={this.props.admin} />;
+			return <GameRow game={game} weekNumber={this.props.weekNumber} key={this.props.weekNumber + "-" + i} admin={this.props.admin} gameIndex={i} players={this.props.players} />;
 		}.bind(this));
+		var opsColumn = "";
+		var addGameRow = "";
+		if(this.props.admin) {
+			opsColumn = <th></th>;
+			addGameRow = <GameRow weekNumber={this.props.weekNumber} key="add" admin={this.props.admin} players={this.props.players} />;
+		}
 		return (
 			<Table striped bordered hover>
 				<thead className="text-left">
 					<th>Player 1</th>
 					<th>Player 2</th>
 					<th>Winner</th>
+					{opsColumn}
 				</thead>
-				<tbody className="text-left">{rows}</tbody>
+				<tbody className="text-left">
+					{rows}
+					{addGameRow}
+				</tbody>
 			</Table>
+		);
+	}
+});
+
+var WeekEditor = React.createClass({
+	propTypes: {
+		week: React.PropTypes.object,
+		submitCallback: React.PropTypes.func.isRequired,
+		cancelCallback: React.PropTypes.func,
+	},
+	updateWeek: function() {
+		this.props.submitCallback(this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
+	},
+	render: function() {
+		var dateDefault = "";
+		var cancelLink = this.props.cancelCallback && <span> <a onClick={this.props.cancelCallback}>Cancel</a></span>;
+		var week = this.props.week;
+
+		function pad(number) { return number < 10 ? '0' + number : number; }
+
+		if(week) {
+			var playDate = week.PlayDate;
+			if(playDate) {
+				playDate = new Date(playDate);
+				dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
+			}
+		}
+		return (
+			<Panel className="text-left">
+				<div className="form-group">
+					<label htmlFor="play-date">Play Date</label>
+					<input id="play-date" className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
+						defaultValue={dateDefault}  />
+				</div>
+				<div className="form-group">
+					<label htmlFor="scenarios">Scenarios (comma separated)</label>
+					<input id="scenarios" className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
+						defaultValue={week && week.Scenarios && week.Scenarios.join(",")} />
+				</div>
+				<Button onClick={this.updateWeek}>Submit</Button>
+				{cancelLink}
+			</Panel>
 		);
 	}
 });
 
 var WeekGroup = React.createClass({
 	propTypes: {
+		players: React.PropTypes.array.isRequired,
+		weekNumber: React.PropTypes.number.isRequired,
 		week: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
 	},
 	getInitialState: function() {
 		return { showWeekEditor: false };
 	},
-	updateWeek: function(weekNumber) {
-		return function(event) {
-			AppActions.updateWeek(weekNumber, this.refs.playDate.getDOMNode().value, this.refs.scenarios.getDOMNode().value);
-			this.hideEditor();
-		}.bind(this);
-	},
 	componentDidUpdate: function(prevProps) {
 		if(prevProps.week != this.props.week) this.hideEditor();
+	},
+	updateWeek: function(weekNumber) {
+		return function(playDate, scenarios) {
+			AppActions.updateWeek(weekNumber, playDate, scenarios);
+			this.hideEditor();
+		}.bind(this);
 	},
 	showEditor: function() {
 		this.setState({showWeekEditor: true});
@@ -101,41 +197,10 @@ var WeekGroup = React.createClass({
 	},
 	render: function() {
 		var admin = this.props.admin;
-		var number = this.props.week.Number;
 		var weekEdit = "";
-		function pad(number) {
-			if (number < 10) {
-				return '0' + number;
-			}
-			return number;
-		}
 		if(admin) {
 			if(this.state.showWeekEditor) {
-				var playDateId  = "play-date-" + number;
-				var scenariosId = "scenarios-" + number;
-				var dateDefault = "";
-				var playDate = this.props.week.PlayDate;
-
-				if(playDate) {
-					playDate = new Date(playDate);
-					dateDefault = playDate.getFullYear() + '-' + pad(playDate.getMonth() + 1) + '-' + pad(playDate.getDate());
-				}
-				weekEdit = (
-					<Panel className="text-left">
-						<div className="form-group">
-							<label htmlFor={playDateId}>Play Date</label>
-							<input id={playDateId} className="form-control" type="date" ref="playDate" placeholder="YYYY-MM-DD"
-								defaultValue={dateDefault}  />
-						</div>
-						<div className="form-group">
-							<label htmlFor={scenariosId}>Scenarios (comma separated)</label>
-							<input id={scenariosId} className="form-control" type="text" ref="scenarios" pattern="((\d+)(,\d+)*)?"
-								defaultValue={this.props.week.Scenarios && this.props.week.Scenarios.join(",")} />
-						</div>
-						<Button onClick={this.hideEditor}>Cancel</Button>
-						<Button onClick={this.updateWeek(number)}>Submit</Button>
-					</Panel>
-				);
+				weekEdit = <WeekEditor week={this.props.week} cancelCallback={this.hideEditor} submitCallback={this.updateWeek(this.props.weekNumber)} />;
 			} else {
 				weekEdit = <div id="edit-week-button"><Button onClick={this.showEditor}>Edit Week</Button></div>;
 			}
@@ -143,7 +208,7 @@ var WeekGroup = React.createClass({
 		return (
 			<div ref="weekGroup">
 				{weekEdit}
-				<WeekTable week={this.props.week} admin={this.props.admin} />
+				<WeekTable week={this.props.week} weekNumber={this.props.weekNumber} admin={this.props.admin} players={this.props.players} />
 			</div>
 		);
 	}
@@ -153,31 +218,64 @@ module.exports = React.createClass({
 	propTypes: {
 		season: React.PropTypes.object.isRequired,
 		admin: React.PropTypes.bool,
-		activeWeek: React.PropTypes.object,
+		activeWeekNumber: React.PropTypes.number.isRequired,
+	},
+	getInitialState: function() {
+		return { showAddWeek: false };
 	},
 	// scroll to the schedule. useful when the schedule is below the button group, when the display width is small
 	scrollToSchedule: function() {
 		this.refs.weekGroup.scrollToSchedule();
 	},
+	viewWeek: function(weekNumber: number): Function {
+		return function() {
+			this.hideAddWeek();
+			AppActions.viewWeek(weekNumber);
+		}.bind(this);
+	},
+	showAddWeek: function() {
+		this.setState({ showAddWeek: true });
+	},
+	hideAddWeek: function() {
+		this.setState({ showAddWeek: false });
+	},
+	addWeek: function(playDate: string, scenarios: string) {
+		AppActions.addWeek(playDate, scenarios);
+		this.hideAddWeek();
+	},
 	render: function(): ?ReactElement {
+		var activeWeek = this.props.season.Weeks[this.props.activeWeekNumber - 1];
 		var admin = this.props.admin;
-		var navButtons = this.props.season.Weeks.map(function(week) {
-			var header = "Week " + week.Number;
+		var navButtons = this.props.season.Weeks.map(function(week, i) {
+			var header = "Week " + (i+1);
 			var playDateHtml = null;
 			var scenariosHtml = null;
-			var active = this.props.activeWeek == week;
+			var active = !this.state.showAddWeek && this.props.activeWeekNumber == i+1;
 			if(week.PlayDate)
 				playDateHtml = <small><br />{new Date(week.PlayDate).toLocaleDateString()}</small>;
 			if(week.Scenarios)
 				scenariosHtml = <small><br />Scenarios: {week.Scenarios.join(", ")}</small>;
 			return (
-				<Button active={active} onClick={function() { AppActions.viewWeek(week.Number); }}>
+				<Button active={active} onClick={this.viewWeek(i+1)}>
 					Week {header}
 					{playDateHtml}
 					{scenariosHtml}
 				</Button>
 			);
 		}.bind(this));
+		var addWeekButton = "";
+		if(admin) {
+			addWeekButton = <Button onClick={this.showAddWeek}>Add Week</Button>;
+		}
+		var content;
+		if(this.state.showAddWeek) {
+			content = <div>
+				<h2>Add Week</h2>
+				<WeekEditor cancelCallback={this.hideAddWeek} submitCallback={this.addWeek} />
+			</div>;
+		} else {
+			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} players={this.props.season.Players} />;
+		}
 		return (
 			<div>
 				<Row className="text-center">
@@ -187,10 +285,11 @@ module.exports = React.createClass({
 					<Col sm={2} xs={12}>
 						<ButtonGroup vertical style={{width: "100%"}}>
 							{navButtons}
+							{addWeekButton}
 						</ButtonGroup>
 					</Col>
 					<Col sm={10} xs={12}>
-						<WeekGroup ref="weekGroup" week={this.props.activeWeek} admin={admin}  />
+						{content}
 					</Col>
 				</Row>
 			</div>

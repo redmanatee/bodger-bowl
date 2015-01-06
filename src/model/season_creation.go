@@ -148,10 +148,6 @@ func generateSchedule(season *SeasonJson) {
 	season.Weeks[3].Games = generateRandomWeek(playerPlayed, players)
 	//Week 6
 	season.Weeks[5].Games = generateRandomWeek(playerPlayed, players)
-
-	for weekNum := range season.Weeks {
-		season.Weeks[weekNum].Number = weekNum + 1
-	}
 }
 
 func shuffleStringArray(src []string) []string {
