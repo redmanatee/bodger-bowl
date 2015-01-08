@@ -17,7 +17,8 @@ var GameRow = React.createClass({
 		weekNumber: React.PropTypes.number.isRequired,
 		gameIndex: React.PropTypes.number,
 		game: React.PropTypes.object,
-		admin: React.PropTypes.bool
+		admin: React.PropTypes.bool,
+		edit: React.PropTypes.bool
 	},
 	getInitialState: function() {
 		var game = this.props.game;
@@ -36,7 +37,7 @@ var GameRow = React.createClass({
 				winner = player1Name;
 			if(winnerNumber == 2)
 				winner = player2Name;
-			if(gameIndex !== null) {
+			if(this.props.edit) {
 				AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
 			} else {
 				AppActions.addGame(weekNumber, player1Name, player2Name, winner);
@@ -98,7 +99,7 @@ var GameRow = React.createClass({
 					</td>
 					<td className="game-buttons">
 						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex)} bsStyle={game ? "default" : "warning"}>
-							{game ? "Update" : "Add"}
+							{this.props.edit ? "Update" : "Add"}
 						</Button>
 						{deleteButton}
 					</td>
@@ -128,7 +129,8 @@ var WeekTable = React.createClass({
 				key={this.props.weekNumber + "-" + i + "-" + game.Players.join("-") + "-" + game.Winner}
 				admin={this.props.admin}
 				gameIndex={i}
-				players={this.props.players} />;
+				players={this.props.players}
+				edit />;
 		}.bind(this));
 		var opsColumn = "";
 		var addGameRow = "";
