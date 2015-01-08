@@ -19,6 +19,13 @@ var GameRow = React.createClass({
 		game: React.PropTypes.object,
 		admin: React.PropTypes.bool
 	},
+	getInitialState: function() {
+		var game = this.props.game;
+		return {
+			player1: game && game.Players[0] && game.Players[0].Name,
+			player2: game && game.Players[1] && game.Players[1].Name
+		};
+	},
 	addGame: function(weekNumber, gameIndex) {
 		return function() {
 			var player1Name = this.refs.player1.getDOMNode().value;
@@ -43,6 +50,12 @@ var GameRow = React.createClass({
 			}
 		};
 	},
+	player1Change: function() {
+		this.setState({player1: this.refs.player1.getDOMNode().value});
+	},
+	player2Change: function() {
+		this.setState({player2: this.refs.player2.getDOMNode().value});
+	},
 	render: function() {
 		var game = this.props.game;
 		var player1 = game && game.Players[0];
@@ -65,13 +78,13 @@ var GameRow = React.createClass({
 			return (
 				<tr className={game ? "" : "warning"}>
 					<td>
-						<select ref="player1" defaultValue={player1 && player1.Name}>
+						<select ref="player1" defaultValue={player1 && player1.Name} onChange={this.player1Change}>
 							<option value="">-</option>
 							{player1Options}
 						</select>
 					</td>
 					<td>
-						<select ref="player2" defaultValue={player2 && player2.Name}>
+						<select ref="player2" defaultValue={player2 && player2.Name} onChange={this.player2Change}>
 							<option value="">-</option>
 							{player2Options}
 						</select>
@@ -79,8 +92,8 @@ var GameRow = React.createClass({
 					<td>
 						<select ref="winner" defaultValue={winner}>
 							<option value="">-</option>
-							<option value={1}>Player 1</option>
-							<option value={2}>Player 2</option>
+							<option value={1}>{this.state.player1 || "-"}</option>
+							<option value={2}>{this.state.player2 || "-"}</option>
 						</select>
 					</td>
 					<td className="game-buttons">
