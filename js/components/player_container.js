@@ -27,7 +27,7 @@ var PlayerSchedule = React.createClass({
 				var scenarios = week.Scenarios && week.Scenarios.join(", ");
 				week.Games.forEach(function(game) {
 					if(game.PlayerIds.indexOf(player.Name) != -1) {
-						var opponent = game.Players.filter(function(p) { return p.Name != player.Name; })[0];
+						var opponent = game.Players.filter(function(p) { return !p || p.Name != player.Name; })[0];
 						weekRows.push(<tr key={weekIndex}><td>{weekText}</td><td><PlayerCell player={opponent} /></td><td>{scenarios}</td><td>{game.WinnerId}</td></tr>);
 					}
 				});
