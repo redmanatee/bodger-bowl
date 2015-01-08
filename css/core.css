@@ -29,3 +29,41 @@ a:hover {
 #week-buttons button + button, .game-buttons button + button {
   margin-left: 1em;
 }
+
+.bracket {
+  display: flex;
+  flex-direction: row;
+  min-width: 700px;
+}
+
+.round {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 200px;
+  list-style: none;
+  padding: 0;
+}
+
+.round .spacer { flex-grow: 1; }
+.round .spacer:first-child,
+.round .spacer:last-child { flex-grow: .5; }
+
+.round .game-spacer {
+  flex-grow: 1;
+}
+
+li.game-top { border-bottom: 1px solid #aaa; }
+
+li.game-spacer {
+  border-right: 1px solid #aaa;
+  min-height: 40px;
+}
+
+li.game-bottom {
+  border-top: 1px solid #aaa;
+}
+
+.game {
+  overflow: hidden;
+}

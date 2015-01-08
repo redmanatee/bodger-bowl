@@ -35,7 +35,7 @@ module.exports = Reflux.createStore({
 	},
 	viewPlayer: function(playerName) {
 		this.state.playerName = playerName;
-		this.state.mainTab = 3;
+		this.state.mainTab = 4;
 		if(this.historyEnabled) window.history.pushState(this.state, '');
 		this.trigger(this.state);
 	},
