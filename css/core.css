@@ -31,13 +31,17 @@ a:hover {
 }
 
 .bracket {
+  display: -webkit-flex;
   display: flex;
+  -webkit-flex-direction: row;
   flex-direction: row;
   min-width: 700px;
 }
 
 .round {
+  display: -webkit-flex;
   display: flex;
+  -webkit-flex-direction: column;
   flex-direction: column;
   justify-content: center;
   width: 200px;
@@ -45,11 +49,12 @@ a:hover {
   padding: 0;
 }
 
-.round .spacer { flex-grow: 1; }
+.round .spacer { -webkit-flex-grow: 1; flex-grow: 1 }
 .round .spacer:first-child,
-.round .spacer:last-child { flex-grow: .5; }
+.round .spacer:last-child { -webkit-flex-grow: .5; flex-grow: .5 }
 
 .round .game-spacer {
+  -webkit-flex-grow: 1;
   flex-grow: 1;
 }
 
