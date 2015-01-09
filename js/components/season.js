@@ -10,6 +10,7 @@ var SeasonStore = require('../stores/season.js');
 var AppActions = require('../actions.js');
 var SeasonScheduleContainer = require('./season_schedule_container.js');
 var ConferenceContainer = require('./conference_container.js');
+var PlayoffContainer = require('./playoff_container.js');
 var PlayerContainer = require('./player_container.js');
 
 module.exports = React.createClass({
@@ -67,6 +68,8 @@ module.exports = React.createClass({
 			if (this.state.activeKey == 2)
 				content = <ConferenceContainer admin={this.props.admin} season={season} />;
 			if (this.state.activeKey == 3)
+				content = <PlayoffContainer season={season} />;
+			if (this.state.activeKey == 4)
 				content = <PlayerContainer
 					admin={this.props.admin}
 					season={season}
@@ -90,8 +93,14 @@ module.exports = React.createClass({
 							</NavItem>
 
 							<NavItem className={this.state.activeKey == 3 ? "active" : ""}
-									eventKey={3}
+									eventKey={2}
 									onClick={function() { AppActions.viewMainTab(3); }}>
+								Playoffs
+							</NavItem>
+
+							<NavItem className={this.state.activeKey == 4 ? "active" : ""}
+									eventKey={3}
+									onClick={function() { AppActions.viewMainTab(4); }}>
 								Players
 							</NavItem>
 						</Nav>
