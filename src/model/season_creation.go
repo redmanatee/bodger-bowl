@@ -129,7 +129,7 @@ func generateSchedule(season *SeasonJson) {
 		players[count] = k
 		count++
 	}
-
+	
 	//Week 1
 	season.Weeks[0].Games = generateWeekSchedule(playerPlayed, playersForScheduling, [5]int{0, 1, 2, 3, 4})
 	//Week 3

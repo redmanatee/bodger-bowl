@@ -9,32 +9,47 @@ import (
 )
 
 func init() {
+	http.HandleFunc("/", HomeRequest)
+	
+	// User Authentication Functions
+	http.HandleFunc("/api/login/", api.AuthorizeUser)
+	http.HandleFunc("/api/oauth2callback", api.HandleOAuth2Callback)
+	http.HandleFunc("/api/getUser", api.GetUser)
+	
+	// Admin Functions
+	http.HandleFunc("/admin/", admin.AdminHandler)
 	http.HandleFunc("/admin/seasons/", admin.SeasonHandler)
 	http.HandleFunc("/admin/seasons/add", admin.AddSeasonHandler)
-	http.HandleFunc("/admin/", admin.AdminHandler)
-	http.HandleFunc("/api/seasons/", api.SeasonList)
-	http.HandleFunc("/", HomeRequest)
-	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
 	http.HandleFunc("/admin/api/seasons/", admin.UpdateSeason)
 	http.HandleFunc("/admin/api/players/setName", admin.SetPlayerName)
 	http.HandleFunc("/admin/api/players/setFaction", admin.SetPlayerFaction)
 	http.HandleFunc("/admin/api/players/toggleStandin", admin.TogglePlayerStandin)
-	http.HandleFunc("/api/players/", api.GetPlayer)
 	http.HandleFunc("/admin/api/players/injuries/", admin.PlayerInjuryUpdateHandler)
 	http.HandleFunc("/admin/api/players/bonds/add/", admin.PlayerBondAddHandler)
 	http.HandleFunc("/admin/api/players/bonds/delete/", admin.PlayerBondDeleteHandler)
 	http.HandleFunc("/admin/api/players/bonds/potential/add/", admin.PlayerPotentialBondAddHandler)
 	http.HandleFunc("/admin/api/players/bonds/potential/delete/", admin.PlayerPotentialBondDeleteHandler)
 	http.HandleFunc("/admin/api/players/bonds/potential/increment/", admin.PlayerPotentialBondIncrementHandler)
+	
+	// API Get Functions
+	http.HandleFunc("/api/seasons/", api.SeasonList)
+	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
+	http.HandleFunc("/api/players/", api.GetPlayer)
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("Home request")
+	c.Infof("%v", r)
+	
+	if r.URL.Path == "/" {
+		http.Redirect(w, r, "/api/login/", http.StatusFound)
+		return
+	}
+	
 	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/home_page.html"))
 	err := tmpl.Execute(w, nil)
 	if err != nil {
 		panic(err)
 	}
-
 }

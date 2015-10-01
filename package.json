@@ -2,7 +2,7 @@
   "name": "bodger-bowl",
   "version": "0.6.0",
   "description": "Tracking software for Bodger Bowl.  Designed for use with GAE.",
-  "main": "index.js",
+  "main": "main.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/redmanatee/bodger-bowl"
@@ -15,6 +15,10 @@
     {
       "name": "Dan Erikson",
       "email": "derikson3@gmail.com"
+    },
+    {
+      "name": "Ben Darling",
+      "email": "ymihere03@gmail.com"
     }
   ],
   "license": "MIT",

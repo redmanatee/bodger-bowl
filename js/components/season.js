@@ -7,6 +7,7 @@ var NavItem = require('react-bootstrap/NavItem');
 var Nav = require('react-bootstrap/Nav');
 var ViewStore = require('../stores/view.js');
 var SeasonStore = require('../stores/season.js');
+var UserStore = require('../stores/user.js');
 var AppActions = require('../actions.js');
 var SeasonScheduleContainer = require('./season_schedule_container.js');
 var ConferenceContainer = require('./conference_container.js');
@@ -26,6 +27,7 @@ module.exports = React.createClass({
 			selectedPlayer: selectedPlayer,
 			activePlayerTab: 1,
 			activeWeekNumber: activeWeekNumber,
+			userName: null,
 		};
 	},
 	componentDidMount: function() {
@@ -45,6 +47,7 @@ module.exports = React.createClass({
 			selectedPlayer: this.getPlayer(state.playerName),
 			activePlayerTab: state.playerTab,
 			activeWeekNumber: state.weekNumber,
+			userName: state.userName,
 		});
 		if (oldActiveWeekNumber != this.state.activeWeekNumber &&
 			this.state.activeKey == 1) {
@@ -102,6 +105,12 @@ module.exports = React.createClass({
 									eventKey={3}
 									onClick={function() { AppActions.viewMainTab(4); }}>
 								Players
+							</NavItem>
+						</Nav>
+						<Nav right>
+							<NavItem
+								onClick={function() { console.log('user logout...'); }}>
+								<NavItem>Logged in as {this.state.userName}</NavItem>
 							</NavItem>
 						</Nav>
 						<Nav right>
