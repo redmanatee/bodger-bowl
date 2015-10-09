@@ -12,8 +12,6 @@ func init() {
 	http.HandleFunc("/", HomeRequest)
 	
 	// User Authentication Functions
-	http.HandleFunc("/api/login/", api.AuthorizeUser)
-	http.HandleFunc("/api/oauth2callback", api.HandleOAuth2Callback)
 	http.HandleFunc("/api/getUser", api.GetUser)
 	
 	// Admin Functions
@@ -40,12 +38,6 @@ func init() {
 func HomeRequest(w http.ResponseWriter, r *http.Request) {
 	c := appengine.NewContext(r)
 	c.Infof("Home request")
-	c.Infof("%v", r)
-	
-	if r.URL.Path == "/" {
-		http.Redirect(w, r, "/api/login/", http.StatusFound)
-		return
-	}
 	
 	tmpl := template.Must(template.ParseFiles("templates/base.html", "templates/home_page.html"))
 	err := tmpl.Execute(w, nil)

@@ -26,6 +26,7 @@ module.exports = Reflux.createActions([
 	"viewRenamedPlayer",
 	"popHistoryState",
 	
-	"getUserName",
-	"viewUserName"
+	"loadUser",
+	"getUser",
+	"redirectUrl"
 ]);

@@ -5,7 +5,7 @@ var AppActions = require('../actions.js');
 // keeps track of what is being displayed for the main tab set, the player tab set, and the player select box
 module.exports = Reflux.createStore({
 	init: function() {
-		this.state = {mainTab: 1, playerTab: 1, playerName: null, weekNumber: 1, userName: null};
+		this.state = {mainTab: 1, playerTab: 1, playerName: null, weekNumber: 1};
 		this.historyEnabled = window.history && window.history.pushState;
 		if(this.historyEnabled) {
 			window.onpopstate = AppActions.popHistoryState;
@@ -17,7 +17,6 @@ module.exports = Reflux.createStore({
 		this.listenTo(AppActions.viewPlayer, this.viewPlayer);
 		this.listenTo(AppActions.viewRenamedPlayer, this.viewRenamedPlayer);
 		this.listenTo(AppActions.popHistoryState, this.popHistoryState);
-		this.listenTo(AppActions.viewUserName, this.viewUserName);
 	},
 	viewMainTab: function(key) {
 		this.state.mainTab = key;
@@ -56,10 +55,5 @@ module.exports = Reflux.createStore({
 			this.state = event.state;
 			this.trigger(this.state);
 		}
-	},
-	viewUserName: function(userName) {
-		console.log('updating username', userName);
-		this.state.userName = userName;
-		this.trigger(this.state);
 	}
 });

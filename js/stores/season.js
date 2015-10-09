@@ -159,8 +159,7 @@ module.exports = Reflux.createStore({
 			.fail(function() { alert("Player Standin Update Failed!"); });
 	},
 	refreshSeasonFromServer: function() {
-		if (window.location.pathname === "/" || 
-			window.location.pathname === "/api/oauth2callback") {
+		if (window.location.pathname === "/") {
 			return this.loadActiveSeasonFromServer();
 		} else if(window.location.pathname !== "/admin/") {
 			var path = window.location.pathname.split('/');

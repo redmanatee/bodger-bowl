@@ -28,11 +28,13 @@ module.exports = React.createClass({
 			activePlayerTab: 1,
 			activeWeekNumber: activeWeekNumber,
 			userName: null,
+			userUrl: null,
 		};
 	},
 	componentDidMount: function() {
 		this.listenTo(ViewStore, this.view);
 		this.listenTo(SeasonStore, this.onSeasonChange);
+		this.listenTo(UserStore, this.getUser);
 	},
 	onSeasonChange: function(season: Object) {
 		this.setState({
@@ -60,6 +62,12 @@ module.exports = React.createClass({
 				return this.state.season.Players[i];
 			}
 		}
+	},
+	getUser: function(user: Object) {
+		this.setState({
+			userName: user.Email,
+			userUrl: user.Url,
+		});
 	},
 	render: function(): ?ReactElement {
 		var season = this.state.season;
@@ -108,13 +116,18 @@ module.exports = React.createClass({
 							</NavItem>
 						</Nav>
 						<Nav right>
+							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-iv/">About</NavItem>
+						</Nav>
+						<Nav right>
 							<NavItem
-								onClick={function() { console.log('user logout...'); }}>
-								<NavItem>Logged in as {this.state.userName}</NavItem>
+								onClick={function() { AppActions.redirectUrl(); }}>
+								<NavItem>Sign Out</NavItem>
 							</NavItem>
 						</Nav>
 						<Nav right>
-							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-iv/">About</NavItem>
+							<NavItem>
+								<NavItem>Logged in as {this.state.userName}</NavItem>
+							</NavItem>
 						</Nav>
 					</Navbar>
 					<Grid fluid>
