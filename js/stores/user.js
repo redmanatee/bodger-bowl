@@ -30,5 +30,3 @@ module.exports = Reflux.createStore({
 		window.location.href = this.user.Url;
 	}
 });
-	
-		
