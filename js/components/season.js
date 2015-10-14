@@ -27,8 +27,7 @@ module.exports = React.createClass({
 			selectedPlayer: selectedPlayer,
 			activePlayerTab: 1,
 			activeWeekNumber: activeWeekNumber,
-			userName: null,
-			userUrl: null,
+			userEmail: null
 		};
 	},
 	componentDidMount: function() {
@@ -48,8 +47,7 @@ module.exports = React.createClass({
 			activeKey: state.mainTab,
 			selectedPlayer: this.getPlayer(state.playerName),
 			activePlayerTab: state.playerTab,
-			activeWeekNumber: state.weekNumber,
-			userName: state.userName,
+			activeWeekNumber: state.weekNumber
 		});
 		if (oldActiveWeekNumber != this.state.activeWeekNumber &&
 			this.state.activeKey == 1) {
@@ -65,8 +63,7 @@ module.exports = React.createClass({
 	},
 	getUser: function(user: Object) {
 		this.setState({
-			userName: user.Email,
-			userUrl: user.Url,
+			userEmail: user.userEmail,
 		});
 	},
 	render: function(): ?ReactElement {
@@ -75,17 +72,19 @@ module.exports = React.createClass({
 			var content = <SeasonScheduleContainer ref="seasonSchedule"
 				admin={this.props.admin}
 				season={season}
-				activeWeekNumber={this.state.activeWeekNumber} />;
+				activeWeekNumber={this.state.activeWeekNumber}
+				user={this.state.userEmail} />;
 			if (this.state.activeKey == 2)
-				content = <ConferenceContainer admin={this.props.admin} season={season} />;
+				content = <ConferenceContainer admin={this.props.admin} season={season} user={this.state.userEmail} />;
 			if (this.state.activeKey == 3)
-				content = <PlayoffContainer season={season} />;
+				content = <PlayoffContainer season={season} user={this.state.userEmail} />;
 			if (this.state.activeKey == 4)
 				content = <PlayerContainer
 					admin={this.props.admin}
 					season={season}
 					selectedPlayer={this.state.selectedPlayer}
-					activeTab={this.state.activePlayerTab} />;
+					activeTab={this.state.activePlayerTab}
+					user={this.state.userEmail}	/>;
 			var brand = <a href="/">Bodger Bowl</a>;
 			return (
 				<div>
@@ -126,7 +125,7 @@ module.exports = React.createClass({
 						</Nav>
 						<Nav right>
 							<NavItem>
-								<NavItem>Logged in as {this.state.userName}</NavItem>
+								<NavItem>Logged in as {this.state.userEmail}</NavItem>
 							</NavItem>
 						</Nav>
 					</Navbar>

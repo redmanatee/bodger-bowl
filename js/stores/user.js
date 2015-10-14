@@ -5,6 +5,7 @@ var AppActions = require('../actions.js');
 
 module.exports = Reflux.createStore({
 	init: function() {
+		this.state = {userEmail: null, userUrl: null};
 		this.listenTo(AppActions.loadUser, this.loadUser);
 		this.listenTo(AppActions.getUser, this.getUser);
 		this.listenTo(AppActions.redirectUrl, this.redirectUrl);
@@ -18,15 +19,16 @@ module.exports = Reflux.createStore({
 		.error(function(xhr, status, err) { console.error(status, err.toString()); }.bind(this));
 	},
 	getUser: function(user){
-		this.user = user;
-		this.trigger(this.user);
+		this.state.userEmail = user.Email;
+		this.state.userUrl = user.Url;
+		this.trigger(this.state);
 	},
 	redirectUrl: function() {
-		if(this.user.Url.indexOf('http') == -1) {
-			window.location.href = 'localhost:8080'+this.user.Url;
+		if(this.state.userUrl.indexOf('http') == -1) {
+			window.location.href = 'localhost:8080'+this.state.userUrl;
 			return;
 		}
 		
-		window.location.href = this.user.Url;
+		window.location.href = this.state.userUrl;
 	}
 });

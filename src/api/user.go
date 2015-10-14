@@ -3,7 +3,6 @@ package api
 import (
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/user"
-	"google.golang.org/appengine/log"
 	"net/http"
 	"encoding/json"
 )
@@ -13,13 +12,13 @@ type User struct {
 	Url string
 }
 
-// Redirect user to the authentication page
+// Retrieve User object and return the user's email
+// If the user is logged in, return a logout URL so
+// the user can logout
 func GetUser(w http.ResponseWriter, r *http.Request){
 	c := appengine.NewContext(r)
-	//var localUser User
 	
 	u := user.Current(c)
-	log.Infof(c, "Getting user %v", u)
 	localUser := User {
 		Email: u.Email,
 		Url: "",
