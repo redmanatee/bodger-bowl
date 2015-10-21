@@ -143,6 +143,7 @@ func (p PlayerJson) CreatePlayer() Player {
 	}
 	return Player {
 		Name: p.Name,
+		Email: p.Email,
 		Standin: p.Standin,
 		Faction: p.Faction,
 		Injuries: p.Injuries,

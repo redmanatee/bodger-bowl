@@ -73,18 +73,36 @@ module.exports = React.createClass({
 				admin={this.props.admin}
 				season={season}
 				activeWeekNumber={this.state.activeWeekNumber}
-				user={this.state.userEmail} />;
+				userEmail={this.state.userEmail} />;
 			if (this.state.activeKey == 2)
-				content = <ConferenceContainer admin={this.props.admin} season={season} user={this.state.userEmail} />;
+				content = <ConferenceContainer admin={this.props.admin} season={season} />;
 			if (this.state.activeKey == 3)
-				content = <PlayoffContainer season={season} user={this.state.userEmail} />;
+				content = <PlayoffContainer season={season} />;
 			if (this.state.activeKey == 4)
 				content = <PlayerContainer
 					admin={this.props.admin}
 					season={season}
 					selectedPlayer={this.state.selectedPlayer}
 					activeTab={this.state.activePlayerTab}
-					user={this.state.userEmail}	/>;
+					userEmail={this.state.userEmail}	/>;
+			var loginBanner = 
+				<Nav right>
+					<NavItem
+						onClick={function() { AppActions.redirectUrl(); }}>
+						<NavItem>{this.state.userEmail === "" ? "Sign In" : "Sign Out"}</NavItem>
+					</NavItem>
+				</Nav>;
+			
+			var userBanner = null;
+			if(this.state.userEmail !== ""){
+				userBanner =
+					<Nav right>
+						<NavItem>
+							<NavItem>Logged in as {this.state.userEmail}</NavItem>
+						</NavItem>
+					</Nav>;
+			}
+				
 			var brand = <a href="/">Bodger Bowl</a>;
 			return (
 				<div>
@@ -117,17 +135,8 @@ module.exports = React.createClass({
 						<Nav right>
 							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-iv/">About</NavItem>
 						</Nav>
-						<Nav right>
-							<NavItem
-								onClick={function() { AppActions.redirectUrl(); }}>
-								<NavItem>Sign Out</NavItem>
-							</NavItem>
-						</Nav>
-						<Nav right>
-							<NavItem>
-								<NavItem>Logged in as {this.state.userEmail}</NavItem>
-							</NavItem>
-						</Nav>
+						{loginBanner}
+						{userBanner}
 					</Navbar>
 					<Grid fluid>
 						{content}

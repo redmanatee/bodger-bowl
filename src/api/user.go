@@ -19,10 +19,7 @@ func GetUser(w http.ResponseWriter, r *http.Request){
 	c := appengine.NewContext(r)
 	
 	u := user.Current(c)
-	localUser := User {
-		Email: u.Email,
-		Url: "",
-	}
+	localUser := new(User)
 	
 	if u == nil {
         url, _ := user.LoginURL(c, "/")
@@ -37,9 +34,12 @@ func GetUser(w http.ResponseWriter, r *http.Request){
 		return
     }
 	
+	
+	
     url, _ := user.LogoutURL(c, "/")
 	
 	localUser.Url = url
+	localUser.Email = u.Email
 	data, err := json.MarshalIndent(localUser, "", "\t")
 	if err != nil {
 		panic(err)

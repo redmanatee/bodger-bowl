@@ -19,7 +19,6 @@ handlers:
   login: admin
 - url: /.*
   script: _go_app
-  login: required
 
 
 skip_files:
