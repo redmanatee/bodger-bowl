@@ -68,6 +68,12 @@ var GameRow = React.createClass({
 			if(game.Winner == player2)
 				winner = 2;
 		}
+		var isGameOwner = false;
+		if(player1 && player2){
+			if(player1.Email == this.props.userEmail || player2.Email == this.props.userEmail){
+				isGameOwner = true;
+			}
+		}
 		var admin = this.props.admin;
 		var player1Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
@@ -106,11 +112,28 @@ var GameRow = React.createClass({
 				</tr>
 			);
 		}
+		var updateButton = null;
+		var winnerMenu = <td><PlayerCell player={game && game.Winner} /></td>;
+		if(isGameOwner){
+			updateButton = 
+				<td className="game-buttons">
+					<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="primary">Update</Button>
+				</td>;
+			winnerMenu = 
+				<td>
+					<select ref="winner" defaultValue={winner}>
+						<option value="">-</option>
+						<option value={1}>{this.state.player1 || "-"}</option>
+						<option value={2}>{this.state.player2 || "-"}</option>
+					</select>
+				</td>;
+		}
 		return (
 			<tr>
-				<td><PlayerCell player={player1} /></td>
-				<td><PlayerCell player={player2} /></td>
-				<td><PlayerCell player={game && game.Winner} /></td>
+				<td><PlayerCell ref="player1" player={player1} /></td>
+				<td><PlayerCell ref="player2" player={player2} /></td>
+				{winnerMenu}
+				{updateButton}
 			</tr>
 		);
 	}
@@ -130,6 +153,7 @@ var WeekTable = React.createClass({
 				admin={this.props.admin}
 				gameIndex={i}
 				players={this.props.players}
+				userEmail={this.props.userEmail}
 				edit />;
 		}.bind(this));
 		var opsColumn = "";
@@ -249,7 +273,7 @@ var WeekGroup = React.createClass({
 		return (
 			<div ref="weekGroup">
 				{weekEdit}
-				<WeekTable week={this.props.week} weekNumber={this.props.weekNumber} admin={this.props.admin} players={this.props.players} />
+				<WeekTable week={this.props.week} weekNumber={this.props.weekNumber} admin={this.props.admin} players={this.props.players} userEmail={this.props.userEmail} />
 			</div>
 		);
 	}
@@ -315,7 +339,7 @@ module.exports = React.createClass({
 				<WeekEditor cancelCallback={this.hideAddWeek} submitCallback={this.addWeek} />
 			</div>;
 		} else {
-			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} players={this.props.season.Players} />;
+			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} players={this.props.season.Players} userEmail={this.props.userEmail} />;
 		}
 		return (
 			<div>

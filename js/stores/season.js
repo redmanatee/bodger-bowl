@@ -255,6 +255,7 @@ module.exports = Reflux.createStore({
 		if (season !== null && season.Length === 1) {
 			season = season[0];
 		}
+		this.seasonId = season.Name + ';' + season.Year;
 		if (season === null || season.Length === 0) {
 			this.loadActiveSeasonFromServer();
 			return;
