@@ -34,8 +34,6 @@ func GetUser(w http.ResponseWriter, r *http.Request){
 		return
     }
 	
-	
-	
     url, _ := user.LogoutURL(c, "/")
 	
 	localUser.Url = url

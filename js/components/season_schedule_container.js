@@ -24,24 +24,40 @@ var GameRow = React.createClass({
 		var game = this.props.game;
 		return {
 			player1: game && game.Players[0] && game.Players[0].Name,
-			player2: game && game.Players[1] && game.Players[1].Name
+			player2: game && game.Players[1] && game.Players[1].Name,
+			winner: game && game.Winner
 		};
 	},
-	addGame: function(weekNumber, gameIndex) {
+	addGame: function(weekNumber, gameIndex, admin) {
+		var winner = null;
 		return function() {
-			var player1Name = this.refs.player1.getDOMNode().value;
-			var player2Name = this.refs.player2.getDOMNode().value;
+			var player1Name = null;
+			var player2Name = null;
+			if(admin){
+				player1Name = this.refs.player1.getDOMNode().value;
+				player2Name = this.refs.player2.getDOMNode().value;
+			} else {
+				player1Name = this.state.player1;
+				player2Name = this.state.player2;
+			}
 			var winnerNumber = this.refs.winner.getDOMNode().value;
-			var winner = null;
+			
 			if(winnerNumber == 1)
 				winner = player1Name;
 			if(winnerNumber == 2)
 				winner = player2Name;
-			if(this.props.edit) {
-				AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+				
+			if(this.props.edit){
+				if(admin) {
+					AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+				} else {
+					AppActions.publicUpdateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+				}
 			} else {
 				AppActions.addGame(weekNumber, player1Name, player2Name, winner);
 			}
+			
+			this.setState({winner: winner});
 		}.bind(this);
 	},
 	deleteGame: function(weekNumber, gameIndex) {
@@ -50,6 +66,9 @@ var GameRow = React.createClass({
 				AppActions.deleteGame(weekNumber, gameIndex);
 			}
 		};
+	},
+	submitDispute: function() {
+		alert('TODO: submit dispute');
 	},
 	player1Change: function() {
 		this.setState({player1: this.refs.player1.getDOMNode().value});
@@ -74,6 +93,8 @@ var GameRow = React.createClass({
 				isGameOwner = true;
 			}
 		}
+		
+		// For admin users
 		var admin = this.props.admin;
 		var player1Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
@@ -104,7 +125,7 @@ var GameRow = React.createClass({
 						</select>
 					</td>
 					<td className="game-buttons">
-						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex)} bsStyle={game ? "default" : "warning"}>
+						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex, admin)} bsStyle={game ? "default" : "warning"}>
 							{this.props.edit ? "Update" : "Add"}
 						</Button>
 						{deleteButton}
@@ -112,26 +133,43 @@ var GameRow = React.createClass({
 				</tr>
 			);
 		}
+		
+		// For non-admin users
+		var winnerMenu = null;
 		var updateButton = null;
-		var winnerMenu = <td><PlayerCell player={game && game.Winner} /></td>;
 		if(isGameOwner){
-			updateButton = 
-				<td className="game-buttons">
-					<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="primary">Update</Button>
-				</td>;
-			winnerMenu = 
-				<td>
-					<select ref="winner" defaultValue={winner}>
-						<option value="">-</option>
-						<option value={1}>{this.state.player1 || "-"}</option>
-						<option value={2}>{this.state.player2 || "-"}</option>
-					</select>
-				</td>;
+			if(!this.state.winner){
+				// Displays when a winner is not set yet
+				winnerMenu = 
+					<td>
+						<select ref="winner" defaultValue={winner}>
+							<option value="">-</option>
+							<option value={1}>{this.state.player1 || "-"}</option>
+							<option value={2}>{this.state.player2 || "-"}</option>
+						</select>
+					</td>;
+					
+				updateButton = 
+					<td className="game-buttons">
+						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex, admin)} bsStyle="primary">Submit Result</Button>
+					</td>;
+			} else {
+				// Displays when a winner already exists
+				winnerMenu = <td><PlayerCell player={this.state.winner} /></td>;
+					
+				updateButton = 
+					<td className="game-buttons">
+						<Button onClick={this.submitDispute()} bsStyle="warning">Dispute</Button>
+					</td>;
+			}
+			
+		} else {
+			winnerMenu = <td><PlayerCell player={this.state.winner} /></td>;
 		}
 		return (
 			<tr>
-				<td><PlayerCell ref="player1" player={player1} /></td>
-				<td><PlayerCell ref="player2" player={player2} /></td>
+				<td><PlayerCell player={player1} /></td>
+				<td><PlayerCell player={player2} /></td>
 				{winnerMenu}
 				{updateButton}
 			</tr>
@@ -148,7 +186,8 @@ var WeekTable = React.createClass({
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.weekNumber}
+			return <GameRow game={game}
+				weekNumber={this.props.weekNumber}
 				key={this.props.weekNumber + "-" + i + "-" + game.Players.join("-") + "-" + game.Winner}
 				admin={this.props.admin}
 				gameIndex={i}
@@ -273,7 +312,11 @@ var WeekGroup = React.createClass({
 		return (
 			<div ref="weekGroup">
 				{weekEdit}
-				<WeekTable week={this.props.week} weekNumber={this.props.weekNumber} admin={this.props.admin} players={this.props.players} userEmail={this.props.userEmail} />
+				<WeekTable week={this.props.week}
+				weekNumber={this.props.weekNumber}
+				admin={this.props.admin}
+				players={this.props.players}
+				userEmail={this.props.userEmail} />
 			</div>
 		);
 	}
