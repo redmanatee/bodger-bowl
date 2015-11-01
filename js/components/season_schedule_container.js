@@ -30,9 +30,9 @@ var GameRow = React.createClass({
 	},
 	addGame: function(weekNumber, gameIndex, admin) {
 		var winner = null;
+		var player1Name = null;
+		var player2Name = null;
 		return function() {
-			var player1Name = null;
-			var player2Name = null;
 			if(admin){
 				player1Name = this.refs.player1.getDOMNode().value;
 				player2Name = this.refs.player2.getDOMNode().value;
@@ -67,8 +67,18 @@ var GameRow = React.createClass({
 			}
 		};
 	},
-	submitDispute: function() {
-		alert('TODO: submit dispute');
+	submitDispute: function(weekNumber, gameIndex) {
+		return function() {
+		var player1Name = this.state.player1;
+		var player2Name = this.state.player2;
+		var winner = this.state.winner;
+		var game = this.props.game;
+		var submit = confirm('Report an error in the game between\\n', player1Name, ' and ', player2Name, '?');
+		
+		if(submit){
+			AppActions.disputeGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+		}
+		}.bind(this);
 	},
 	player1Change: function() {
 		this.setState({player1: this.refs.player1.getDOMNode().value});
@@ -88,8 +98,9 @@ var GameRow = React.createClass({
 				winner = 2;
 		}
 		var isGameOwner = false;
+		var userEmail = this.props.userEmail.toLowerCase();
 		if(player1 && player2){
-			if(player1.Email == this.props.userEmail || player2.Email == this.props.userEmail){
+			if(player1.Email.toLowerCase() ==  userEmail || player2.Email.toLowerCase() == userEmail){
 				isGameOwner = true;
 			}
 		}
@@ -159,7 +170,7 @@ var GameRow = React.createClass({
 					
 				updateButton = 
 					<td className="game-buttons">
-						<Button onClick={this.submitDispute()} bsStyle="warning">Dispute</Button>
+						<Button onClick={this.submitDispute(this.props.weekNumber, this.props.gameIndex)} bsStyle="warning">Dispute</Button>
 					</td>;
 			}
 			

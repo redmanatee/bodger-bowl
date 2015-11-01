@@ -44,9 +44,9 @@ func splitGameUpdateData(c appengine.Context, data string) (player1Name string, 
 // dispatcher for routes beginning with /admin/api/seasons/
 func UpdateSeason(w http.ResponseWriter, r *http.Request) {
 	subpath := strings.TrimPrefix(r.URL.Path, "/admin/api/seasons/")
-
 	weekGameRegexp := regexp.MustCompile(`^([^/]+)/weeks/(\d+)/games/(\d+)`)
 	weekGameMatches := weekGameRegexp.FindStringSubmatch(subpath)
+	
 	if weekGameMatches != nil {
 		weekNumber, err := strconv.Atoi(weekGameMatches[2])
 		if err != nil {

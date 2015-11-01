@@ -36,6 +36,7 @@ func generateWeekSchedule(playerPlayed map[string]map[string]bool, playersForSch
 			games[count] = Game {
 				PlayerIds: make([]string, 2),
 				WinnerId: "",
+				IsDisputed: false,
 			}
 			player1Name := d[schedule[0]]
 			player2Name := d[schedule[1]]
@@ -47,6 +48,7 @@ func generateWeekSchedule(playerPlayed map[string]map[string]bool, playersForSch
 			games[count] = Game {
 				PlayerIds: make([]string, 2),
 				WinnerId: "",
+				IsDisputed: false,
 			}
 			player1Name = d[schedule[2]]
 			player2Name = d[schedule[3]]
@@ -64,6 +66,7 @@ func generateWeekSchedule(playerPlayed map[string]map[string]bool, playersForSch
 		games[count] = Game{
 			PlayerIds: make([]string, 2),
 			WinnerId: "",
+			IsDisputed: false,
 		}
 		player1Name := unplayed[index]
 		player2Name := unplayed[index+1]
@@ -100,6 +103,7 @@ func generateRandomWeek(playerPlayed map[string]map[string]bool, players []strin
 		games[index/2] = Game{
 			PlayerIds: gameArr,
 			WinnerId: "",
+			IsDisputed: false,
 		}
 		playerPlayed[player1Name][player2Name] = true
 		playerPlayed[player2Name][player1Name] = true
