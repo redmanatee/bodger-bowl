@@ -165,9 +165,15 @@ func updateGameDispute(w http.ResponseWriter, r *http.Request, seasonId string, 
 	winnerName := r.FormValue("winnerName")
 	player1Name := r.FormValue("player1Name")
 	player2Name := r.FormValue("player2Name")
+	isDisputed, err := strconv.ParseBool(r.FormValue("isDisputed"))
+	if err != nil {
+		panic(err)
+	}
+	
 	c.Infof("winner: %v", winnerName)
 	c.Infof("player1Name: %v", player1Name)
 	c.Infof("player2Name: %v", player2Name)
+	c.Infof("isDisputed: %v", isDisputed)
 	season := LoadSeasonById(c, seasonId)
 	
 	const emailMessage = `
@@ -190,17 +196,15 @@ func updateGameDispute(w http.ResponseWriter, r *http.Request, seasonId string, 
 	if err := mail.Send(c, msg); err != nil {
 		c.Errorf("Couldn't send email: %v", err)
 	}
-	/*
+	
 	var weeks []model.Week
-	err := json.Unmarshal(season.Schedule, &weeks)
-	if err != nil {
-		panic(err)
+	err2 := json.Unmarshal(season.Schedule, &weeks)
+	if err2 != nil {
+		panic(err2)
 	}
 	game := &(weeks[weekNumber-1].Games[gameIndex])
-	game.WinnerId = winnerName
-	game.PlayerIds[0] = player1Name
-	game.PlayerIds[1] = player2Name
-	c.Infof("Updating game %v, %v: %v", weekNumber, gameIndex, weeks)
+	game.IsDisputed = isDisputed
+	c.Infof("Disputing game %v, %v: %v", weekNumber, gameIndex, weeks)
 	newSchedule, err := json.Marshal(weeks)
 	if err != nil {
 		panic(err)
@@ -209,5 +213,5 @@ func updateGameDispute(w http.ResponseWriter, r *http.Request, seasonId string, 
 	err = model.SaveSeason(c, *season)
 	if err != nil {
 		panic(err)
-	}*/
+	}
 }

@@ -25,7 +25,8 @@ var GameRow = React.createClass({
 		return {
 			player1: game && game.Players[0] && game.Players[0].Name,
 			player2: game && game.Players[1] && game.Players[1].Name,
-			winner: game && game.Winner
+			winner: game && game.Winner,
+			isDisputed: game && game.IsDisputed
 		};
 	},
 	addGame: function(weekNumber, gameIndex, admin) {
@@ -67,17 +68,19 @@ var GameRow = React.createClass({
 			}
 		};
 	},
-	submitDispute: function(weekNumber, gameIndex) {
+	processDispute: function(weekNumber, gameIndex, isDisputed) {
 		return function() {
 		var player1Name = this.state.player1;
 		var player2Name = this.state.player2;
 		var winner = this.state.winner;
 		var game = this.props.game;
-		var submit = confirm('Report an error in the game between\\n', player1Name, ' and ', player2Name, '?');
+		var submit = confirm('Report an error in the game between \n' + player1Name + ' and ' + player2Name + '?');
 		
 		if(submit){
-			AppActions.disputeGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+			AppActions.processDispute(weekNumber, gameIndex, player1Name, player2Name, winner, isDisputed);
 		}
+		
+		this.setState({isDisputed: true});
 		}.bind(this);
 	},
 	player1Change: function() {
@@ -98,10 +101,12 @@ var GameRow = React.createClass({
 				winner = 2;
 		}
 		var isGameOwner = false;
-		var userEmail = this.props.userEmail.toLowerCase();
-		if(player1 && player2){
-			if(player1.Email.toLowerCase() ==  userEmail || player2.Email.toLowerCase() == userEmail){
-				isGameOwner = true;
+		if(this.props.userEmail !== null){
+			var userEmail = this.props.userEmail.toLowerCase();
+			if(player1 && player2){
+				if(player1.Email.toLowerCase() ==  userEmail || player2.Email.toLowerCase() == userEmail){
+					isGameOwner = true;
+				}
 			}
 		}
 		
@@ -111,8 +116,15 @@ var GameRow = React.createClass({
 		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		if (admin) {
 			var deleteButton = null;
+			var resolveDisputeButton = null;
 			if(game) {
-					deleteButton = <Button onClick={this.deleteGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="danger">Delete</Button>;
+				deleteButton = <Button onClick={this.deleteGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="danger">Delete</Button>;
+				if(this.state.isDisputed){
+					resolveDisputeButton = 
+						<td className="game-buttons">
+							<Button onClick={this.processDispute(this.props.weekNumber, this.props.gameIndex, false)} bsStyle="warning">Resolve Dispute</Button>
+						</td>;
+				}
 			}
 			return (
 				<tr className={game ? "" : "warning"}>
@@ -136,6 +148,7 @@ var GameRow = React.createClass({
 						</select>
 					</td>
 					<td className="game-buttons">
+						{resolveDisputeButton}
 						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex, admin)} bsStyle={game ? "default" : "warning"}>
 							{this.props.edit ? "Update" : "Add"}
 						</Button>
@@ -167,11 +180,15 @@ var GameRow = React.createClass({
 			} else {
 				// Displays when a winner already exists
 				winnerMenu = <td><PlayerCell player={this.state.winner} /></td>;
-					
-				updateButton = 
-					<td className="game-buttons">
-						<Button onClick={this.submitDispute(this.props.weekNumber, this.props.gameIndex)} bsStyle="warning">Dispute</Button>
-					</td>;
+				if(this.state.isDisputed){
+					updateButton = 
+						<td className="game-buttons"><Button bsStyle="danger">Disputed</Button></td>;
+				} else {
+					updateButton = 
+						<td className="game-buttons">
+							<Button onClick={this.processDispute(this.props.weekNumber, this.props.gameIndex, true)} bsStyle="warning">Dispute</Button>
+						</td>;
+				}
 			}
 			
 		} else {
