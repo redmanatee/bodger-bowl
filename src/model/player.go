@@ -10,6 +10,7 @@ import (
 
 type Player struct {
 	Name string
+	Email string
 	Faction string
 	Wins int   // unused
 	Losses int // unused
@@ -84,6 +85,7 @@ func createPlayersFromCsv(csvData string) []PlayerJson {
 		players[index] = PlayerJson {
 			Name: row[0],
 			Faction: row[1],
+			Email: row[2],
 			Standin: false,
 			Injuries: make([]string, 0),
 			Bonds: *new(BondSet),

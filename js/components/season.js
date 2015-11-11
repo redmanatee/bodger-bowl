@@ -7,6 +7,7 @@ var NavItem = require('react-bootstrap/NavItem');
 var Nav = require('react-bootstrap/Nav');
 var ViewStore = require('../stores/view.js');
 var SeasonStore = require('../stores/season.js');
+var UserStore = require('../stores/user.js');
 var AppActions = require('../actions.js');
 var SeasonScheduleContainer = require('./season_schedule_container.js');
 var ConferenceContainer = require('./conference_container.js');
@@ -26,11 +27,13 @@ module.exports = React.createClass({
 			selectedPlayer: selectedPlayer,
 			activePlayerTab: 1,
 			activeWeekNumber: activeWeekNumber,
+			userEmail: null
 		};
 	},
 	componentDidMount: function() {
 		this.listenTo(ViewStore, this.view);
 		this.listenTo(SeasonStore, this.onSeasonChange);
+		this.listenTo(UserStore, this.getUser);
 	},
 	onSeasonChange: function(season: Object) {
 		this.setState({
@@ -44,7 +47,7 @@ module.exports = React.createClass({
 			activeKey: state.mainTab,
 			selectedPlayer: this.getPlayer(state.playerName),
 			activePlayerTab: state.playerTab,
-			activeWeekNumber: state.weekNumber,
+			activeWeekNumber: state.weekNumber
 		});
 		if (oldActiveWeekNumber != this.state.activeWeekNumber &&
 			this.state.activeKey == 1) {
@@ -58,13 +61,19 @@ module.exports = React.createClass({
 			}
 		}
 	},
+	getUser: function(user: Object) {
+		this.setState({
+			userEmail: user.userEmail,
+		});
+	},
 	render: function(): ?ReactElement {
 		var season = this.state.season;
 		if(season) {
 			var content = <SeasonScheduleContainer ref="seasonSchedule"
 				admin={this.props.admin}
 				season={season}
-				activeWeekNumber={this.state.activeWeekNumber} />;
+				activeWeekNumber={this.state.activeWeekNumber}
+				userEmail={this.state.userEmail} />;
 			if (this.state.activeKey == 2)
 				content = <ConferenceContainer admin={this.props.admin} season={season} />;
 			if (this.state.activeKey == 3)
@@ -74,7 +83,26 @@ module.exports = React.createClass({
 					admin={this.props.admin}
 					season={season}
 					selectedPlayer={this.state.selectedPlayer}
-					activeTab={this.state.activePlayerTab} />;
+					activeTab={this.state.activePlayerTab}
+					userEmail={this.state.userEmail}	/>;
+			var loginBanner = 
+				<Nav right>
+					<NavItem
+						onClick={function() { AppActions.redirectUrl(); }}>
+						<NavItem>{this.state.userEmail === "" ? "Sign In" : "Sign Out"}</NavItem>
+					</NavItem>
+				</Nav>;
+			
+			var userBanner = null;
+			if(this.state.userEmail !== ""){
+				userBanner =
+					<Nav right>
+						<NavItem>
+							<NavItem>Logged in as {this.state.userEmail}</NavItem>
+						</NavItem>
+					</Nav>;
+			}
+				
 			var brand = <a href="/">Bodger Bowl</a>;
 			return (
 				<div>
@@ -107,6 +135,8 @@ module.exports = React.createClass({
 						<Nav right>
 							<NavItem href="http://sustainedattack.wordpress.com/events/bodger-bowl-iv/">About</NavItem>
 						</Nav>
+						{loginBanner}
+						{userBanner}
 					</Navbar>
 					<Grid fluid>
 						{content}

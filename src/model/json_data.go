@@ -30,6 +30,7 @@ type Game struct {
 
 type PlayerJson struct {
 	Name string
+	Email string
 	Faction string
 	Standin bool
 	Injuries []string
@@ -94,6 +95,7 @@ func (player Player) CreatePlayerJson() PlayerJson {
 	//Note: we don't apply the email or phone number to help our end users keep that information private.
 	return PlayerJson {
 			Name: player.Name,
+			Email: player.Email,
 			Faction: player.Faction,
 			Standin: player.Standin,
 			Injuries: player.Injuries,
@@ -141,6 +143,7 @@ func (p PlayerJson) CreatePlayer() Player {
 	}
 	return Player {
 		Name: p.Name,
+		Email: p.Email,
 		Standin: p.Standin,
 		Faction: p.Faction,
 		Injuries: p.Injuries,

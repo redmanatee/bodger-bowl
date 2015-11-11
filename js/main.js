@@ -16,4 +16,5 @@ $(function() {
 	if(seasons) React.render(<AdminSeasonTable pollInterval="1000" />, seasons);
 
 	AppActions.loadSeason();
+	AppActions.loadUser();
 });
