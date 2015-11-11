@@ -1,6 +1,7 @@
 package api
 
 import (
+	"time"
 	"appengine"
 	"appengine/datastore"
 	"appengine/mail"
@@ -145,6 +146,13 @@ func updateGame(w http.ResponseWriter, r *http.Request, seasonId string, weekNum
 		panic(err)
 	}
 	game := &(weeks[weekNumber-1].Games[gameIndex])
+	if len(game.WinnerId) == 0 {
+		if len(winnerName) != 0 {
+			now := time.Now()
+			deadline := now.Add(time.Duration(4*24) * time.Hour)
+			game.DisputeDeadline = deadline.Unix()
+		}
+	}
 	game.WinnerId = winnerName
 	game.PlayerIds[0] = player1Name
 	game.PlayerIds[1] = player2Name
@@ -170,10 +178,6 @@ func updateGameDispute(w http.ResponseWriter, r *http.Request, seasonId string, 
 		panic(err)
 	}
 	
-	c.Infof("winner: %v", winnerName)
-	c.Infof("player1Name: %v", player1Name)
-	c.Infof("player2Name: %v", player2Name)
-	c.Infof("isDisputed: %v", isDisputed)
 	season := LoadSeasonById(c, seasonId)
 	
 	const emailMessage = `
@@ -187,9 +191,12 @@ func updateGameDispute(w http.ResponseWriter, r *http.Request, seasonId string, 
 	"%s -- Automated Dispute Notification"
 	`
 	
+	var emailList []string
+	emailList = []string{"dungeongod@gmail.com"}
+	
 	msg := &mail.Message{
 			Sender:  "",
-			To:      []string{"ymihere03@gmail.com"},
+			To:      emailList,
 			Subject: fmt.Sprintf(emailSubject, season.Name),
 			Body:    fmt.Sprintf(emailMessage, player1Name, player2Name, winnerName),
 	}

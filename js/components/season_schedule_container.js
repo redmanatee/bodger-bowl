@@ -26,7 +26,8 @@ var GameRow = React.createClass({
 			player1: game && game.Players[0] && game.Players[0].Name,
 			player2: game && game.Players[1] && game.Players[1].Name,
 			winner: game && game.Winner,
-			isDisputed: game && game.IsDisputed
+			isDisputed: game && game.IsDisputed,
+			disputeDeadline: game && game.DisputeDeadline
 		};
 	},
 	addGame: function(weekNumber, gameIndex, admin) {
@@ -180,10 +181,12 @@ var GameRow = React.createClass({
 			} else {
 				// Displays when a winner already exists
 				winnerMenu = <td><PlayerCell player={this.state.winner} /></td>;
+				var nowSeconds = Date.now()/1000;
+				
 				if(this.state.isDisputed){
 					updateButton = 
 						<td className="game-buttons"><Button bsStyle="danger">Disputed</Button></td>;
-				} else {
+				} else if(this.state.disputeDeadline > nowSeconds) {
 					updateButton = 
 						<td className="game-buttons">
 							<Button onClick={this.processDispute(this.props.weekNumber, this.props.gameIndex, true)} bsStyle="warning">Dispute</Button>
