@@ -24,24 +24,42 @@ var GameRow = React.createClass({
 		var game = this.props.game;
 		return {
 			player1: game && game.Players[0] && game.Players[0].Name,
-			player2: game && game.Players[1] && game.Players[1].Name
+			player2: game && game.Players[1] && game.Players[1].Name,
+			winner: game && game.Winner,
+			isDisputed: game && game.IsDisputed,
+			disputeDeadline: game && game.DisputeDeadline
 		};
 	},
-	addGame: function(weekNumber, gameIndex) {
+	addGame: function(weekNumber, gameIndex, admin) {
+		var winner = null;
+		var player1Name = null;
+		var player2Name = null;
 		return function() {
-			var player1Name = this.refs.player1.getDOMNode().value;
-			var player2Name = this.refs.player2.getDOMNode().value;
+			if(admin){
+				player1Name = this.refs.player1.getDOMNode().value;
+				player2Name = this.refs.player2.getDOMNode().value;
+			} else {
+				player1Name = this.state.player1;
+				player2Name = this.state.player2;
+			}
 			var winnerNumber = this.refs.winner.getDOMNode().value;
-			var winner = null;
+			
 			if(winnerNumber == 1)
 				winner = player1Name;
 			if(winnerNumber == 2)
 				winner = player2Name;
-			if(this.props.edit) {
-				AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+				
+			if(this.props.edit){
+				if(admin) {
+					AppActions.updateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+				} else {
+					AppActions.publicUpdateGame(weekNumber, gameIndex, player1Name, player2Name, winner);
+				}
 			} else {
 				AppActions.addGame(weekNumber, player1Name, player2Name, winner);
 			}
+			
+			this.setState({winner: winner});
 		}.bind(this);
 	},
 	deleteGame: function(weekNumber, gameIndex) {
@@ -50,6 +68,21 @@ var GameRow = React.createClass({
 				AppActions.deleteGame(weekNumber, gameIndex);
 			}
 		};
+	},
+	processDispute: function(weekNumber, gameIndex, isDisputed) {
+		return function() {
+		var player1Name = this.state.player1;
+		var player2Name = this.state.player2;
+		var winner = this.state.winner;
+		var game = this.props.game;
+		var submit = confirm('Report an error in the game between \n' + player1Name + ' and ' + player2Name + '?');
+		
+		if(submit){
+			AppActions.processDispute(weekNumber, gameIndex, player1Name, player2Name, winner, isDisputed);
+		}
+		
+		this.setState({isDisputed: true});
+		}.bind(this);
 	},
 	player1Change: function() {
 		this.setState({player1: this.refs.player1.getDOMNode().value});
@@ -68,13 +101,31 @@ var GameRow = React.createClass({
 			if(game.Winner == player2)
 				winner = 2;
 		}
+		var isGameOwner = false;
+		if(this.props.userEmail !== null){
+			var userEmail = this.props.userEmail.toLowerCase();
+			if(player1 && player2){
+				if(player1.Email.toLowerCase() ==  userEmail || player2.Email.toLowerCase() == userEmail){
+					isGameOwner = true;
+				}
+			}
+		}
+		
+		// For admin users
 		var admin = this.props.admin;
 		var player1Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		var player2Options = this.props.players.map(function(player) { return <option key={player.Name}>{player.Name}</option>; });
 		if (admin) {
 			var deleteButton = null;
+			var resolveDisputeButton = null;
 			if(game) {
-					deleteButton = <Button onClick={this.deleteGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="danger">Delete</Button>;
+				deleteButton = <Button onClick={this.deleteGame(this.props.weekNumber, this.props.gameIndex)} bsStyle="danger">Delete</Button>;
+				if(this.state.isDisputed){
+					resolveDisputeButton = 
+						<td className="game-buttons">
+							<Button onClick={this.processDispute(this.props.weekNumber, this.props.gameIndex, false)} bsStyle="warning">Resolve Dispute</Button>
+						</td>;
+				}
 			}
 			return (
 				<tr className={game ? "" : "warning"}>
@@ -98,7 +149,8 @@ var GameRow = React.createClass({
 						</select>
 					</td>
 					<td className="game-buttons">
-						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex)} bsStyle={game ? "default" : "warning"}>
+						{resolveDisputeButton}
+						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex, admin)} bsStyle={game ? "default" : "warning"}>
 							{this.props.edit ? "Update" : "Add"}
 						</Button>
 						{deleteButton}
@@ -106,11 +158,51 @@ var GameRow = React.createClass({
 				</tr>
 			);
 		}
+		
+		// For non-admin users
+		var winnerMenu = null;
+		var updateButton = null;
+		if(isGameOwner){
+			if(!this.state.winner){
+				// Displays when a winner is not set yet
+				winnerMenu = 
+					<td>
+						<select ref="winner" defaultValue={winner}>
+							<option value="">-</option>
+							<option value={1}>{this.state.player1 || "-"}</option>
+							<option value={2}>{this.state.player2 || "-"}</option>
+						</select>
+					</td>;
+					
+				updateButton = 
+					<td className="game-buttons">
+						<Button onClick={this.addGame(this.props.weekNumber, this.props.gameIndex, admin)} bsStyle="primary">Submit Result</Button>
+					</td>;
+			} else {
+				// Displays when a winner already exists
+				winnerMenu = <td><PlayerCell player={this.state.winner} /></td>;
+				var nowSeconds = Date.now()/1000;
+				
+				if(this.state.isDisputed){
+					updateButton = 
+						<td className="game-buttons"><Button bsStyle="danger">Disputed</Button></td>;
+				} else if(this.state.disputeDeadline > nowSeconds) {
+					updateButton = 
+						<td className="game-buttons">
+							<Button onClick={this.processDispute(this.props.weekNumber, this.props.gameIndex, true)} bsStyle="warning">Dispute</Button>
+						</td>;
+				}
+			}
+			
+		} else {
+			winnerMenu = <td><PlayerCell player={this.state.winner} /></td>;
+		}
 		return (
 			<tr>
 				<td><PlayerCell player={player1} /></td>
 				<td><PlayerCell player={player2} /></td>
-				<td><PlayerCell player={game && game.Winner} /></td>
+				{winnerMenu}
+				{updateButton}
 			</tr>
 		);
 	}
@@ -125,11 +217,13 @@ var WeekTable = React.createClass({
 	},
 	render: function() {
 		var rows = this.props.week.Games.map(function(game, i) {
-			return <GameRow game={game} weekNumber={this.props.weekNumber}
+			return <GameRow game={game}
+				weekNumber={this.props.weekNumber}
 				key={this.props.weekNumber + "-" + i + "-" + game.Players.join("-") + "-" + game.Winner}
 				admin={this.props.admin}
 				gameIndex={i}
 				players={this.props.players}
+				userEmail={this.props.userEmail}
 				edit />;
 		}.bind(this));
 		var opsColumn = "";
@@ -249,7 +343,11 @@ var WeekGroup = React.createClass({
 		return (
 			<div ref="weekGroup">
 				{weekEdit}
-				<WeekTable week={this.props.week} weekNumber={this.props.weekNumber} admin={this.props.admin} players={this.props.players} />
+				<WeekTable week={this.props.week}
+				weekNumber={this.props.weekNumber}
+				admin={this.props.admin}
+				players={this.props.players}
+				userEmail={this.props.userEmail} />
 			</div>
 		);
 	}
@@ -315,7 +413,7 @@ module.exports = React.createClass({
 				<WeekEditor cancelCallback={this.hideAddWeek} submitCallback={this.addWeek} />
 			</div>;
 		} else {
-			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} players={this.props.season.Players} />;
+			content = <WeekGroup ref="weekGroup" weekNumber={this.props.activeWeekNumber} week={activeWeek} admin={admin} players={this.props.season.Players} userEmail={this.props.userEmail} />;
 		}
 		return (
 			<div>

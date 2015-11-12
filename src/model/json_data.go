@@ -26,6 +26,8 @@ type Week struct {
 type Game struct {
 	PlayerIds []string
 	WinnerId string
+	IsDisputed bool
+	DisputeDeadline int64
 }
 
 type PlayerJson struct {

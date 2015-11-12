@@ -11,9 +11,6 @@ import (
 func init() {
 	http.HandleFunc("/", HomeRequest)
 	
-	// User Authentication Functions
-	http.HandleFunc("/api/getUser", api.GetUser)
-	
 	// Admin Functions
 	http.HandleFunc("/admin/", admin.AdminHandler)
 	http.HandleFunc("/admin/seasons/", admin.SeasonHandler)
@@ -29,10 +26,15 @@ func init() {
 	http.HandleFunc("/admin/api/players/bonds/potential/delete/", admin.PlayerPotentialBondDeleteHandler)
 	http.HandleFunc("/admin/api/players/bonds/potential/increment/", admin.PlayerPotentialBondIncrementHandler)
 	
+	// User Authentication Functions
+	http.HandleFunc("/api/getUser", api.GetUser)
+	
 	// API Get Functions
 	http.HandleFunc("/api/seasons/", api.SeasonList)
 	http.HandleFunc("/api/seasons/latest/", api.GetActiveSeason)
 	http.HandleFunc("/api/players/", api.GetPlayer)
+	http.HandleFunc("/api/seasons/update/", api.PublicUpdateSeason)
+	http.HandleFunc("/api/seasons/dispute/", api.DisputeGame)
 }
 
 func HomeRequest(w http.ResponseWriter, r *http.Request) {

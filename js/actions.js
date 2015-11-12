@@ -13,6 +13,8 @@ module.exports = Reflux.createActions([
 	"toggleStandin",
 	"addGame",
 	"updateGame",
+	"publicUpdateGame",
+	"processDispute",
 	"deleteGame",
 	"addWeek",
 	"updateWeek",
