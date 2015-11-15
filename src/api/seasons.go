@@ -192,7 +192,7 @@ func updateGameDispute(w http.ResponseWriter, r *http.Request, seasonId string, 
 	`
 	
 	var emailList []string
-	emailList = []string{"dungeongod@gmail.com"}
+	emailList = []string{"dungeongod"+"@"+"gmail"+".com"}
 	
 	msg := &mail.Message{
 			Sender:  "",
